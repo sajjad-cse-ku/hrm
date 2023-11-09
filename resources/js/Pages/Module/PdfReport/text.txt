@@ -1,0 +1,81 @@
+
+
+ {/*<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">*/}
+                                    {/*<div>*/}
+                                    {/*    <label>*/}
+                                    {/*        Select Department*/}
+                                    {/*    </label>*/}
+                                    {/*    <select*/}
+                                    {/*        id="department_id"*/}
+                                    {/*        className="form-select text-white-dark"*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        value={values.department_id || ''}*/}
+                                    {/*    >*/}
+                                    {/*        <option value="all">All</option>*/}
+                                    {/*        {departments.map((item) => (*/}
+                                    {/*            <option*/}
+                                    {/*                key={item.id}*/}
+                                    {/*                value={item.id}*/}
+                                    {/*            >*/}
+                                    {/*                {item.name}*/}
+                                    {/*            </option>*/}
+                                    {/*        ))}*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
+                                    {/*<div>*/}
+                                    {/*    <label>*/}
+                                    {/*        Select Designation*/}
+                                    {/*    </label>*/}
+                                    {/*    <select*/}
+                                    {/*        id="designation_id"*/}
+                                    {/*        className="form-select text-white-dark"*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        value={values.designation_id || ''}*/}
+                                    {/*    >*/}
+                                    {/*        <option value="all">All</option>*/}
+                                    {/*        {designations.map((item) => (*/}
+                                    {/*            <option*/}
+                                    {/*                key={item.id}*/}
+                                    {/*                value={item.id}*/}
+                                    {/*            >*/}
+                                    {/*                {item.name}*/}
+                                    {/*            </option>*/}
+                                    {/*        ))}*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
+                                    {/*<div>*/}
+                                    {/*    <label>*/}
+                                    {/*        Select Religion*/}
+                                    {/*    </label>*/}
+                                    {/*    <select*/}
+                                    {/*        id="religion_id"*/}
+                                    {/*        className="form-select text-white-dark"*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        value={values.religion_id || ''}*/}
+                                    {/*    >*/}
+                                    {/*        <option value="all">All</option>*/}
+                                    {/*        {religions.map((item) => (*/}
+                                    {/*            <option*/}
+                                    {/*                key={item.id}*/}
+                                    {/*                value={item.id}*/}
+                                    {/*            >*/}
+                                    {/*                {item.name}*/}
+                                    {/*            </option>*/}
+                                    {/*        ))}*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
+                                    {/*<div>*/}
+                                    {/*    <label>*/}
+                                    {/*        Select Gender*/}
+                                    {/*    </label>*/}
+                                    {/*    <select*/}
+                                    {/*        id="gender"*/}
+                                    {/*        className="form-select text-white-dark"*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        value={values.gender || ''}*/}
+                                    {/*    >*/}
+                                    {/*        <option value="all">All</option>*/}
+                                    {/*        <option value="Male">Male</option>*/}
+                                    {/*        <option value="Female">Female</option>*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}

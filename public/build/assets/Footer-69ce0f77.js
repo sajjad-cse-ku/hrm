@@ -1,0 +1,1 @@
+import{j as t}from"./app-10261b6d.js";function r(){return t.jsxs("div",{className:"dark:text-white-dark text-center ltr:sm:text-left rtl:sm:text-right p-6 mt-auto",children:["© ",new Date().getFullYear(),". Luminous Labs All rights reserved."]})}export{r as default};

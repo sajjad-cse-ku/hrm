@@ -1,0 +1,325 @@
+<?php
+
+namespace App\Console\Commands;
+use App\Models\Shift;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use App\Models\Attendance;
+use App\Models\Company;
+use App\Models\PublicHoliday;
+use App\Models\PunchDetails;
+use App\Models\Roster;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+
+class AttendanceCron extends Command
+{
+    public function __construct()
+
+    {
+
+        parent::__construct();
+
+    }
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'attendance:cron';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        date_default_timezone_set('Asia/Dhaka');
+        $allow_minute = SiteSettings()->extra_time;
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+        $currentDate = $request->set_date ?? Carbon::now()->toDateString();
+        $currentDay = Carbon::parse($currentDate)->day;
+        $currentOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        $created_by = 1 ;
+
+        $companies = Company::with('user')->where('status', 1)->get();
+        $isData = PunchDetails::whereDate('attendance_datetime',$currentDate)->get();
+        $general_time = Shift::where('id', 2)->first();
+
+        if(count($isData) > 0){
+            foreach ($companies as $company) {
+
+                $public_holiday = $this->getCompnayBasePublicHoliDays($currentOfMonth,$endOfMonth,$currentDate,$company->id);
+                $userAttendanceData = $this->userAttendanceData($company,$currentDate);
+                // New loop Add for testing
+                foreach ($userAttendanceData as $attendanceData) {
+                    $user = $attendanceData['user'];
+                    $leaves = $attendanceData['leaves'];
+                    //Rostar and Shift Data
+                    $userWithRoster = $this->userWithRoster($currentYear,$currentMonth,$user->id,$currentDay,$general_time);
+                    $shift_id = $userWithRoster['shift_id'] ;
+                    // Entry Exit Data Get
+                    $enrtyExitData = $this->enrtyExitData($attendanceData,$shift_id,$leaves);
+                    $getUserLateData = $this->getUserLateData($shift_id,$userWithRoster['shift_entry_time'] ,$allow_minute,$enrtyExitData['entry_time'],$userWithRoster['shift_exit_time'],$enrtyExitData['exit_time'],$user);
+
+                    $leave_flag = isset($leaves->id) ? 1 : 0;
+                    $leave_id = isset($leaves->id) ? 1 : 0;
+                    $offday_flag = $shift_id == 1 ? 1 : 0;
+                    $offday_present = ($offday_flag == 1 && $user->id) ? 1 : 0;
+                    // Data Insert Or Update
+                    $this->attendanceDataDbInsert($user,$enrtyExitData,$userWithRoster,$getUserLateData,$leave_flag,$leave_id,$public_holiday,$offday_flag,$offday_present,$created_by,$currentDate);
+
+                }
+            }
+
+        }
+        else if( count($isData) == 0 ) {
+            foreach ($companies as $company) {
+                $public_holiday = $this->getCompnayBasePublicHoliDays($currentOfMonth,$endOfMonth,$currentDate,$company->id);
+                if($public_holiday != NULL){
+                    foreach ($company->user as $user) {
+                        $this->publicHoliDayDataInsert($user,$currentDate,$created_by,$public_holiday);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public function attendanceDataDbInsert($user,$enrtyExitData,$userWithRoster,$getUserLateData,$leave_flag,$leave_id,$public_holiday,$offday_flag,$offday_present,$created_by,$currentDate){
+
+        try {
+            DB::beginTransaction();
+            $save = Attendance::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
+                ],
+                [
+                    'company_id' => $user->company_id,
+                    'created_by' => $created_by,
+                    'user_id' => $user->id,
+                    'department_id' => $user->professionaldata->department_id,
+                    'device_id' => 1,
+                    'attendance_datetime' => $enrtyExitData['attend_date'] ?? null,
+                    'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
+                    'entry_date' => $enrtyExitData['entry_date'] ?? null,
+                    'entry_time' => $enrtyExitData['entry_time'] ?? null,
+                    'shift_entry_time' => $userWithRoster['shift_entry_time'] ?? null,
+                    'exit_date' => $enrtyExitData['exit_date'] ?? null,
+                    'exit_time' => $enrtyExitData['exit_time'] ?? null,
+                    'shift_exit_time' => $userWithRoster['shift_exit_time'] ?? null,
+                    'attend_status' => $enrtyExitData['attend_status'] ?? 0,
+                    'night_duty' => $enrtyExitData['night_duty'] ?? 0,
+                    'late_flag' => $getUserLateData['late_flag'] ?? 0,
+                    'late_allow' => $getUserLateData['late_allow'] ?? 0,
+                    'late_minute' => $getUserLateData['late_minute'] ?? 0,
+                    'over_time' => $getUserLateData['over_time'] ?? 0,
+                    'overtime_hour' => $getUserLateData['overtime_hour'] ?? 0,
+                    'leave_flag' => $leave_flag,
+                    'leave_id' => $leave_id,
+                    'holiday_flag' => count($public_holiday) == 0 ? 0 : 1,
+                    'offday_flag' => $offday_flag,
+                    'offday_present' => $offday_present,
+                    'shift_id' => $userWithRoster['shift_id'] ?? null,
+                ]
+            );
+            if ($save) {
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true ;
+    }
+    public function getCompnayBasePublicHoliDays($currentOfMonth,$endOfMonth,$currentDate,$company_id){
+        $events = PublicHoliday::where(function ($query) use ($currentOfMonth, $endOfMonth,$company_id) {
+            $query->where('from_date', '<=', $endOfMonth)
+                ->where('to_date', '>=', $currentOfMonth)
+                ->where('company_id', $company_id);
+        })->get();
+
+        $public_holiday = $events->filter(function ($event) use ($currentDate) {
+            return $event->from_date <= $currentDate && $event->to_date >= $currentDate;
+        });
+        return $public_holiday;
+    }
+
+    public function userAttendanceData($company,$currentDate){
+
+        $userAttendanceData = []; // Array to store user attendance data
+        foreach ($company->user as $user) {
+            $punches = $user->punches()->whereDate('attendance_datetime', $currentDate)->get();
+            $leaves = $user->leaveapplication()->whereDate('from_date', $currentDate)->first();
+            if (isset($punches)) {
+                $minAttendanceDetails = $punches->min('attendance_datetime');
+                $maxAttendanceDetails = $punches->max('attendance_datetime');
+                $userAttendanceData[] = [
+                    'user' => $user,
+                    'leaves'=>$leaves,
+                    'minAttendanceDetails' => $punches->where('attendance_datetime', $minAttendanceDetails)->first(),
+                    'maxAttendanceDetails' => $punches->where('attendance_datetime', $maxAttendanceDetails)->first(),
+                ];
+            }
+        }
+        return $userAttendanceData ;
+    }
+    //    Get User  Roster Data
+    public function userWithRoster($currentYear,$currentMonth,$user_id,$currentDay,$general_time){
+
+        $result = [];
+        $userWithRoster = Roster::with(
+            'shift_day_1', 'shift_day_2', 'shift_day_3', 'shift_day_4', 'shift_day_5', 'shift_day_6', 'shift_day_7', 'shift_day_8', 'shift_day_9', 'shift_day_10', 'shift_day_11', 'shift_day_12', 'shift_day_13', 'shift_day_14', 'shift_day_15', 'shift_day_16', 'shift_day_17', 'shift_day_18', 'shift_day_19', 'shift_day_20', 'shift_day_21', 'shift_day_22', 'shift_day_23', 'shift_day_24', 'shift_day_25', 'shift_day_26', 'shift_day_27', 'shift_day_28', 'shift_day_29', 'shift_day_30', 'shift_day_31',
+            'loc_1', 'loc_2', 'loc_3', 'loc_4', 'loc_5'
+        )->where('r_year', $currentYear)
+            ->where('month_id', $currentMonth)
+            ->where('user_id', $user_id)
+            ->first();
+
+        for ($day = 1; $day <= 31; $day++) {
+
+            $dayProperty = "shift_day_" . $day;
+
+            if ($day == $currentDay && isset($userWithRoster)) {
+                $shift_entry_time = $userWithRoster->$dayProperty ? $userWithRoster->$dayProperty->from_time :  $general_time->from_time;
+                $shift_exit_time = $userWithRoster->$dayProperty ? $userWithRoster->$dayProperty->to_time : $general_time->to_time;
+                break;
+            }else{
+                $shift_entry_time = $general_time->from_time ;
+                $shift_exit_time = $general_time->to_time;
+            }
+        }
+        $shift_id = $userWithRoster->{'shift_day_' . $currentDay}->id ?? null ;
+
+        // Push Result to Array Value
+        $result['shift_entry_time'] = $shift_entry_time ;
+        $result['shift_exit_time'] = $shift_exit_time ;
+        $result['shift_id'] = $shift_id ;
+        return $result ;
+
+    }
+    // Get Entry Data And Exit
+    public function enrtyExitData($attendanceData,$shift_id,$leaves){
+
+        $result = [];
+
+        $minAttendanceDetails = isset($attendanceData['minAttendanceDetails']) ? $attendanceData['minAttendanceDetails'] : null ;
+        $maxAttendanceDetails = isset($attendanceData['maxAttendanceDetails']) ? $attendanceData['maxAttendanceDetails'] : null;
+        $min_attendance_datetime= $minAttendanceDetails != null ? $minAttendanceDetails->attendance_datetime : null;
+        $max_attendance_datetime= $minAttendanceDetails != null ? $maxAttendanceDetails->attendance_datetime : null;
+
+        if ($min_attendance_datetime !== null) {
+            $minCarbon = Carbon::parse($min_attendance_datetime);
+            $attend_date = $minCarbon->toDateString();
+            $entry_date = $minCarbon->toDateString();
+            $entry_time = $minCarbon->toTimeString();
+        }else{
+            $entry_time = $entry_date = $attend_date  = null;
+        }
+
+        if ($max_attendance_datetime !== null) {
+            $maxCarbon = Carbon::parse($max_attendance_datetime);
+            $exit_date = $maxCarbon->toDateString();
+            $exit_time = $maxCarbon->toTimeString();
+        } else {
+            $exit_date = $exit_time = null;
+        }
+
+        $attend_status = $min_attendance_datetime != null ? 'P' : ($shift_id == 1 ? 'O' : (isset($leaves->id )? 'L' : 'A'));
+        $night_duty = in_array($shift_id, [5,9,11]) ? $shift_id : 0;
+
+        $result['attend_date'] = $attend_date;
+        $result['entry_date'] = $entry_date;
+        $result['entry_time'] = $entry_time;
+        $result['exit_date'] = $exit_date;
+        $result['exit_time'] = $exit_time;
+        $result['attend_status'] = $attend_status;
+        $result['night_duty'] = $night_duty;
+
+        return $result;
+    }
+    // Get the Late Data Info
+    public function getUserLateData($shift_id,$shift_entry_time,$allow_minute,$entry_time,$shift_exit_time,$exit_time,$user){
+
+        $result = [];
+        if($shift_id !== 1 || $shift_id === null){
+            $late_flag = (Carbon::parse($shift_entry_time)->addMinutes($allow_minute)->format('H:i:s') < $entry_time) ? 1 : 0;
+        }else $late_flag = 0;
+
+
+        //late time count
+        $carbonShiftEntryTime = Carbon::parse($shift_entry_time);
+        $carbonEntryTime = Carbon::parse($entry_time);
+        $late_minute = floor(($carbonShiftEntryTime->diffInSeconds($carbonEntryTime))/60);
+        //late time count
+        $carbonShiftExitTime = Carbon::parse($shift_exit_time);
+        $carbonExitTime = Carbon::parse($exit_time);
+        $over_time = $user->professionaldata->overtime == 1 ? 1 : 0;
+        $overtime_hour = ceil(($carbonShiftExitTime->diffInSeconds($carbonExitTime))/60);
+        $late_allow = $user->professionaldata->late_allow ?? 0;
+
+        $result['late_flag'] = $late_flag ;
+        $result['late_minute'] = $late_minute ;
+        $result['over_time'] = $over_time ;
+        $result['overtime_hour'] = $overtime_hour ;
+        $result['late_allow'] = $late_allow ;
+        return $result;
+
+    }
+    public function publicHoliDayDataInsert($user,$currentDate,$created_by,$public_holiday){
+        try {
+            DB::beginTransaction();
+            $save = Attendance::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'attend_date'=> $currentDate,
+                ],
+                [
+                    'company_id'=>$user->company_id,
+                    'created_by'=> $created_by,
+                    'user_id'=>$user->id,
+                    'department_id'=>$user->professionaldata->department_id,
+                    'device_id'=> 1 ,
+                    'attendance_datetime'=> null,
+                    'attend_date'=> $currentDate ,
+                    'entry_date'=> null,
+                    'entry_time'=> null,
+                    'shift_entry_time'=> null ,
+                    'exit_date'=> null ,
+                    'exit_time'=> null ,
+                    'shift_exit_time'=>  null ,
+                    'attend_status'=> "O" ,
+                    'night_duty'=> 0 ,
+                    'late_flag'=>0 ,
+                    'late_allow'=> 0 ,
+                    'late_minute'=> 0 ,
+                    'over_time'=> 0 ,
+                    'overtime_hour'=> 0 ,
+                    'leave_flag'=> 0 ,
+                    'leave_id'=>0 ,
+                    'holiday_flag'=>count($public_holiday) == 0 ? 0 : 1,
+                    'offday_flag'=> 1 ,
+                    'offday_present'=>1,
+                    'shift_id'=> null,
+                ]);
+            if($save){
+                DB::commit();
+            }
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true ;
+    }
+}
