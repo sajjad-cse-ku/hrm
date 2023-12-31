@@ -1,56 +1,57 @@
 import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import FlashMessage from "../../Component/FlashMessage";
-import {Link, usePage} from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import HtmlReactParser from "html-react-parser";
 import axios from "axios";
 
 function AssignTask() {
-    const { base_url,flash,tasks } = usePage().props;
-    const [isTask,setTask]=useState(tasks)
-    const [isTitle,setTitle]=useState('Created Task')
+    const { base_url, flash, tasks } = usePage().props;
+    const [isTask, setTask] = useState(tasks);
+    const [isTitle, setTitle] = useState("Created Task");
 
     const createdTask = async () => {
         try {
-            const response = await axios.get('/admin/task/get-created-task/');
-            setTask(response.data)
-            setTitle('Created Task')
+            const response = await axios.get("/admin/task/get-created-task/");
+            setTask(response.data);
+            setTitle("Created Task");
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const processingTask = async () => {
         try {
-            const response = await axios.get('/admin/task/get-processing-task/');
+            const response = await axios.get(
+                "/admin/task/get-processing-task/"
+            );
             // console.log(response.data)
-            setTask(response.data)
-            setTitle('Processing Task')
+            setTask(response.data);
+            setTitle("Processing Task");
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const reviewTask = async () => {
         try {
-            const response = await axios.get('/admin/task/get-review-task/');
-            setTask(response.data)
-            setTitle('Review Task')
+            const response = await axios.get("/admin/task/get-review-task/");
+            setTask(response.data);
+            setTitle("Review Task");
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const doneTask = async () => {
         try {
-            const response = await axios.get('/admin/task/get-done-task/');
-            setTask(response.data)
-            setTitle('Approved Task')
+            const response = await axios.get("/admin/task/get-done-task/");
+            setTask(response.data);
+            setTitle("Approved Task");
         } catch (error) {
             console.error(error);
         }
-    }
-
+    };
 
     return (
         <>
@@ -91,31 +92,52 @@ function AssignTask() {
                 </ul>
             </div>
 
-            <div className="mb-5 panel mt-6 flex flex-wrap items-center justify-between overflow-x-auto whitespace-nowrap p-3">
-
-                <div className="md:w-2/3 basis-[90%]">
-
+            <div className="mb-5 panel mt-6 flex flex-wrap items-center justify-between overflow-x-auto whitespace-nowrap p-3 gap-2">
+                <div className="">
                     <button
-                        className="px-7 py-2 bg-yellow-600 text-white rounded-md text-[15px]" onClick={createdTask}>
+                        className="px-7 py-2 bg-yellow-600 text-white rounded-md text-[15px]"
+                        onClick={createdTask}
+                    >
                         New Task
                     </button>
                     <button
-                        className="px-7 py-2 bg-red-600 text-white rounded-md text-[15px] ml-2" onClick={processingTask}>
+                        className="px-7 py-2 bg-red-600 text-white rounded-md text-[15px] ml-2"
+                        onClick={processingTask}
+                    >
                         Processing
                     </button>
                     <button
-                        className="px-7 py-2 bg-secondary text-white rounded-md text-[15px] ml-2" onClick={reviewTask}>
+                        className="px-7 py-2 bg-secondary text-white rounded-md text-[15px] ml-2"
+                        onClick={reviewTask}
+                    >
                         Review
                     </button>
                     <button
-                        className="px-7 py-2 bg-green-600 text-white rounded-md text-[15px] ml-2" onClick={doneTask}>
+                        className="px-7 py-2 bg-green-600 text-white rounded-md text-[15px] ml-2"
+                        onClick={doneTask}
+                    >
                         Done
                     </button>
                 </div>
-                <div className="md:w-1/3 basis-[10%]">
-                    <Link href={`${base_url}/admin/task/create`} method="get" className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2">
-                        Create Task
+                <div className="">
+                    <Link href={`${base_url}/admin/task/create`} method="get">
+                        <button className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]">
+                            Create Task
+                        </button>
                     </Link>
+                    {/* <button
+                        className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
+                        onClick={() => {
+                            naviate(
+                                location.pathname.replace(
+                                    location.pathname,
+                                    "/admin/task/create"
+                                )
+                            );
+                        }}
+                    >
+                        Create Task
+                    </button> */}
                 </div>
             </div>
 
@@ -123,81 +145,141 @@ function AssignTask() {
                 <div className="grid lg:grid-cols-1 grid-cols-1 gap-6">
                     <div className="panel h-full w-full">
                         <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">{isTitle}</h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                {isTitle}
+                            </h5>
                         </div>
                         <div className="table-responsive custom-scroll">
                             <table>
                                 <thead>
-                                <tr>
-                                    <th>Project name</th>
-                                    <th>Task Title</th>
-                                    <th>Assigned User</th>
-                                    <th>priority</th>
-                                    <th>Time Duration</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
-                                </tr>
+                                    <tr>
+                                        <th>Project name</th>
+                                        <th>Task Title</th>
+                                        <th>Assigned User</th>
+                                        <th>priority</th>
+                                        <th>Time Duration</th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            Action
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {
-                                    isTask && isTask.length > 0 &&
-                                    isTask?.map((task,index) => (
-                                            <tr key={index} className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    {isTask &&
+                                        isTask.length > 0 &&
+                                        isTask?.map((task, index) => (
+                                            <tr
+                                                key={index}
+                                                className="text-white-dark hover:text-black dark:hover:text-white-light/90 group"
+                                            >
                                                 <td className="min-w-[150px] text-black dark:text-white">
                                                     <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">{task?.project?.name}</span>
+                                                        <span className="whitespace-nowrap">
+                                                            {
+                                                                task?.project
+                                                                    ?.name
+                                                            }
+                                                        </span>
                                                     </div>
                                                 </td>
 
                                                 <td className="min-w-[150px] text-black dark:text-white">
                                                     <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">{task?.task_title}</span>
+                                                        <span className="whitespace-nowrap">
+                                                            {task?.task_title}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td className="min-w-[150px] text-black dark:text-white flex pl-6">
                                                     {task?.users.map((user) => (
-                                                        <div key={user.id} className="flex items-center pb-2">
-                                                  <span className="whitespace-nowrap">
-                                                      <span className="badge bg-emerald-800 shadow-md dark:group-hover:bg-transparent">{user?.first_name} {user?.last_name}</span>
-                                                  </span>
+                                                        <div
+                                                            key={user.id}
+                                                            className="flex items-center pb-2"
+                                                        >
+                                                            <span className="whitespace-nowrap">
+                                                                <span className="badge bg-emerald-800 shadow-md dark:group-hover:bg-transparent">
+                                                                    {
+                                                                        user?.first_name
+                                                                    }{" "}
+                                                                    {
+                                                                        user?.last_name
+                                                                    }
+                                                                </span>
+                                                            </span>
                                                         </div>
                                                     ))}
                                                 </td>
                                                 <td className="min-w-[150px] text-black dark:text-white">
                                                     <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">{task?.task_priority}</span>
+                                                        <span className="whitespace-nowrap">
+                                                            {
+                                                                task?.task_priority
+                                                            }
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td className="min-w-[150px] text-black dark:text-white">
-                                                    {task.task_status === "C" ? (
-                                                        <span className="whitespace-nowrap">Assigned</span>
-                                                    ) : task.task_status === "P"  ? (
+                                                    {task.task_status ===
+                                                    "C" ? (
+                                                        <span className="whitespace-nowrap">
+                                                            Assigned
+                                                        </span>
+                                                    ) : task.task_status ===
+                                                      "P" ? (
                                                         <div className="flex items-center">
-                                                            <span className="whitespace-nowrap">Start at :- {task?.task_start_date_time}</span>
+                                                            <span className="whitespace-nowrap">
+                                                                Start at :-{" "}
+                                                                {
+                                                                    task?.task_start_date_time
+                                                                }
+                                                            </span>
                                                         </div>
-                                                    ) : task.task_status === "R" || task.task_status === "A" ? (
+                                                    ) : task.task_status ===
+                                                          "R" ||
+                                                      task.task_status ===
+                                                          "A" ? (
                                                         <div className="flex items-center">
-                                                            <span className="whitespace-nowrap">{task?.task_total_hours}</span>
+                                                            <span className="whitespace-nowrap">
+                                                                {
+                                                                    task?.task_total_hours
+                                                                }
+                                                            </span>
                                                         </div>
                                                     ) : null}
                                                 </td>
                                                 <td>
-                                                    {task.task_status === "C" || task.task_status === "P"? (
-                                                        <Link href={`${base_url}/admin/task/edit/` + task.id} method="get" className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2">
+                                                    {task.task_status === "C" ||
+                                                    task.task_status === "P" ? (
+                                                        <Link
+                                                            href={
+                                                                `${base_url}/admin/task/edit/` +
+                                                                task.id
+                                                            }
+                                                            method="get"
+                                                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
+                                                        >
                                                             Edit
                                                         </Link>
-                                                    ) : task.task_status === "R" ? (
-                                                        <Link href={`${base_url}/admin/task/review/` + task.id} method="get" className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2">
+                                                    ) : task.task_status ===
+                                                      "R" ? (
+                                                        <Link
+                                                            href={
+                                                                `${base_url}/admin/task/review/` +
+                                                                task.id
+                                                            }
+                                                            method="get"
+                                                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
+                                                        >
                                                             View
                                                         </Link>
-                                                    ) : task.task_status === "A" ? (
+                                                    ) : task.task_status ===
+                                                      "A" ? (
                                                         <div className="text-success">
                                                             Complete
                                                         </div>
                                                     ) : null}
                                                 </td>
                                             </tr>
-                                        ))
-                                }
+                                        ))}
                                 </tbody>
                             </table>
                         </div>
@@ -211,4 +293,3 @@ AssignTask.layout = (page) => (
     <MainLayout children={page} title="HR || Assign Task" />
 );
 export default AssignTask;
-

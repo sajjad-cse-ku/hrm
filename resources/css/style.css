@@ -1,0 +1,136 @@
+/* Side-Bar Button  */
+.side-btn {
+    display: flex;
+    height: 40px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: auto 0;
+    padding-left: 7px;
+    transition: all 0.5s ease;
+    z-index: 51;
+    position: absolute;
+    bottom: 0;
+    left: 5px;
+    right: 5px;
+    border: 1px solid rgba(3, 3, 3, 0.051);
+    border-radius: 5px;
+}
+
+.menu-hov:hover>.side-btn {
+    display: flex;
+}
+
+.side-btn:hover {
+    display: flex;
+}
+
+.icon-box {
+    display: none;
+}
+
+/* .icon-btn:hover {
+    background: transparent !important;
+} */
+
+/* .icon-btn:hover>.icon-box {
+    display: block !important;
+} */
+
+.box {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ps__rail-y {
+    right: 0 !important;
+    left: auto !important;
+}
+
+.collapse-icon-v3 {
+    display: none !important;
+}
+
+
+
+
+
+@media (max-width: 1560px) {
+    .box {
+        width: 80%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+@media (max-width: 1460px) {
+    .box {
+        width: 90%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+@media (max-width: 1360px) {
+    .box {
+        width: 95%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* For Large Screen */
+
+@media (min-width: 1024px) {
+
+    /* SidebarV3 */
+    .vertical .sidebarV3 {
+        @apply lg:ltr:left-0 w-[240px];
+    }
+
+    .vertical.toggle-sidebar .sidebarV3 {
+        @apply ltr:left-0 w-[80px]
+    }
+
+    .vertical .menu-title {
+        @apply transition-all duration-[500ms];
+    }
+
+    .vertical.toggle-sidebar .menu-title {
+        @apply hidden transition-all duration-[500ms];
+    }
+
+    .vertical.toggle-sidebar .nav-item {
+        @apply relative;
+    }
+
+    .vertical.toggle-sidebar .sidebarV3 .nav-item:hover>.menu-title {
+        display: block !important;
+        @apply absolute block right-3 bg-[#333] text-white transition-all duration-[500ms];
+    }
+
+
+
+
+}
+
+/* For Small Screen */
+@media (min-width: 0px) and (max-width: 1024px) {
+
+    .collapse-icon-v3 {
+        display: flex !important;
+        left: 0 !important;
+    }
+
+    /* SidebarV3 */
+    .vertical .sidebarV3 {
+        @apply ltr:-left-[280px] rtl:-right-[280px] lg:ltr:left-0 lg:rtl:right-0;
+    }
+
+    .vertical.toggle-sidebar .sidebarV3 {
+        @apply ltr:left-0 rtl:right-[260px] lg:ltr:-left-[280px] lg:rtl:-right-[280px];
+    }
+}

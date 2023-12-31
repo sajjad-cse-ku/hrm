@@ -25,6 +25,7 @@ class LoginController extends Controller
     }
     public function loginPost(LoginRequest $request){
         $result = $this->authRepository->login($request);
+        
         if($result['status']== true){
             Session::put('adminLogin', 'admin_log_in');
             return to_route('admin.dashboard')->with('success', $result['message']);

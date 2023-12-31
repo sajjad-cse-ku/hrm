@@ -5,8 +5,10 @@ import Dropdown from "../Component/Dropdown";
 import { useTranslation } from "react-i18next";
 import { usePage } from "@inertiajs/react";
 import i18next from "i18next";
+import logo from "../../../images/logo.svg";
+import { HiX } from "react-icons/hi";
 
-function Header({ handleToggleSidebar }) {
+function HeaderV3({ handleToggleSidebar, isToggleSidebar }) {
     const { base_url, auth } = usePage().props;
 
     const [search, setSearch] = useState(false);
@@ -30,53 +32,9 @@ function Header({ handleToggleSidebar }) {
 
     const isRtl = themeConfig.rtlClass === "rtl" ? true : false;
 
-    //     const setLocale = (flag) => {
-    //     setFlag(flag);
-    //     if (flag.toLowerCase() === 'ae') {
-    //         dispatch(toggleRTL('rtl'));
-    //     } else {
-    //         dispatch(toggleRTL('ltr'));
-    //     }
-    // };
-    // const [flag, setFlag] = useState(themeConfig.locale);
-
     function createMarkup(messages) {
         return { __html: messages };
     }
-    // const [messages, setMessages] = useState([
-    //     {
-    //         id: 1,
-    //         image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-success-light dark:bg-success text-success dark:text-success-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>',
-    //         title: 'Congratulations!',
-    //         message: 'Your OS has been updated.',
-    //         time: '1hr',
-    //     },
-    //     {
-    //         id: 2,
-    //         image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-info-light dark:bg-info text-info dark:text-info-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>',
-    //         title: 'Did you know?',
-    //         message: 'You can switch between artboards.',
-    //         time: '2hr',
-    //     },
-    //     {
-    //         id: 3,
-    //         image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-danger-light dark:bg-danger text-danger dark:text-danger-light"> <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>',
-    //         title: 'Something went wrong!',
-    //         message: 'Send Reposrt',
-    //         time: '2days',
-    //     },
-    //     {
-    //         id: 4,
-    //         image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-warning-light dark:bg-warning text-warning dark:text-warning-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">    <circle cx="12" cy="12" r="10"></circle>    <line x1="12" y1="8" x2="12" y2="12"></line>    <line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>',
-    //         title: 'Warning',
-    //         message: 'Your password strength is low.',
-    //         time: '5days',
-    //     },
-    // ]);
-
-    // const removeMessage = (value) => {
-    //     setMessages(messages.filter((user) => user.id !== value));
-    // };
 
     const [notifications, setNotifications] = useState([
         {
@@ -116,57 +74,88 @@ function Header({ handleToggleSidebar }) {
         >
             <div className="shadow-sm">
                 <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
-                    <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
-                        <Link
-                            href="/"
-                            className="main-logo flex items-center shrink-0"
-                        >
-                            <img
-                                className="w-8 ltr:-ml-1 rtl:-mr-1 inline"
-                                src={
-                                    auth?.avatar
-                                        ? `/storage/profile/${auth.avatar}`
-                                        : "/assets/images/user-profile.jpeg"
-                                }
-                                alt="logo"
-                            />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle hidden md:inline dark:text-white-light transition-all duration-300">
-                                LUMINOUS HRM
-                            </span>
-                        </Link>
-                        <button
-                            type="button"
-                            className="collapse-icon flex-none dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary flex lg:hidden ltr:ml-2 rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
-                            onClick={() => handleToggleSidebar()}
-                        >
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                    <div className="horizontal-logo-v3 flex justify-between items-center ltr:mr-2 rtl:ml-2">
+                        <div className="brand flex gap-2 nowrap items-center">
+                            <button
+                                type="button"
+                                className="collapse-icon-v3 dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary lg:hidden rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
+                                onClick={() => handleToggleSidebar()}
                             >
-                                <path
-                                    d="M20 7L4 7"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
+                                {!isToggleSidebar ? <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M20 7L4 7"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                    <path
+                                        opacity="0.5"
+                                        d="M20 12L4 12"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                    <path
+                                        d="M20 17L4 17"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                </svg> : <HiX />}
+                            </button>
+                            <Link
+                                href="/"
+                                className="main-logo-v3 flex items-center shrink-0"
+                            >
+                                <img
+                                    className="w-6 ltr:-ml-1 rtl:-mr-1 inline"
+                                    src={logo}
+                                    alt="logo"
                                 />
-                                <path
-                                    opacity="0.5"
-                                    d="M20 12L4 12"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                />
-                                <path
-                                    d="M20 17L4 17"
-                                    stroke="currentColor"
-                                    strokeWidth="1.5"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                        </button>
+                                <span className="text-xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle dark:text-white-light transition-all duration-300">
+                                    LUMINOUS HRM
+                                </span>
+                            </Link>
+                            {/* <button
+                                type="button"
+                                className="collapse-icon flex-none dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary flex lg:hidden ltr:ml-2 rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
+                                onClick={() => handleToggleSidebar()}
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M20 7L4 7"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                    <path
+                                        opacity="0.5"
+                                        d="M20 12L4 12"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                    <path
+                                        d="M20 17L4 17"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </button> */}
+                        </div>
                     </div>
 
                     <div className="ltr:mr-2 rtl:ml-2 hidden sm:block">
@@ -2081,4 +2070,4 @@ function Header({ handleToggleSidebar }) {
     );
 }
 
-export default Header;
+export default HeaderV3;
