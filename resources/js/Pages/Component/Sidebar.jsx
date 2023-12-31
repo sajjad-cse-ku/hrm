@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 function Sidebar({ handleToggleSidebar }) {
     const { url, base_url, auth } = usePage().props;
 
-    const [isToggleSidebar, setIsToggleSidebar] = useState(false);
     const [toggleSidebar, setToggleSidebar] = useState(true);
     const [currentMenu, setCurrentMenu] = useState("");
     const [errorSubMenu, setErrorSubMenu] = useState(false);
@@ -52,7 +51,7 @@ function Sidebar({ handleToggleSidebar }) {
                     semidark ? "text-white-dark" : ""
                 }`}
             >
-                <div className="bg-white dark:bg-black relative menu-hov">
+                <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
                         <Link
                             href="/"
@@ -99,35 +98,15 @@ function Sidebar({ handleToggleSidebar }) {
                         </button>
                     </div>
 
-                    {window.innerWidth > 1023 && (
-                        <div
-                            className="side-btn bg-white dark:bg-black"
-                            onClick={() => {
-                                handleToggleSidebar();
-                                setIsToggleSidebar(!isToggleSidebar);
-                            }}
-                            style={isToggleSidebar ? { display: "flex" } : {}}
-                        >
-                            {!isToggleSidebar ? (
-                                <ArrowLeft semidark={semidark} />
-                            ) : (
-                                <ArrowRight semidark={semidark} />
-                            )}
-                        </div>
-                    )}
-
                     <PerfectScrollbar className="h-[calc(100vh-80px)] relative verticlescroll scrollwidth-0">
                         <ul className="relative font-semibold space-y-0.5 p-4 py-0">
                             <div className="mt-2 mb-2"></div>
                             <li className="nav-item">
                                 <ul>
-                                    <li
-                                        className="nav-item"
-                                        onClick={() => toggleMenu("dashboard")}
-                                    >
+                                    <li className="nav-item">
                                         <Link
                                             href={`${base_url}/admin/dashboard`}
-                                            className="group icon-btn"
+                                            className="group"
                                         >
                                             <div className="flex items-center">
                                                 <svg
@@ -162,17 +141,13 @@ function Sidebar({ handleToggleSidebar }) {
                                         </Link>
                                     </li>
 
-                                    <li
-                                        className="nav-item"
-                                        onClick={() => toggleMenu("notice")}
-                                    >
+                                    <li className="nav-item">
                                         <Link
                                             className={
-                                                // url ===
-                                                // `${base_url}/admin/notice`
-                                                toggleMenu === "notice"
-                                                    ? "active icon-btn"
-                                                    : "icon-btn"
+                                                url ===
+                                                `${base_url}/admin/notice`
+                                                    ? "active"
+                                                    : ""
                                             }
                                             href={`${base_url}/admin/notice`}
                                         >
@@ -216,8 +191,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "task_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("task_management")
@@ -250,20 +225,30 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "task_management"
                                                         ? "!rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
-                                            ></div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "task_management"
-                                                }
-                                            />
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -306,8 +291,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             type="button"
                                             className={`${
                                                 currentMenu === "manage_company"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("manage_company")
@@ -331,7 +316,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "manage_company"
@@ -339,13 +324,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "manage_company"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -380,8 +374,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             type="button"
                                             className={`${
                                                 currentMenu === "configuration"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("configuration")
@@ -420,7 +414,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "configuration"
@@ -428,13 +422,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "configuration"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -537,8 +540,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             type="button"
                                             className={`${
                                                 currentMenu === "departments"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("departments")
@@ -563,7 +566,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "departments"
@@ -571,13 +574,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "departments"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -640,8 +652,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "manage_employee"
-                                                    ? "active icon-btn"
-                                                    : "icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("manage_employee")
@@ -676,20 +688,30 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "manage_employee"
                                                         ? "!rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
-                                            ></div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "manage_employee"
-                                                }
-                                            />
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -720,8 +742,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "leave_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("leave_management")
@@ -749,7 +771,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "leave_management"
@@ -757,13 +779,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "leave_management"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -860,8 +891,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "shift_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("shift_management")
@@ -917,7 +948,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "shift_management"
@@ -925,13 +956,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "shift_management"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
                                         <AnimateHeight
                                             duration={300}
@@ -973,8 +1013,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "attendance_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu(
@@ -1009,7 +1049,7 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "attendance_management"
@@ -1017,13 +1057,22 @@ function Sidebar({ handleToggleSidebar }) {
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "attendance_management"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
                                         <AnimateHeight
                                             duration={300}
@@ -1080,8 +1129,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "late_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("late_management")
@@ -1117,20 +1166,30 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "late_management"
                                                         ? "!rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
-                                            ></div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "late_management"
-                                                }
-                                            />
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
                                         <AnimateHeight
                                             duration={300}
@@ -1186,8 +1245,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "roster_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("roster_management")
@@ -1243,20 +1302,30 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "roster_management"
                                                         ? "!rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
-                                            ></div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "roster_management"
-                                                }
-                                            />
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
                                         <AnimateHeight
                                             duration={300}
@@ -1301,8 +1370,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             type="button"
                                             className={`${
                                                 currentMenu === "users"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() => toggleMenu("users")}
                                         >
@@ -1329,19 +1398,29 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu === "users"
                                                         ? "rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
                                             >
-                                            </div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu === "users"
-                                                }
-                                            />
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
 
                                         <AnimateHeight
@@ -1395,8 +1474,8 @@ function Sidebar({ handleToggleSidebar }) {
                                             className={`${
                                                 currentMenu ===
                                                 "report_management"
-                                                    ? "active icon-btn"
-                                                    : " icon-btn"
+                                                    ? "active"
+                                                    : ""
                                             } nav-link group w-full`}
                                             onClick={() =>
                                                 toggleMenu("report_management")
@@ -1421,20 +1500,30 @@ function Sidebar({ handleToggleSidebar }) {
                                                 </span>
                                             </div>
 
-                                            {/* <div
+                                            <div
                                                 className={
                                                     currentMenu ===
                                                     "report_management"
                                                         ? "!rotate-90"
                                                         : "rtl:rotate-180"
                                                 }
-                                            ></div> */}
-                                            <Arrow
-                                                isCurrentMenu={
-                                                    currentMenu ===
-                                                    "report_management"
-                                                }
-                                            />
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        d="M9 5L15 12L9 19"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </button>
                                         <AnimateHeight
                                             duration={300}
@@ -1532,7 +1621,7 @@ function Sidebar({ handleToggleSidebar }) {
                                     <li className="nav-item">
                                         <Link
                                             href={`${base_url}/admin/get-punch-details`}
-                                            className="group icon-btn"
+                                            className="group"
                                         >
                                             <div className="flex items-center">
                                                 <svg
@@ -1568,7 +1657,7 @@ function Sidebar({ handleToggleSidebar }) {
                                     <li className="nav-item">
                                         <Link
                                             href={`${base_url}/admin/get-date-wise-attendance`}
-                                            className="group icon-btn"
+                                            className="group"
                                         >
                                             <div className="flex items-center">
                                                 <svg
@@ -1616,96 +1705,3 @@ function Sidebar({ handleToggleSidebar }) {
 }
 
 export default Sidebar;
-
-const ArrowLeft = ({ semidark }) => {
-    return (
-        <span
-            className={semidark ? "dark" : ""}
-            style={semidark ? { color: "#fff" } : {}}
-        >
-            <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 m-auto"
-            >
-                <path
-                    d="M13 19L7 12L13 5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-                <path
-                    opacity="0.5"
-                    d="M16.9998 19L10.9998 12L16.9998 5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
-        </span>
-    );
-};
-
-const ArrowRight = ({ semidark }) => {
-    return (
-        <span className="rotate-180" style={semidark ? { color: "#fff" } : {}}>
-            <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 m-auto"
-            >
-                <path
-                    d="M13 19L7 12L13 5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-                <path
-                    opacity="0.5"
-                    d="M16.9998 19L10.9998 12L16.9998 5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
-        </span>
-    );
-};
-
-const Arrow = ({ isCurrentMenu }) => {
-    return (
-        <div
-            className={
-                isCurrentMenu
-                    ? "!rotate-90 icon-box block"
-                    : "rtl:rotate-180 icon-box"
-            }
-        >
-            <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M9 5L15 12L9 19"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
-        </div>
-    );
-};
