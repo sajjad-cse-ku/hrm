@@ -11,7 +11,7 @@ import axios from 'axios'; // Import Axios
 function Edit()
 {
     const {  flash,companies,users,titles,religions,bangladesh,department,designation,working_status,banks,result } = usePage().props;
-    console.log(result)
+    // console.log(result)
     const { register, handleSubmit,setValue,formState: { errors } } = useForm({
         defaultValues: {
             user_id:result?.id,

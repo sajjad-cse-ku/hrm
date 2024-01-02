@@ -22,7 +22,7 @@ function Edit() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(values)
+        // console.log(values)
         router.post("/admin/leave_application/update", values);
     }
     return (

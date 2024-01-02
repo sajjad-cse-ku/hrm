@@ -5,11 +5,12 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 
-function Edit({result}) {
+function Edit({ result }) {
     // console.log(result)
-    const { errors,flash } = usePage().props;
+    const { errors, flash } = usePage().props;
+    const [activeBtn, setActiveBtn] = useState("address");
     const [values, setValues] = useState({
-        id:result.id,
+        id: result.id,
         name: result.name,
         address: result.address,
         city: result.city,
@@ -32,7 +33,7 @@ function Edit({result}) {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(values)
+        // console.log(values);
         router.post("/admin/group-companies/update", values);
     }
 
@@ -87,8 +88,9 @@ function Edit({result}) {
                             onSubmit={handleSubmit}
                             method="post"
                         >
+                            {/* Basic Information */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                <div className="mx-4">
                                     <label>Name</label>
                                     <input
                                         id="name"
@@ -105,7 +107,7 @@ function Edit({result}) {
                                     )}
                                 </div>
 
-                                <div>
+                                {/* <div className="mx-4">
                                     <label>address</label>
                                     <input
                                         id="address"
@@ -120,10 +122,179 @@ function Edit({result}) {
                                             {errors.address}
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="mx-4">
+                                    <label>Website</label>
+                                    <input
+                                        id="website"
+                                        type="text"
+                                        placeholder="Enter Website"
+                                        className="form-input"
+                                        value={values.website}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                                <div className="mx-4">
+                                    <label>Currency</label>
+                                    <input
+                                        id="currency"
+                                        type="text"
+                                        placeholder="Enter Currency"
+                                        className="form-input"
+                                        value={values.currency}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+                            {/* Button */}
+                            <div className="flex nowrap items-center pt-2 mx-4 border-b border-solid border-gray-300">
+                                <button
+                                    type="button"
+                                    className={`${
+                                        activeBtn === "address"
+                                            ? " btn-after  font-extrabold"
+                                            : ""
+                                    } btn bg-transparent border-0 relative`}
+                                    onClick={() => setActiveBtn("address")}
+                                >
+                                    Address
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`${
+                                        activeBtn === "contact"
+                                            ? " btn-after  font-extrabold"
+                                            : ""
+                                    } btn bg-transparent border-0 relative`}
+                                    onClick={() => setActiveBtn("contact")}
+                                >
+                                    Contact
+                                </button>
+                            </div>
+
+                            {/* Address */}
+                            {activeBtn === "address" && (
                                 <div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                        <div className="mx-4 flex nowrap items-center">
+                                            <div className="mr-1 w-[50%]">
+                                                <label>Country</label>
+                                                <input
+                                                    id="country"
+                                                    type="text"
+                                                    placeholder="Enter Country"
+                                                    className="form-input"
+                                                    value={values.country}
+                                                    onChange={handleChange}
+                                                />
+                                                {errors.country && (
+                                                    <div className="text-red-600 text-[14px]">
+                                                        {errors.country}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="ml-1 w-[50%]">
+                                                <label>City</label>
+                                                <input
+                                                    id="city"
+                                                    type="text"
+                                                    placeholder="Enter city"
+                                                    className="form-input"
+                                                    value={values.city}
+                                                    onChange={handleChange}
+                                                />
+                                                {errors.city && (
+                                                    <div className="text-red-600 text-[14px]">
+                                                        {errors.city}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="mx-4 flex nowrap items-center">
+                                            <div className="mr-1 w-[50%]">
+                                                <label>Post Code</label>
+                                                <input
+                                                    id="post_code"
+                                                    type="number"
+                                                    placeholder="Enter Post Code"
+                                                    className="form-input"
+                                                    value={values.post_code}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div className="ml-1 w-[50%]">
+                                                <label>State</label>
+                                                <input
+                                                    id="state"
+                                                    type="text"
+                                                    placeholder="Enter State"
+                                                    className="form-input"
+                                                    value={values.state}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                        <div className="mx-4">
+                                            <label>address</label>
+                                            <input
+                                                id="address"
+                                                type="text"
+                                                placeholder="Enter address"
+                                                className="form-input"
+                                                value={values.address}
+                                                onChange={handleChange}
+                                            />
+                                            {errors.address && (
+                                                <div className="text-red-600 text-[14px]">
+                                                    {errors.address}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Contact Information */}
+                            {activeBtn === "contact" && (
+                                <div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                        <div className="mx-4">
+                                            <label>Phone Number</label>
+                                            <input
+                                                id="phone_no"
+                                                type="number"
+                                                placeholder="Enter Phone Number"
+                                                className="form-input"
+                                                value={values.phone_no}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                        <div className="mx-4">
+                                            <label>Email</label>
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                placeholder="Enter Email"
+                                                className="form-input"
+                                                value={values.email}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* OLD CODE */}
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="mx-4">
                                     <label>City</label>
                                     <input
                                         id="city"
@@ -140,7 +311,7 @@ function Edit({result}) {
                                     )}
                                 </div>
 
-                                <div >
+                                <div className="mx-4">
                                     <label>Country</label>
                                     <input
                                         id="country"
@@ -156,11 +327,10 @@ function Edit({result}) {
                                         </div>
                                     )}
                                 </div>
-
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                <div className="mx-4">
                                     <label>Post Code</label>
                                     <input
                                         id="post_code"
@@ -172,7 +342,7 @@ function Edit({result}) {
                                     />
                                 </div>
 
-                                <div>
+                                <div className="mx-4">
                                     <label>Email</label>
                                     <input
                                         id="email"
@@ -194,9 +364,8 @@ function Edit({result}) {
 
                             </div> */}
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-                                <div className="md:col-span-2">
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="mx-4">
                                     <label>State</label>
                                     <input
                                         id="state"
@@ -206,9 +375,9 @@ function Edit({result}) {
                                         value={values.state}
                                         onChange={handleChange}
                                     />
-                                </div>
+                                </div>*/}
 
-                                {/* <div>
+                            {/* <div>
                                     <label>Phone Number</label>
                                     <select
                                         id="phone_no"
@@ -222,10 +391,8 @@ function Edit({result}) {
                                         <option>5</option>
                                     </select>
                                 </div> */}
-                                <div className="md:col-span-2">
-                                    <label>
-                                        Phone Number
-                                    </label>
+                            {/*} <div className="mx-4">
+                                    <label>Phone Number</label>
                                     <input
                                         id="phone_no"
                                         type="number"
@@ -238,7 +405,7 @@ function Edit({result}) {
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                <div className="mx-4">
                                     <label>Website</label>
                                     <input
                                         id="website"
@@ -250,7 +417,7 @@ function Edit({result}) {
                                     />
                                 </div>
 
-                                <div>
+                                <div className="mx-4">
                                     <label>Currency</label>
                                     <input
                                         id="currency"
@@ -261,7 +428,7 @@ function Edit({result}) {
                                         onChange={handleChange}
                                     />
                                 </div>
-                            </div>
+                            </div> */}
                             {/* <div>
                                 <label className="flex items-center mt-1 cursor-pointer">
                                     <input

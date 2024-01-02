@@ -146,7 +146,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
     const sectionSelect =  async (id) => {
         try {
             const response = await axios.get('/admin/section-select/'+id);
-            console.log(response);
+            // console.log(response);
             setSection(response.data);
         } catch (error) {
             console.error(error);
@@ -223,7 +223,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
         data.title_id = null;
         data.transport = null;
         data.working_status_id = null;
-        console.log(data);
+        // console.log(data);
         // router.post("/admin/employee/store", data);
     }
 

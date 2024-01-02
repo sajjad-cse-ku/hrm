@@ -118,12 +118,12 @@ function LateApply() {
             </div>
             <div className="mb-5 panel mt-6 flex flex-wrap items-center whitespace-nowrap p-3 ">
 
-                <ul className="flex w-full md:w-1/2 space-x-2 rtl:space-x-reverse">
+                <ul className="flex w-full md:w-1/2 space-x-2 rtl:space-x-reverse my-2">
                     <li className="text-red-600 hover:underline">
                         <b><span className="text-[18px]">Apply for another person</span></b>
                     </li>
                 </ul>
-                <div className="w-full md:w-1/2 flex">
+                <div className="w-full md:w-1/2 flex my-2">
                     <Select
                         className="w-full mr-2"
                         id="userSelect"

@@ -2,7 +2,7 @@ import MainLayout from "../../Layout/Mainlayout";
 import { usePage } from "@inertiajs/react";
 function EmployeeAttendanceDateRangeWiseReport() {
     const { filename } = usePage().props;
-    console.log(filename)
+    // console.log(filename)
     return (
         <>
             <div className="panel">

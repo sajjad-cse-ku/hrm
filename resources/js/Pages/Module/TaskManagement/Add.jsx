@@ -2,18 +2,17 @@ import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import Select from 'react-select';
-
+import Select from "react-select";
 
 function Add() {
-    const {  flash,users,projects,errors } = usePage().props;
+    const { flash, users, projects, errors } = usePage().props;
 
     const [values, setValues] = useState({
-        project_id:"",
-        task_title:"",
-        task_priority:"",
-        task_author_comment:"",
-        selectedAssignedUser: []
+        project_id: "",
+        task_title: "",
+        task_priority: "",
+        task_author_comment: "",
+        selectedAssignedUser: [],
     });
 
     const handleSelectProject = (selectedOption) => {
@@ -43,12 +42,13 @@ function Add() {
         e.preventDefault();
         // console.log(values);
         router.post("/admin/task/store", values);
-
     };
 
     const options = users.map((user) => ({
         value: user?.id,
-        label: user?.first_name ? `${user.first_name} ${user.last_name} - ${user.id}` : '',
+        label: user?.first_name
+            ? `${user.first_name} ${user.last_name} - ${user.id}`
+            : "",
     }));
 
     const project = projects.map((project) => ({
@@ -96,25 +96,32 @@ function Add() {
             </div>
             <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
                 <div className="panel" id="forms_grid">
-                    <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center justify-between mb-5 mx-[1rem]">
                         <h5 className="font-semibold text-lg dark:text-white-light">
-                        Task Management
+                            Task Management
                         </h5>
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5"
+                            className="space-y-5 forms"
                             onSubmit={handleSubmit}
                             method="post"
                         >
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label>Project Name<span className="text-red-600 ">*</span></label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mar-1">
+                                <div className="mx-[1rem]">
+                                    <label>
+                                        Project Name
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <Select
                                         placeholder="Select an option"
                                         options={project}
                                         isSearchable={true}
-                                        value={project.find(option => option.value === values.project_id)}
+                                        value={project.find(
+                                            (option) =>
+                                                option.value ===
+                                                values.project_id
+                                        )}
                                         onChange={handleSelectProject}
                                     />
                                     {errors.project_id && (
@@ -123,14 +130,17 @@ function Add() {
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label>Task Title<span className="text-red-600 ">*</span></label>
+                                <div className="mx-[1rem]">
+                                    <label>
+                                        Task Title
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="task_title"
                                         type="text"
                                         placeholder="Enter Title"
                                         className="form-input"
-                                        value={values.task_title || ''}
+                                        value={values.task_title || ""}
                                         onChange={handleChange}
                                     />
                                     {errors.task_title && (
@@ -139,8 +149,11 @@ function Add() {
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label>Assigned User<span className="text-red-600 ">*</span></label>
+                                <div className="mx-[1rem]">
+                                    <label>
+                                        Assigned User
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <Select
                                         placeholder="Select an option"
                                         options={options}
@@ -155,8 +168,11 @@ function Add() {
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label>Task Priority<span className="text-red-600 ">*</span></label>
+                                <div className="mx-[1rem]">
+                                    <label>
+                                        Task Priority
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <select
                                         id="task_priority"
                                         className="form-select text-white-dark"
@@ -175,14 +191,18 @@ function Add() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                                <div>
-                                    <label>Task Description<span className="text-red-600 ">*</span></label>
+                                <div className="mx-[1rem]">
+                                    <label>
+                                        Task Description
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
 
                                     <textarea
                                         id="task_author_comment"
+                                        rows={5}
                                         placeholder="Enter Description"
                                         className="form-input"
-                                        value={values.task_author_comment || ''}
+                                        value={values.task_author_comment || ""}
                                         onChange={handleChange}
                                     ></textarea>
                                     {errors.task_author_comment && (
@@ -209,8 +229,6 @@ function Add() {
     );
 }
 
-Add.layout = (page) => (
-    <MainLayout children={page} title="HR || Add Shift" />
-);
+Add.layout = (page) => <MainLayout children={page} title="HR || Add Shift" />;
 
 export default Add;

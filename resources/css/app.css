@@ -421,7 +421,7 @@
         .form-textarea,
         .form-select,
         .form-multiselect {
-            @apply w-full rounded-md border border-white-light bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
+            @apply w-full rounded-md border border-[rgba(3,3,3,0.3)] bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
         }
 
         .form-input-lg,
@@ -674,7 +674,7 @@
 
         .sidebarV3 ul.sub-menu li button,
         .sidebarV3 ul.sub-menu li a {
-            @apply flex w-full items-center px-9 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-[#ededf7] hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark:before:bg-gray-500 dark:hover:bg-gray-900 dark:hover:text-primary;
+            @apply flex w-full items-center px-5 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-[#ededf7] hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark:before:bg-gray-500 dark:hover:bg-gray-900 dark:hover:text-primary;
         }
 
         .sidebarV3 ul.sub-menu li button.active,
@@ -937,13 +937,13 @@
         padding-top: 20px;
     }
 
-    .all-permission-lists label:first-child {
+    /* .all-permission-lists label:first-child {
         position: absolute;
         top: -28px;
         left: 205px;
         font-weight: 600;
         text-transform: capitalize;
-    }
+    } */
 
     .custom-scroll {
         height: 100vh;

@@ -21,7 +21,7 @@ function Add() {
         }
     };
     function onSubmit(data) {
-        console.log(data);
+        // console.log(data);
          router.post("/admin/employee_posting/store", data);
     }
     return (

@@ -3,6 +3,8 @@ import MainLayout from "../../Layout/Mainlayout";
 import { DataTable } from "mantine-datatable";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage";
+import { CiViewList } from "react-icons/ci";
+import { MdOutlineDelete, MdOutlineEditNote } from "react-icons/md";
 
 function Index() {
     const { base_url, flash, result, permissions } = usePage().props;
@@ -194,21 +196,75 @@ function Index() {
                                         </label>
                                     ),
                                 },
+                                // {
+                                //     accessor: "action",
+                                //     title: "Action",
+                                //     titleClassName: "!text-center",
+                                //     render: (result) => (
+                                //         <div className="flex items-center w-max mx-auto gap-2">
+                                //             <Link
+                                //                 href={
+                                //                     `${base_url}/admin/notice/view/` +
+                                //                     result.id
+                                //                 }
+                                //                 method="get"
+                                //                 className="btn btn-sm btn-outline-primary"
+                                //             >
+                                //                 View
+                                //             </Link>
+                                //             {permissions.includes(
+                                //                 "notice-edit"
+                                //             ) ||
+                                //             permissions.includes(
+                                //                 "super-admin"
+                                //             ) ? (
+                                //                 <Link
+                                //                     href={
+                                //                         `${base_url}/admin/notice/edit/` +
+                                //                         result.id
+                                //                     }
+                                //                     method="get"
+                                //                     className="btn btn-sm btn-outline-primary"
+                                //                 >
+                                //                     Edit
+                                //                 </Link>
+                                //             ) : null}
+                                //             {permissions.includes(
+                                //                 "notice-delete"
+                                //             ) ||
+                                //             permissions.includes(
+                                //                 "super-admin"
+                                //             ) ? (
+
+                                //                 <Link
+                                //                     href={
+                                //                         `${base_url}/admin/notice/delete/` +
+                                //                         result.id
+                                //                     }
+                                //                     method="get"
+                                //                     className="btn btn-sm btn-outline-danger"
+                                //                 >
+                                //                     Delete
+                                //                 </Link>
+                                //             ) : null}
+                                //         </div>
+                                //     ),
+                                // },
                                 {
                                     accessor: "action",
                                     title: "Action",
                                     titleClassName: "!text-center",
                                     render: (result) => (
-                                        <div className="flex items-center w-max mx-auto gap-2">
+                                        <div className="flex items-center w-max mx-auto gap-2 icon-box">
                                             <Link
                                                 href={
                                                     `${base_url}/admin/notice/view/` +
                                                     result.id
                                                 }
                                                 method="get"
-                                                className="btn btn-sm btn-outline-primary"
+                                                className="btn-outline-primary"
                                             >
-                                                View
+                                                <CiViewList />
                                             </Link>
                                             {permissions.includes(
                                                 "notice-edit"
@@ -222,9 +278,9 @@ function Index() {
                                                         result.id
                                                     }
                                                     method="get"
-                                                    className="btn btn-sm btn-outline-primary"
+                                                    className="btn-outline-primary"
                                                 >
-                                                    Edit
+                                                    <MdOutlineEditNote />
                                                 </Link>
                                             ) : null}
                                             {permissions.includes(
@@ -239,9 +295,9 @@ function Index() {
                                                         result.id
                                                     }
                                                     method="get"
-                                                    className="btn btn-sm btn-outline-danger"
+                                                    className="btn-outline-danger"
                                                 >
-                                                    Delete
+                                                    <MdOutlineDelete />
                                                 </Link>
                                             ) : null}
                                         </div>

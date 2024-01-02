@@ -39,16 +39,23 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
     const semidark = themeConfig.semidark;
     const { t } = useTranslation();
     const toggleMenu = (value) => {
-        setCurrentMenuItem((oldValue) => {
-            return oldValue === value ? "" : value;
-        });
+        // setCurrentMenuItem((oldValue) => {
+        //     return oldValue === value ? "" : value;
+        // });
+        setCurrentMenuItem(value);
     };
     useEffect(() => {
         let menuItems = sessionStorage.getItem("item");
+        const menu = sessionStorage.getItem("menu");
+
+        if (menu) {
+            handleChangeCurrentMenu(menu);
+        }
+
         if (menuItems) {
-            handleChangeCurrentMenu(menuItems);
+            handleChangeCurrentMenuItem(menuItems);
         } else {
-            handleChangeCurrentMenu("Dashboard");
+            handleChangeCurrentMenuItem("Dashboard");
         }
         const selector = document.querySelector(
             '.sidebar ul a[href="' + window.location.pathname + '"]'
@@ -80,8 +87,6 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
         sessionStorage.setItem("item", item);
     };
     const handleChangeCurrentMenu = (item) => {
-        console.log(item, currentMenu);
-        console.log(item === currentMenu);
         if (item === currentMenu && isMenuOpen) {
             setIsMenuOpen(false);
         } else {
@@ -113,14 +118,15 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
                     /> */}
 
                     {/* side navigation bar side arrow button */}
-                    {window.innerWidth > 1023 && (
+                    {
+                        // window.innerWidth > 1023 &&
                         <SideArrowBar
                             // handleClick={handleToggleSidebar}
                             isToggleSidebar={isToggleSidebar}
                             semidark={semidark}
                             onClickBtn={handleToggleSidebar}
                         />
-                    )}
+                    }
                     {/* all main menu items */}
 
                     <PerfectScrollbar className="relative verticlescroll scrollwidth-0">
@@ -221,7 +227,7 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
                                                         : 0
                                                 }
                                             >
-                                                <ul className="sub-menu text-gray-500">
+                                                <ul className="sub-menu text-gray-500 mb-1">
                                                     {data.items.map((item) => {
                                                         return (
                                                             <li key={item.id}>
@@ -276,7 +282,7 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
     function SideArrowBar({ isToggleSidebar, semidark, onClickBtn }) {
         return (
             <div
-                className="side-btn bg-white dark:bg-black"
+                className={` side-btn bg-white dark:bg-black`}
                 onClick={() => {
                     onClickBtn();
                     // setIsToggleSidebar(!isToggleSidebar);
@@ -284,9 +290,15 @@ const SidebarV3 = ({ handleToggleSidebar, isToggleSidebar }) => {
                 style={isToggleSidebar ? { display: "flex" } : {}}
             >
                 {!isToggleSidebar ? (
-                    <ArrowLeft semidark={semidark} />
-                ) : (
+                    window.innerWidth > 1024 ? (
+                        <ArrowLeft semidark={semidark} />
+                    ) : (
+                        <ArrowRight semidark={semidark} />
+                    )
+                ) : window.innerWidth > 1024 ? (
                     <ArrowRight semidark={semidark} />
+                ) : (
+                    <ArrowLeft semidark={semidark} />
                 )}
             </div>
         );

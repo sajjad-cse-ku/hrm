@@ -30,7 +30,7 @@ function Edit() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(values)
+        // console.log(values)
         router.post("/admin/org_calender/update", values);
     }
     return (

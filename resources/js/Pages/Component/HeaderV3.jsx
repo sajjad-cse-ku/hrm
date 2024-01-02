@@ -74,40 +74,44 @@ function HeaderV3({ handleToggleSidebar, isToggleSidebar }) {
         >
             <div className="shadow-sm">
                 <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
-                    <div className="horizontal-logo-v3 flex justify-between items-center ltr:mr-2 rtl:ml-2">
+                    <div className="horizontal-logo flex justify-between items-center ltr:mr-2 rtl:ml-2">
                         <div className="brand flex gap-2 nowrap items-center">
                             <button
                                 type="button"
-                                className="collapse-icon-v3 dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary lg:hidden rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
+                                className="collapse-icon dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary lg:hidden rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
                                 onClick={() => handleToggleSidebar()}
                             >
-                                {!isToggleSidebar ? <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M20 7L4 7"
-                                        stroke="currentColor"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                    />
-                                    <path
-                                        opacity="0.5"
-                                        d="M20 12L4 12"
-                                        stroke="currentColor"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                    />
-                                    <path
-                                        d="M20 17L4 17"
-                                        stroke="currentColor"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                    />
-                                </svg> : <HiX />}
+                                {!isToggleSidebar ? (
+                                    <svg
+                                        width="20"
+                                        height="20"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M20 7L4 7"
+                                            stroke="currentColor"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                        />
+                                        <path
+                                            opacity="0.5"
+                                            d="M20 12L4 12"
+                                            stroke="currentColor"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                        />
+                                        <path
+                                            d="M20 17L4 17"
+                                            stroke="currentColor"
+                                            strokeWidth="1.5"
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                ) : (
+                                    <HiX />
+                                )}
                             </button>
                             <Link
                                 href="/"
@@ -118,7 +122,7 @@ function HeaderV3({ handleToggleSidebar, isToggleSidebar }) {
                                     src={logo}
                                     alt="logo"
                                 />
-                                <span className="text-xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle dark:text-white-light transition-all duration-300">
+                                <span className="hidden text-xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle dark:text-white-light transition-all duration-300 sm:block">
                                     LUMINOUS HRM
                                 </span>
                             </Link>

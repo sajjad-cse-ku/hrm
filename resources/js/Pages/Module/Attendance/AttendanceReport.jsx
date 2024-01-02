@@ -13,7 +13,7 @@ function Index() {
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const dayNamesArray = daysArray.map(day => {
         const date = new Date(new Date().getFullYear(), new Date().getMonth(), day);
-        console.log(date)
+        // console.log(date)
         return date.toLocaleDateString('en-US', { weekday: 'short' }); // Adjust locale as needed
     });
     return (
@@ -85,7 +85,7 @@ function Index() {
 
                                         </td>
                                         {attend.getAttendance.map((day, dayIndex) => {
-                                            console.log(day.status)
+                                            // console.log(day.status)
                                             let statusBadge;
                                             if (day.status === 'Late') {
                                                 statusBadge = (

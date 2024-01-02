@@ -81,7 +81,7 @@ function Add()
     const sectionSelect =  async (id) => {
         try {
             const response = await axios.get('/admin/section-select/'+id);
-            console.log(response);
+            // console.log(response);
             setSection(response.data);
         } catch (error) {
             console.error(error);

@@ -6,7 +6,7 @@ import FlashMessage from "../../Component/FlashMessage";
 
 function Index() {
     const { base_url, flash,result, permissions } = usePage().props;
-    console.log(result);
+    // console.log(result);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [page2, setPage2] = useState(1);
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);

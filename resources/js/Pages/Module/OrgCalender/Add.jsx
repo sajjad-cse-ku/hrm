@@ -65,7 +65,7 @@ function Add() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(values)
+        // console.log(values)
         router.post("/admin/org_calender/store", values);
         // setValues({
         //     calender_year: "",

@@ -59,88 +59,183 @@ function TodayAttendance() {
                         <span>List</span>
                     </li>
                 </ul>
-                <Link href={`${base_url}/admin/home-office`}
-                    className="px-7 py-2 bg-yellow-400 text-white rounded-md text-[15px]">
+                <Link
+                    href={`${base_url}/admin/home-office`}
+                    className="px-7 py-2 bg-[#4361EE] text-white rounded-md text-[15px]"
+                >
                     Home Office
                 </Link>
             </div>
-
-
 
             <div className="pt-5">
                 <div className="grid lg:grid-cols-1 grid-cols-1 gap-6">
                     <div className="panel h-full w-full">
                         <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">{results?.first_name} {results?.last_name}-{results?.id} <span className="text-indigo-700">{results?.professionaldata?.department?.name}</span></h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                {results?.first_name} {results?.last_name}-
+                                {results?.id}{" "}
+                                <span className="text-indigo-700">
+                                    {
+                                        results?.professionaldata?.department
+                                            ?.name
+                                    }
+                                </span>
+                            </h5>
                         </div>
                         <div className="table-responsive custom-scroll">
                             <table>
                                 <thead>
-                                <tr>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">Date</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">Shift</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">User Check In</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">User Check Out</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">Comment</th>
-                                    <th className="ltr:rounded-r-md rtl:rounded-l-md">Status</th>
-                                </tr>
+                                    <tr>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            Date
+                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            Shift
+                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            User Check In
+                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            User Check Out
+                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            Comment
+                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
+                                            Status
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
+                                    {results?.attendances?.map(
+                                        (result, index) => (
+                                            <tr
+                                                key={index}
+                                                className="text-white-dark hover:text-black dark:hover:text-white-light/90 group"
+                                            >
+                                                <td className="text-black">
+                                                    {result?.attend_date}
+                                                </td>
+                                                <td className="text-black">
+                                                    {result?.shift
+                                                        ? `${result?.shift?.from_time} - ${result?.shift?.to_time}`
+                                                        : `${formatTime(
+                                                              general_time?.from_time
+                                                          )} - ${formatTime(
+                                                              general_time?.to_time
+                                                          )}`}
+                                                </td>
 
-                                    {results?.attendances?.map((result,index) => (
-                                        <tr key={index} className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
-                                            <td className="text-black">
-                                                {result?.attend_date}
-                                            </td>
-                                            <td className="text-black">
-                                                {result?.shift ? (
-                                                    `${result?.shift?.from_time} - ${result?.shift?.to_time}`
-                                                ) : `${formatTime(general_time?.from_time)} - ${formatTime(general_time?.to_time)}`}
-                                            </td>
+                                                <td>
+                                                    {result?.entry_time ? (
+                                                        <span className="text-green-950 font-bold">
+                                                            {formatTime(
+                                                                result?.entry_time
+                                                            )}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">
+                                                            N/A
+                                                        </span>
+                                                    )}
+                                                </td>
 
-                                            <td>
-                                                {result?.entry_time ? <span className="text-green-950 font-bold">{formatTime(result?.entry_time)}</span> : <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">N/A</span> }
-                                            </td>
+                                                <td>
+                                                    {result?.exit_time ? (
+                                                        <span className="text-green-950 font-bold">
+                                                            {formatTime(
+                                                                result?.exit_time
+                                                            )}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">
+                                                            N/A
+                                                        </span>
+                                                    )}
+                                                </td>
 
-                                            <td>
-                                                {result?.exit_time ? <span className="text-green-950 font-bold">{formatTime(result?.exit_time)}</span>: <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">N/A</span> }
-                                            </td>
+                                                <td className="text-black">
+                                                    {result?.manual_update_remarks &&
+                                                        HtmlReactParser(
+                                                            result.manual_update_remarks
+                                                        )}
+                                                </td>
+                                                <td>
+                                                    {result?.holiday_flag ===
+                                                        1 &&
+                                                        result?.attendance_datetime ===
+                                                            null && (
+                                                            <span className="badge bg-indigo-700 shadow-md dark:group-hover:bg-transparent">
+                                                                Public Holiday
+                                                            </span>
+                                                        )}
 
-                                            <td className="text-black">
-                                                {result?.manual_update_remarks && (
-                                                    HtmlReactParser(result.manual_update_remarks)
-                                                )}
-                                            </td>
-                                            <td>
-                                                {result?.holiday_flag === 1 && result?.attendance_datetime === null &&(
-                                                    <span className="badge bg-indigo-700 shadow-md dark:group-hover:bg-transparent">Public Holiday</span>
-                                                )}
+                                                    {result?.leave_id !== 0 &&
+                                                        result?.holiday_flag ===
+                                                            0 && (
+                                                            <span className="badge bg-indigo-600 shadow-md dark:group-hover:bg-transparent">
+                                                                {
+                                                                    result
+                                                                        ?.leave
+                                                                        ?.name
+                                                                }{" "}
+                                                                Leave
+                                                            </span>
+                                                        )}
 
-                                                {result?.leave_id !==0 && result?.holiday_flag === 0 && (
-                                                    <span className="badge bg-indigo-600 shadow-md dark:group-hover:bg-transparent">
-                                                    {result?.leave?.name} Leave
-                                              </span>
-                                                )}
-
-                                                {result?.holiday_flag === 0 && result?.offday_flag === 1 && result?.attendance_datetime === null &&(
-                                                    <span className="badge bg-indigo-800 shadow-md dark:group-hover:bg-transparent">Off Day</span>
-                                                )}
-                                                {result?.late_flag === 1 && result?.attendance !== null &&(
-                                                    <span className="badge bg-yellow-400 shadow-md dark:group-hover:bg-transparent">
-                                                    Late
-                                                </span>
-                                                )}
-                                                {result?.leave_id === 0 && result?.late_flag === 0 && result?.attendance_datetime && (
-                                                    <span className={`badge ${ result?.attendance?.attend_status === "R" ? "bg-indigo-800" : "bg-emerald-800"} shadow-md dark:group-hover:bg-transparent`}>{result?.attend_status === "R" ? "Remote" : "Present"}</span>
-                                                )}
-                                                {result?.attendance_datetime == null && result?.leave_id === 0 && result?.holiday_flag === 0  && result?.offday_flag === 0 && (
-                                                    <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">Absent</span>
-                                                )}
-                                            </td>
-
-                                        </tr>
-                                    ))}
-
+                                                    {result?.holiday_flag ===
+                                                        0 &&
+                                                        result?.offday_flag ===
+                                                            1 &&
+                                                        result?.attendance_datetime ===
+                                                            null && (
+                                                            <span className="badge bg-indigo-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Off Day
+                                                            </span>
+                                                        )}
+                                                    {result?.late_flag === 1 &&
+                                                        result?.attendance !==
+                                                            null && (
+                                                            <span className="badge bg-yellow-400 shadow-md dark:group-hover:bg-transparent">
+                                                                Late
+                                                            </span>
+                                                        )}
+                                                    {result?.leave_id === 0 &&
+                                                        result?.late_flag ===
+                                                            0 &&
+                                                        result?.attendance_datetime && (
+                                                            <span
+                                                                className={`badge ${
+                                                                    result
+                                                                        ?.attendance
+                                                                        ?.attend_status ===
+                                                                    "R"
+                                                                        ? "bg-indigo-800"
+                                                                        : "bg-emerald-800"
+                                                                } shadow-md dark:group-hover:bg-transparent`}
+                                                            >
+                                                                {result?.attend_status ===
+                                                                "R"
+                                                                    ? "Remote"
+                                                                    : "Present"}
+                                                            </span>
+                                                        )}
+                                                    {result?.attendance_datetime ==
+                                                        null &&
+                                                        result?.leave_id ===
+                                                            0 &&
+                                                        result?.holiday_flag ===
+                                                            0 &&
+                                                        result?.offday_flag ===
+                                                            0 && (
+                                                            <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">
+                                                                Absent
+                                                            </span>
+                                                        )}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
                                 </tbody>
                             </table>
                         </div>

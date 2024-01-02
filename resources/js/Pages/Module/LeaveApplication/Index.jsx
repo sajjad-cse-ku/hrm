@@ -6,23 +6,33 @@ import axios from "axios";
 import Select from "react-select";
 
 function Index() {
-    const { base_url, flash , users,result, permissions , pre_leave_applications} = usePage().props;
-    const[userLeaveData , setUserLeaveData] = useState([])
+    const {
+        base_url,
+        flash,
+        users,
+        result,
+        permissions,
+        pre_leave_applications,
+    } = usePage().props;
+    const [userLeaveData, setUserLeaveData] = useState([]);
     const [isVisible, setIsVisible] = useState(true);
     const [selectedValue, setSelectedValue] = useState(null);
-    const[isPreLeaveData,setPreLeaveData] = useState(pre_leave_applications);
-    const getUserLeaveData =  async (id) => {
-        if(id){
+    const [isPreLeaveData, setPreLeaveData] = useState(pre_leave_applications);
+    const getUserLeaveData = async (id) => {
+        if (id) {
             try {
-                const response = await axios.get('/admin/get-user/leave-date/'+id);
+                const response = await axios.get(
+                    "/admin/get-user/leave-date/" + id
+                );
+                // console.log(response.data[0]);
                 setIsVisible(false);
                 setUserLeaveData(response.data[0]);
-                setPreLeaveData(response.data[1])
+                setPreLeaveData(response.data[1]);
             } catch (error) {
                 console.error(error);
             }
-        }else{
-            setPreLeaveData(pre_leave_applications)
+        } else {
+            setPreLeaveData(pre_leave_applications);
             setIsVisible(true);
         }
     };
@@ -33,7 +43,9 @@ function Index() {
 
     const options = users.map((user) => ({
         value: user?.id,
-        label: user?.first_name ? `${user.first_name} ${user.last_name} - ${user.id}` : '',
+        label: user?.first_name
+            ? `${user.first_name} ${user.last_name} - ${user.id}`
+            : "",
     }));
 
     const handleFindUsersClick = (e) => {
@@ -41,7 +53,6 @@ function Index() {
         // Use the selectedValue state to get the selected value.
         getUserLeaveData(selectedValue);
     };
-
 
     return (
         <>
@@ -82,54 +93,78 @@ function Index() {
                 </ul>
             </div>
 
-
-            {permissions.includes('leave-other-view') || permissions.includes('super-admin') &&
-
-                <div className="mb-5 panel mt-6 flex flex-wrap items-center whitespace-nowrap p-3 ">
-
-                    <ul className="flex w-full md:w-1/2 space-x-2 rtl:space-x-reverse">
-                        <li className="text-red-600 hover:underline">
-                            <b><span className="text-[18px]">Apply Leave Application for another person</span></b>
-                        </li>
-                    </ul>
-                    <div className="w-full md:w-1/2 flex">
-
-                        <Select
-                            className="w-full mr-2"
-                            id="userSelect"
-                            placeholder="Select an option"
-                            options={options}
-                            isSearchable={true}
-                            onChange={handleSelectChange} // Set the onChange handler
-                        />
-                        <button
-                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
-                            onClick={handleFindUsersClick}
-                        >
-                            Find Users
-                        </button>
+            {permissions.includes("leave-other-view") ||
+                (permissions.includes("super-admin") && (
+                    <div className="mb-5 panel mt-6 flex flex-wrap items-center whitespace-nowrap p-3 ">
+                        <ul className="mb-3 mr-3">
+                            <li className="text-red-600 hover:underline">
+                                <b>
+                                    <span className="text-[18px]">
+                                        Apply Leave Application for another
+                                        person
+                                    </span>
+                                </b>
+                            </li>
+                        </ul>
+                        <div className="w-full md:w-1/2 flex ml-auto mb-3">
+                            <Select
+                                className="w-full mr-2"
+                                id="userSelect"
+                                placeholder="Select an option"
+                                options={options}
+                                isSearchable={true}
+                                onChange={handleSelectChange} // Set the onChange handler
+                            />
+                            <button
+                                className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
+                                onClick={handleFindUsersClick}
+                            >
+                                Find Users
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-            }
-            { isVisible &&
-               <div className="pt-5">
+                ))}
+            {isVisible && (
+                <div className="pt-5">
                     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
                         <div className="panel">
                             <div className="mb-5">
                                 <div className="flex flex-col justify-center items-center">
-                                    <img src={result[0]?.user?.avatar ? `/storage/profile/${result[0]?.user?.avatar}` : '/assets/images/user-profile.jpeg'} alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-                                    <p className="font-semibold text-primary text-xl">{result[0]?.user?.first_name} {result[0]?.user?.last_name}</p>
+                                    <img
+                                        src={
+                                            result[0]?.user?.avatar
+                                                ? `/storage/profile/${result[0]?.user?.avatar}`
+                                                : "/assets/images/user-profile.jpeg"
+                                        }
+                                        alt="img"
+                                        className="w-24 h-24 rounded-full object-cover  mb-5"
+                                    />
+                                    <p className="font-semibold text-primary text-xl">
+                                        {result[0]?.user?.first_name}{" "}
+                                        {result[0]?.user?.last_name}
+                                    </p>
                                 </div>
                                 <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
                                     <li className="flex items-center gap-2">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
                                             <path
                                                 d="M2.3153 12.6978C2.26536 12.2706 2.2404 12.057 2.2509 11.8809C2.30599 10.9577 2.98677 10.1928 3.89725 10.0309C4.07094 10 4.286 10 4.71612 10H15.2838C15.7139 10 15.929 10 16.1027 10.0309C17.0132 10.1928 17.694 10.9577 17.749 11.8809C17.7595 12.057 17.7346 12.2706 17.6846 12.6978L17.284 16.1258C17.1031 17.6729 16.2764 19.0714 15.0081 19.9757C14.0736 20.6419 12.9546 21 11.8069 21H8.19303C7.04537 21 5.9263 20.6419 4.99182 19.9757C3.72352 19.0714 2.89681 17.6729 2.71598 16.1258L2.3153 12.6978Z"
                                                 stroke="currentColor"
                                                 strokeWidth="1.5"
                                             />
-                                            <path opacity="0.5" d="M17 17H19C20.6569 17 22 15.6569 22 14C22 12.3431 20.6569 11 19 11H17.5" stroke="currentColor" strokeWidth="1.5" />
+                                            <path
+                                                opacity="0.5"
+                                                d="M17 17H19C20.6569 17 22 15.6569 22 14C22 12.3431 20.6569 11 19 11H17.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
                                             <path
                                                 opacity="0.5"
                                                 d="M10.0002 2C9.44787 2.55228 9.44787 3.44772 10.0002 4C10.5524 4.55228 10.5524 5.44772 10.0002 6"
@@ -152,24 +187,62 @@ function Index() {
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                             />
-                                        </svg>{' '}
-                                        {result[0]?.user?.professionaldata?.designation?.name}
+                                        </svg>{" "}
+                                        {
+                                            result[0]?.user?.professionaldata
+                                                ?.designation?.name
+                                        }
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
                                             <path
                                                 d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12Z"
                                                 stroke="currentColor"
                                                 strokeWidth="1.5"
                                             />
-                                            <path opacity="0.5" d="M7 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                            <path opacity="0.5" d="M17 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                            <path opacity="0.5" d="M2 9H22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                            <path
+                                                opacity="0.5"
+                                                d="M7 4V2.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M17 4V2.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M2 9H22"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
                                         </svg>
-                                        {result[0]?.user?.professionaldata?.joining_date}
+                                        {
+                                            result[0]?.user?.professionaldata
+                                                ?.joining_date
+                                        }
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
                                             <path
                                                 opacity="0.5"
                                                 d="M5 8.51464C5 4.9167 8.13401 2 12 2C15.866 2 19 4.9167 19 8.51464C19 12.0844 16.7658 16.2499 13.2801 17.7396C12.4675 18.0868 11.5325 18.0868 10.7199 17.7396C7.23416 16.2499 5 12.0844 5 8.51464Z"
@@ -188,11 +261,26 @@ function Index() {
                                                 strokeLinecap="round"
                                             />
                                         </svg>
-                                        {result[0]?.user?.personaldata?.pr_address} , {result[0]?.user?.personaldata?.pr_district}
+                                        {
+                                            result[0]?.user?.personaldata
+                                                ?.pr_address
+                                        }{" "}
+                                        ,{" "}
+                                        {
+                                            result[0]?.user?.personaldata
+                                                ?.pr_district
+                                        }
                                     </li>
                                     <li>
                                         <button className="flex items-center gap-2">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+                                            <svg
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="shrink-0"
+                                            >
                                                 <path
                                                     opacity="0.5"
                                                     d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
@@ -206,11 +294,19 @@ function Index() {
                                                     strokeLinecap="round"
                                                 />
                                             </svg>
-                                            <span className="text-primary truncate">{result[0]?.user?.email}</span>
+                                            <span className="text-primary truncate">
+                                                {result[0]?.user?.email}
+                                            </span>
                                         </button>
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
                                             <path
                                                 d="M5.00659 6.93309C5.04956 5.7996 5.70084 4.77423 6.53785 3.93723C7.9308 2.54428 10.1532 2.73144 11.0376 4.31617L11.6866 5.4791C12.2723 6.52858 12.0372 7.90533 11.1147 8.8278M17.067 18.9934C18.2004 18.9505 19.2258 18.2992 20.0628 17.4622C21.4558 16.0692 21.2686 13.8468 19.6839 12.9624L18.5209 12.3134C17.4715 11.7277 16.0947 11.9628 15.1722 12.8853"
                                                 stroke="currentColor"
@@ -223,9 +319,12 @@ function Index() {
                                                 strokeWidth="1.5"
                                             />
                                         </svg>
-                                        <span className="whitespace-nowrap" dir="ltr">
-                                    {result[0]?.user?.mobile ?? "N/A"}
-                                    </span>
+                                        <span
+                                            className="whitespace-nowrap"
+                                            dir="ltr"
+                                        >
+                                            {result[0]?.user?.mobile ?? "N/A"}
+                                        </span>
                                     </li>
                                 </ul>
                             </div>
@@ -233,10 +332,11 @@ function Index() {
                         <div className=" lg:col-span-2 xl:col-span-3">
                             <div className="panel">
                                 <div className="table-responsive mb-5">
-                                    {
-                                        permissions.includes('leave-personal-view') || permissions.includes('super-admin')  ? (
-                                            <table>
-                                                <thead>
+                                    {permissions.includes(
+                                        "leave-personal-view"
+                                    ) || permissions.includes("super-admin") ? (
+                                        <table>
+                                            <thead>
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Leave Eligible</th>
@@ -244,276 +344,94 @@ function Index() {
                                                     <th>Leave Balance</th>
                                                     <th>Action</th>
                                                 </tr>
-                                                </thead>
-                                                <tbody>
+                                            </thead>
+                                            <tbody>
                                                 {result?.map((data) => {
                                                     return (
                                                         <tr key={data.id}>
-                                                            <td>{data.leavecategory.name}</td>
-                                                            <td>{data.leave_eligible}</td>
-                                                            <td>{data.leave_enjoyed}</td>
-                                                            <td>{data.leave_balance}</td>
+                                                            <td>
+                                                                {
+                                                                    data
+                                                                        .leavecategory
+                                                                        .name
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_eligible
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_enjoyed
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_balance
+                                                                }
+                                                            </td>
                                                             <td className="text-center">
-
                                                                 <div className="flex items-center w-max mx-auto gap-2">
-                                                                    {permissions.includes('leave-personal-create') || permissions.includes('super-admin') &&
-                                                                        <Link href={`${base_url}/admin/leave_application/apply/`+data.user_id +'/'+ data.leave_id} method="get" className="btn btn-sm btn-outline-success">
-                                                                            Apply
-                                                                        </Link>
-                                                                    }
-                                                                    {permissions.includes('leave-personal-edit') || permissions.includes('super-admin') &&
-                                                                        <Link href={`${base_url}/admin/leave_application/edit/`+data.leave_id} method="get" className="btn btn-sm btn-outline-primary">
-                                                                            Edit
-                                                                        </Link>
-                                                                    }
+                                                                    {permissions.includes(
+                                                                        "leave-personal-create"
+                                                                    ) ||
+                                                                        (permissions.includes(
+                                                                            "super-admin"
+                                                                        ) && (
+                                                                            <Link
+                                                                                href={
+                                                                                    `${base_url}/admin/leave_application/apply/` +
+                                                                                    data.user_id +
+                                                                                    "/" +
+                                                                                    data.leave_id
+                                                                                }
+                                                                                method="get"
+                                                                                className="btn btn-sm btn-outline-success"
+                                                                            >
+                                                                                Apply
+                                                                            </Link>
+                                                                        ))}
+                                                                    {permissions.includes(
+                                                                        "leave-personal-edit"
+                                                                    ) ||
+                                                                        (permissions.includes(
+                                                                            "super-admin"
+                                                                        ) && (
+                                                                            <Link
+                                                                                href={
+                                                                                    `${base_url}/admin/leave_application/edit/` +
+                                                                                    data.leave_id
+                                                                                }
+                                                                                method="get"
+                                                                                className="btn btn-sm btn-outline-primary"
+                                                                            >
+                                                                                Edit
+                                                                            </Link>
+                                                                        ))}
                                                                 </div>
-
                                                             </td>
                                                         </tr>
                                                     );
                                                 })}
-                                                </tbody>
-                                            </table>
-
-                                        ) : (
-                                            <h3>You are not authorized to see this page content</h3>
-                                        )
-                                    }
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <h3>
+                                            You are not authorized to see this
+                                            page content
+                                        </h3>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
-                   {
-                       isPreLeaveData.length !== 0 &&
-                       <div className="panel lg:col-span-2 xl:col-span-3">
-                           <div className="mb-5">
-                               <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                   <table className="whitespace-nowrap">
-                                       <thead>
-                                       <tr>
-                                           <th>From Date</th>
-                                           <th>To Date</th>
-                                           <th>Nod</th>
-                                           <th>Reason</th>
-                                           <th>Status</th>
-                                       </tr>
-                                       </thead>
-                                       <tbody className="dark:text-white-dark">
-                                       {isPreLeaveData.map((leave)=>(
-                                           <tr key={leave}>
-                                               <td>{leave?.from_date}</td>
-                                               <td>{leave?.to_date}</td>
-                                               <td className="text-danger">{leave?.nods}</td>
-                                               <td className="text-center">{leave?.reason}</td>
-                                               <td className="text-center">
-                                                   {leave?.status === "C" ? <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">Pending</span>: null}
-                                                   {leave?.status === "A" ? <span className="badge bg-green-800 shadow-md dark:group-hover:bg-transparent">Approved</span> : null}
-                                                   {leave?.status === "R" ? <span className="badge bg-blue-800 shadow-md dark:group-hover:bg-transparent">Recommended</span> : null}
-                                                   {leave?.status === "D" ? <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">Dismissed</span> : null}
-                                                   {leave?.status === "E" ? <span className="badge bg-purple-800 shadow-md dark:group-hover:bg-transparent">Enjoyed</span> : null}
-                                                   {leave?.status === "L" ? <span className="badge bg-danger shadow-md dark:group-hover:bg-transparent">Cancel</span> : null}
-                                                   {leave?.status === "AK" ? <span className="badge bg-blue-600 shadow-md dark:group-hover:bg-transparent">Acknowledged</span> : null}
-                                                   {leave?.status === "CA" ? <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">Cancel Acknowledged</span> : null}
-                                               </td>
-                                           </tr>
-                                       ))}
-                                       </tbody>
-                                   </table>
-                               </div>
-                           </div>
-                       </div>
-                   }
-
-               </div>
-
-            }
-            {!isVisible && userLeaveData.length!==0 &&
-                    <div className="pt-5">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
-                            <div className="panel">
-                                <div className="mb-5">
-                                    <div className="flex flex-col justify-center items-center">
-                                        <img src={userLeaveData[0]?.user?.avatar ? `/storage/profile/${userLeaveData[0]?.user?.avatar}` : '/assets/images/user-profile.jpeg'} alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-                                        <p className="font-semibold text-primary text-xl">{userLeaveData[0]?.user?.first_name} {userLeaveData[0]?.user?.last_name}</p>
-                                    </div>
-                                    <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-                                        <li className="flex items-center gap-2">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
-                                                <path
-                                                    d="M2.3153 12.6978C2.26536 12.2706 2.2404 12.057 2.2509 11.8809C2.30599 10.9577 2.98677 10.1928 3.89725 10.0309C4.07094 10 4.286 10 4.71612 10H15.2838C15.7139 10 15.929 10 16.1027 10.0309C17.0132 10.1928 17.694 10.9577 17.749 11.8809C17.7595 12.057 17.7346 12.2706 17.6846 12.6978L17.284 16.1258C17.1031 17.6729 16.2764 19.0714 15.0081 19.9757C14.0736 20.6419 12.9546 21 11.8069 21H8.19303C7.04537 21 5.9263 20.6419 4.99182 19.9757C3.72352 19.0714 2.89681 17.6729 2.71598 16.1258L2.3153 12.6978Z"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path opacity="0.5" d="M17 17H19C20.6569 17 22 15.6569 22 14C22 12.3431 20.6569 11 19 11H17.5" stroke="currentColor" strokeWidth="1.5" />
-                                                <path
-                                                    opacity="0.5"
-                                                    d="M10.0002 2C9.44787 2.55228 9.44787 3.44772 10.0002 4C10.5524 4.55228 10.5524 5.44772 10.0002 6"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                                <path
-                                                    d="M4.99994 7.5L5.11605 7.38388C5.62322 6.87671 5.68028 6.0738 5.24994 5.5C4.81959 4.9262 4.87665 4.12329 5.38382 3.61612L5.49994 3.5"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                                <path
-                                                    d="M14.4999 7.5L14.6161 7.38388C15.1232 6.87671 15.1803 6.0738 14.7499 5.5C14.3196 4.9262 14.3767 4.12329 14.8838 3.61612L14.9999 3.5"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>{' '}
-                                            {userLeaveData[0]?.user?.professionaldata?.designation?.name}
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
-                                                <path
-                                                    d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12Z"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path opacity="0.5" d="M7 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                                <path opacity="0.5" d="M17 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                                <path opacity="0.5" d="M2 9H22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                            </svg>
-                                            {userLeaveData[0]?.user?.professionaldata?.joining_date}
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
-                                                <path
-                                                    opacity="0.5"
-                                                    d="M5 8.51464C5 4.9167 8.13401 2 12 2C15.866 2 19 4.9167 19 8.51464C19 12.0844 16.7658 16.2499 13.2801 17.7396C12.4675 18.0868 11.5325 18.0868 10.7199 17.7396C7.23416 16.2499 5 12.0844 5 8.51464Z"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path
-                                                    d="M14 9C14 10.1046 13.1046 11 12 11C10.8954 11 10 10.1046 10 9C10 7.89543 10.8954 7 12 7C13.1046 7 14 7.89543 14 9Z"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path
-                                                    d="M20.9605 15.5C21.6259 16.1025 22 16.7816 22 17.5C22 19.9853 17.5228 22 12 22C6.47715 22 2 19.9853 2 17.5C2 16.7816 2.37412 16.1025 3.03947 15.5"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                />
-                                            </svg>
-                                            {userLeaveData[0]?.user?.personaldata?.pr_address} , {userLeaveData[0]?.user?.personaldata?.pr_district}
-                                        </li>
-                                        <li>
-                                            <button className="flex items-center gap-2">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                                                    <path
-                                                        opacity="0.5"
-                                                        d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.5"
-                                                    />
-                                                    <path
-                                                        d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.5"
-                                                        strokeLinecap="round"
-                                                    />
-                                                </svg>
-                                                <span className="text-primary truncate">{userLeaveData[0]?.user?.email}</span>
-                                            </button>
-                                        </li>
-                                        <li className="flex items-center gap-2">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M5.00659 6.93309C5.04956 5.7996 5.70084 4.77423 6.53785 3.93723C7.9308 2.54428 10.1532 2.73144 11.0376 4.31617L11.6866 5.4791C12.2723 6.52858 12.0372 7.90533 11.1147 8.8278M17.067 18.9934C18.2004 18.9505 19.2258 18.2992 20.0628 17.4622C21.4558 16.0692 21.2686 13.8468 19.6839 12.9624L18.5209 12.3134C17.4715 11.7277 16.0947 11.9628 15.1722 12.8853"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                                <path
-                                                    opacity="0.5"
-                                                    d="M5.00655 6.93311C4.93421 8.84124 5.41713 12.0817 8.6677 15.3323C11.9183 18.5829 15.1588 19.0658 17.0669 18.9935M15.1722 12.8853C15.1722 12.8853 14.0532 14.0042 12.0245 11.9755C9.99578 9.94676 11.1147 8.82782 11.1147 8.82782"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1.5"
-                                                />
-                                            </svg>
-                                            <span className="whitespace-nowrap" dir="ltr">
-                                    {userLeaveData[0]?.user?.mobile ?? "N/A"}
-                                    </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className="lg:col-span-2 xl:col-span-3">
-                                <div className="panel">
-
-                                    <div className="table-responsive mb-5">
-                                        {
-                                            permissions.includes('leave-other-view') || permissions.includes('super-admin')  ? (
-                                                <table>
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Leave Eligible</th>
-                                                        <th>Leave Enjoy</th>
-                                                        <th>Leave Balance</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {userLeaveData?.map((data) => {
-                                                        return (
-                                                            <tr key={data.id}>
-                                                                <td>{data.leavecategory.name}</td>
-                                                                <td>{data.leave_eligible}</td>
-                                                                <td>{data.leave_enjoyed}</td>
-                                                                <td>{data.leave_balance}</td>
-                                                                <td className="text-center">
-                                                                    <div className="flex items-center w-max mx-auto gap-2">
-                                                                        {
-                                                                            permissions.includes('leave-other-create') || permissions.includes('super-admin')  ? (
-                                                                                <Link
-                                                                                    href={`${base_url}/admin/leave_application/apply/`+data.user_id +'/'+ data.leave_id}
-                                                                                    method="get"
-                                                                                    className="btn btn-sm btn-outline-success"
-                                                                                >
-                                                                                    Apply
-                                                                                </Link>
-                                                                            ) : null
-                                                                        }
-                                                                        {
-                                                                            permissions.includes('leave-other-edit') || permissions.includes('super-admin')  ? (
-                                                                                <Link
-                                                                                    href={`${base_url}/admin/leave_application/edit/`+data.user_id +'/'+ data.leave_id}
-                                                                                    method="get"
-                                                                                    className="btn btn-sm btn-outline-primary"
-                                                                                >
-                                                                                    Edit
-                                                                                </Link>
-                                                                            ) : null
-                                                                        }
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-
-                                                        );
-                                                    })}
-                                                    </tbody>
-                                                </table>
-                                            ) : null
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {
-                            isPreLeaveData.length !== 0 &&
-                            <div className="panel lg:col-span-2 xl:col-span-3">
-                                <div className="mb-5">
-                                    <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                        <table className="whitespace-nowrap">
-                                            <thead>
+                    {isPreLeaveData.length !== 0 && (
+                        <div className="panel lg:col-span-2 xl:col-span-3">
+                            <div className="mb-5">
+                                <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                    <table className="whitespace-nowrap">
+                                        <thead>
                                             <tr>
                                                 <th>From Date</th>
                                                 <th>To Date</th>
@@ -521,35 +439,465 @@ function Index() {
                                                 <th>Reason</th>
                                                 <th>Status</th>
                                             </tr>
-                                            </thead>
-                                            <tbody className="dark:text-white-dark">
-                                            {isPreLeaveData.map((leave)=>(
+                                        </thead>
+                                        <tbody className="dark:text-white-dark">
+                                            {isPreLeaveData.map((leave) => (
                                                 <tr key={leave}>
                                                     <td>{leave?.from_date}</td>
                                                     <td>{leave?.to_date}</td>
-                                                    <td className="text-danger">{leave?.nods}</td>
-                                                    <td className="text-center">{leave?.reason}</td>
+                                                    <td className="text-danger">
+                                                        {leave?.nods}
+                                                    </td>
                                                     <td className="text-center">
-                                                        {leave?.status === "C" ? <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">Pending</span>: null}
-                                                        {leave?.status === "A" ? <span className="badge bg-green-800 shadow-md dark:group-hover:bg-transparent">Approved</span> : null}
-                                                        {leave?.status === "R" ? <span className="badge bg-blue-800 shadow-md dark:group-hover:bg-transparent">Recommended</span> : null}
-                                                        {leave?.status === "D" ? <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">Dismissed</span> : null}
-                                                        {leave?.status === "E" ? <span className="badge bg-purple-800 shadow-md dark:group-hover:bg-transparent">Enjoyed</span> : null}
-                                                        {leave?.status === "L" ? <span className="badge bg-danger shadow-md dark:group-hover:bg-transparent">Cancel</span> : null}
-                                                        {leave?.status === "AK" ? <span className="badge bg-blue-600 shadow-md dark:group-hover:bg-transparent">Acknowledged</span> : null}
-                                                        {leave?.status === "CA" ? <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">Cancel Acknowledged</span> : null}
+                                                        {leave?.reason}
+                                                    </td>
+                                                    <td className="text-center">
+                                                        {leave?.status ===
+                                                        "C" ? (
+                                                            <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">
+                                                                Pending
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "A" ? (
+                                                            <span className="badge bg-green-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Approved
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "R" ? (
+                                                            <span className="badge bg-blue-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Recommended
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "D" ? (
+                                                            <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">
+                                                                Dismissed
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "E" ? (
+                                                            <span className="badge bg-purple-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Enjoyed
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "L" ? (
+                                                            <span className="badge bg-danger shadow-md dark:group-hover:bg-transparent">
+                                                                Cancel
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "AK" ? (
+                                                            <span className="badge bg-blue-600 shadow-md dark:group-hover:bg-transparent">
+                                                                Acknowledged
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "CA" ? (
+                                                            <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">
+                                                                Cancel
+                                                                Acknowledged
+                                                            </span>
+                                                        ) : null}
                                                     </td>
                                                 </tr>
                                             ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        }
+                        </div>
+                    )}
+                </div>
+            )}
+            {!isVisible && userLeaveData.length !== 0 && (
+                <div className="pt-5">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
+                        <div className="panel">
+                            <div className="mb-5">
+                                <div className="flex flex-col justify-center items-center">
+                                    <img
+                                        src={
+                                            userLeaveData[0]?.user?.avatar
+                                                ? `/storage/profile/${userLeaveData[0]?.user?.avatar}`
+                                                : "/assets/images/user-profile.jpeg"
+                                        }
+                                        alt="img"
+                                        className="w-24 h-24 rounded-full object-cover  mb-5"
+                                    />
+                                    <p className="font-semibold text-primary text-xl">
+                                        {userLeaveData[0]?.user?.first_name}{" "}
+                                        {userLeaveData[0]?.user?.last_name}
+                                    </p>
+                                </div>
+                                <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
+                                    <li className="flex items-center gap-2">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
+                                            <path
+                                                d="M2.3153 12.6978C2.26536 12.2706 2.2404 12.057 2.2509 11.8809C2.30599 10.9577 2.98677 10.1928 3.89725 10.0309C4.07094 10 4.286 10 4.71612 10H15.2838C15.7139 10 15.929 10 16.1027 10.0309C17.0132 10.1928 17.694 10.9577 17.749 11.8809C17.7595 12.057 17.7346 12.2706 17.6846 12.6978L17.284 16.1258C17.1031 17.6729 16.2764 19.0714 15.0081 19.9757C14.0736 20.6419 12.9546 21 11.8069 21H8.19303C7.04537 21 5.9263 20.6419 4.99182 19.9757C3.72352 19.0714 2.89681 17.6729 2.71598 16.1258L2.3153 12.6978Z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M17 17H19C20.6569 17 22 15.6569 22 14C22 12.3431 20.6569 11 19 11H17.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M10.0002 2C9.44787 2.55228 9.44787 3.44772 10.0002 4C10.5524 4.55228 10.5524 5.44772 10.0002 6"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                            <path
+                                                d="M4.99994 7.5L5.11605 7.38388C5.62322 6.87671 5.68028 6.0738 5.24994 5.5C4.81959 4.9262 4.87665 4.12329 5.38382 3.61612L5.49994 3.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                            <path
+                                                d="M14.4999 7.5L14.6161 7.38388C15.1232 6.87671 15.1803 6.0738 14.7499 5.5C14.3196 4.9262 14.3767 4.12329 14.8838 3.61612L14.9999 3.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>{" "}
+                                        {
+                                            userLeaveData[0]?.user
+                                                ?.professionaldata?.designation
+                                                ?.name
+                                        }
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
+                                            <path
+                                                d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12Z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M7 4V2.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M17 4V2.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M2 9H22"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+                                        {
+                                            userLeaveData[0]?.user
+                                                ?.professionaldata?.joining_date
+                                        }
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-5 h-5 shrink-0"
+                                        >
+                                            <path
+                                                opacity="0.5"
+                                                d="M5 8.51464C5 4.9167 8.13401 2 12 2C15.866 2 19 4.9167 19 8.51464C19 12.0844 16.7658 16.2499 13.2801 17.7396C12.4675 18.0868 11.5325 18.0868 10.7199 17.7396C7.23416 16.2499 5 12.0844 5 8.51464Z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                d="M14 9C14 10.1046 13.1046 11 12 11C10.8954 11 10 10.1046 10 9C10 7.89543 10.8954 7 12 7C13.1046 7 14 7.89543 14 9Z"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                d="M20.9605 15.5C21.6259 16.1025 22 16.7816 22 17.5C22 19.9853 17.5228 22 12 22C6.47715 22 2 19.9853 2 17.5C2 16.7816 2.37412 16.1025 3.03947 15.5"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+                                        {
+                                            userLeaveData[0]?.user?.personaldata
+                                                ?.pr_address
+                                        }{" "}
+                                        ,{" "}
+                                        {
+                                            userLeaveData[0]?.user?.personaldata
+                                                ?.pr_district
+                                        }
+                                    </li>
+                                    <li>
+                                        <button className="flex items-center gap-2">
+                                            <svg
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="shrink-0"
+                                            >
+                                                <path
+                                                    opacity="0.5"
+                                                    d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                />
+                                                <path
+                                                    d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8"
+                                                    stroke="currentColor"
+                                                    strokeWidth="1.5"
+                                                    strokeLinecap="round"
+                                                />
+                                            </svg>
+                                            <span className="text-primary truncate">
+                                                {userLeaveData[0]?.user?.email}
+                                            </span>
+                                        </button>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M5.00659 6.93309C5.04956 5.7996 5.70084 4.77423 6.53785 3.93723C7.9308 2.54428 10.1532 2.73144 11.0376 4.31617L11.6866 5.4791C12.2723 6.52858 12.0372 7.90533 11.1147 8.8278M17.067 18.9934C18.2004 18.9505 19.2258 18.2992 20.0628 17.4622C21.4558 16.0692 21.2686 13.8468 19.6839 12.9624L18.5209 12.3134C17.4715 11.7277 16.0947 11.9628 15.1722 12.8853"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                opacity="0.5"
+                                                d="M5.00655 6.93311C4.93421 8.84124 5.41713 12.0817 8.6677 15.3323C11.9183 18.5829 15.1588 19.0658 17.0669 18.9935M15.1722 12.8853C15.1722 12.8853 14.0532 14.0042 12.0245 11.9755C9.99578 9.94676 11.1147 8.82782 11.1147 8.82782"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                        </svg>
+                                        <span
+                                            className="whitespace-nowrap"
+                                            dir="ltr"
+                                        >
+                                            {userLeaveData[0]?.user?.mobile ??
+                                                "N/A"}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-2 xl:col-span-3">
+                            <div className="panel">
+                                <div className="table-responsive mb-5">
+                                    {permissions.includes("leave-other-view") ||
+                                    permissions.includes("super-admin") ? (
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Leave Eligible</th>
+                                                    <th>Leave Enjoy</th>
+                                                    <th>Leave Balance</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {userLeaveData?.map((data) => {
+                                                    return (
+                                                        <tr key={data.id}>
+                                                            <td>
+                                                                {
+                                                                    data
+                                                                        .leavecategory
+                                                                        .name
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_eligible
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_enjoyed
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.leave_balance
+                                                                }
+                                                            </td>
+                                                            <td className="text-center">
+                                                                <div className="flex items-center w-max mx-auto gap-2">
+                                                                    {permissions.includes(
+                                                                        "leave-other-create"
+                                                                    ) ||
+                                                                    permissions.includes(
+                                                                        "super-admin"
+                                                                    ) ? (
+                                                                        <Link
+                                                                            href={
+                                                                                `${base_url}/admin/leave_application/apply/` +
+                                                                                data.user_id +
+                                                                                "/" +
+                                                                                data.leave_id
+                                                                            }
+                                                                            method="get"
+                                                                            className="btn btn-sm btn-outline-success"
+                                                                        >
+                                                                            Apply
+                                                                        </Link>
+                                                                    ) : null}
+                                                                    {permissions.includes(
+                                                                        "leave-other-edit"
+                                                                    ) ||
+                                                                    permissions.includes(
+                                                                        "super-admin"
+                                                                    ) ? (
+                                                                        <Link
+                                                                            href={
+                                                                                `${base_url}/admin/leave_application/edit/` +
+                                                                                data.user_id +
+                                                                                "/" +
+                                                                                data.leave_id
+                                                                            }
+                                                                            method="get"
+                                                                            className="btn btn-sm btn-outline-primary"
+                                                                        >
+                                                                            Edit
+                                                                        </Link>
+                                                                    ) : null}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    ) : null}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-            }
-
+                    {isPreLeaveData.length !== 0 && (
+                        <div className="panel lg:col-span-2 xl:col-span-3">
+                            <div className="mb-5">
+                                <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                    <table className="whitespace-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>From Date</th>
+                                                <th>To Date</th>
+                                                <th>Nod</th>
+                                                <th>Reason</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="dark:text-white-dark">
+                                            {isPreLeaveData.map((leave) => (
+                                                <tr key={leave}>
+                                                    <td>{leave?.from_date}</td>
+                                                    <td>{leave?.to_date}</td>
+                                                    <td className="text-danger">
+                                                        {leave?.nods}
+                                                    </td>
+                                                    <td className="text-center">
+                                                        {leave?.reason}
+                                                    </td>
+                                                    <td className="text-center">
+                                                        {leave?.status ===
+                                                        "C" ? (
+                                                            <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">
+                                                                Pending
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "A" ? (
+                                                            <span className="badge bg-green-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Approved
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "R" ? (
+                                                            <span className="badge bg-blue-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Recommended
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "D" ? (
+                                                            <span className="badge bg-warning shadow-md dark:group-hover:bg-transparent">
+                                                                Dismissed
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "E" ? (
+                                                            <span className="badge bg-purple-800 shadow-md dark:group-hover:bg-transparent">
+                                                                Enjoyed
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "L" ? (
+                                                            <span className="badge bg-danger shadow-md dark:group-hover:bg-transparent">
+                                                                Cancel
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "AK" ? (
+                                                            <span className="badge bg-blue-600 shadow-md dark:group-hover:bg-transparent">
+                                                                Acknowledged
+                                                            </span>
+                                                        ) : null}
+                                                        {leave?.status ===
+                                                        "CA" ? (
+                                                            <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">
+                                                                Cancel
+                                                                Acknowledged
+                                                            </span>
+                                                        ) : null}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </>
     );
 }

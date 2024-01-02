@@ -86,7 +86,7 @@ function AllTypeEmployeeReport() {
     // console.log(selectedValues)
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(selectedValues);
+        // console.log(selectedValues);
         // router.get("/admin/all-type-employee-report",values);
     }
     return (

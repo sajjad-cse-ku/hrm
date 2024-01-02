@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import Select from 'react-select';
+import Select from "react-select";
 
 function PunchDetailsDateRangeWise() {
-    const {  flash,errors } = usePage().props;
+    const { flash, errors } = usePage().props;
     const [values, setValues] = useState({
-        from_date:"",
-        to_date:"",
+        from_date: "",
+        to_date: "",
     });
 
     function handleChange(e) {
@@ -20,10 +20,9 @@ function PunchDetailsDateRangeWise() {
         }));
     }
 
-
     function handleSubmit(e) {
         e.preventDefault();
-        router.get("/admin/punch-details/date-range-wise-report",values);
+        router.get("/admin/punch-details/date-range-wise-report", values);
     }
     return (
         <>
@@ -72,19 +71,22 @@ function PunchDetailsDateRangeWise() {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5"
+                            className="space-y-5 form"
                             onSubmit={handleSubmit}
                             method="post"
                         >
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                 <div>
-                                    <label>From Date<span className="text-red-600 ">*</span></label>
+                                    <label>
+                                        From Date
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="from_date"
                                         type="date"
                                         placeholder="Enter effect date"
                                         className="form-input"
-                                        value={values.from_date || ''}
+                                        value={values.from_date || ""}
                                         onChange={handleChange}
                                     />
                                     {errors.from_date && (
@@ -94,7 +96,10 @@ function PunchDetailsDateRangeWise() {
                                     )}
                                 </div>
                                 <div>
-                                    <label>To Date<span className="text-red-600 ">*</span></label>
+                                    <label>
+                                        To Date
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="to_date"
                                         type="date"
@@ -109,7 +114,6 @@ function PunchDetailsDateRangeWise() {
                                         </div>
                                     )}
                                 </div>
-
                             </div>
 
                             <div>

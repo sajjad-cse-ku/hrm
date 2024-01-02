@@ -11,7 +11,7 @@ function Rolelist() {
     const { roles, flash, permissions } = usePage().props
     const { t } = useTranslation();
 
-    console.log(roles.Permissions);
+    // console.log(roles.Permissions);
 
 
     const isRtl = themeConfig.rtlClass === 'rtl' ? true : false;

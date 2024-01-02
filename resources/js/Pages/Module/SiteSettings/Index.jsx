@@ -2,13 +2,16 @@ import React from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import { useForm  } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-
-function Index()
-{
-    const {  flash,result } = usePage().props;
-    const { register, handleSubmit,setValue,formState: { errors } } = useForm();
+function Index() {
+    const { flash, result } = usePage().props;
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm();
 
     function onSubmit(data) {
         // console.log(data);
@@ -54,8 +57,12 @@ function Index()
                 </ul>
             </div>
 
-            <div className="pt-5 grid lg:grid-cols-2 grid-cols-2 gap-6">
-                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
+            <div className="pt-5 grid gap-6 gr-col-1 items-center justify-center">
+                <form
+                    className="space-y-5"
+                    onSubmit={handleSubmit(onSubmit)}
+                    method="post"
+                >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -88,7 +95,11 @@ function Index()
                     </div>
                 </form>
 
-                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
+                <form
+                    className="space-y-5"
+                    onSubmit={handleSubmit(onSubmit)}
+                    method="post"
+                >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -104,7 +115,9 @@ function Index()
                                         type="number"
                                         className="form-input"
                                         placeholder="26"
-                                        defaultValue={Math.floor(365/result?.sick)}
+                                        defaultValue={Math.floor(
+                                            365 / result?.sick
+                                        )}
                                         {...register("sick")}
                                     />
                                 </div>
@@ -114,7 +127,9 @@ function Index()
                                         type="number"
                                         className="form-input"
                                         placeholder="36"
-                                        defaultValue={Math.floor(365/result?.casual)}
+                                        defaultValue={Math.floor(
+                                            365 / result?.casual
+                                        )}
                                         {...register("casual")}
                                     />
                                 </div>
@@ -132,8 +147,12 @@ function Index()
                 </form>
             </div>
 
-            <div className="pt-5 grid lg:grid-cols-2 grid-cols-2 gap-6">
-                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
+            <div className="pt-5 grid gap-6 gr-col-1 items-center justify-center">
+                <form
+                    className="space-y-5"
+                    onSubmit={handleSubmit(onSubmit)}
+                    method="post"
+                >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -186,8 +205,6 @@ function Index()
                     </div>
                 </form>
             </div>
-
-
         </>
     );
 }

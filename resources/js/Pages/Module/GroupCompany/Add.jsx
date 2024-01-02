@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 
 function Add() {
-    const { errors,flash } = usePage().props;
+    const { errors, flash } = usePage().props;
     const [values, setValues] = useState({
         name: "",
         address: "",
@@ -73,7 +73,7 @@ function Add() {
             </div>
             <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
                 <div className="panel" id="forms_grid">
-                    <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center justify-between mb-5 mx-4">
                         <h5 className="font-semibold text-lg dark:text-white-light">
                             Group Company
                         </h5>
@@ -85,8 +85,11 @@ function Add() {
                             method="post"
                         >
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label>Name<span className="text-red-600 ">*</span></label>
+                                <div className="mx-4">
+                                    <label>
+                                        Name
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="name"
                                         type="text"
@@ -102,8 +105,11 @@ function Add() {
                                     )}
                                 </div>
 
-                                <div>
-                                    <label>Address<span className="text-red-600 ">*</span></label>
+                                <div className="mx-4">
+                                    <label>
+                                        Address
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="address"
                                         type="text"
@@ -120,8 +126,11 @@ function Add() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label>City<span className="text-red-600 ">*</span></label>
+                                <div className="mx-4">
+                                    <label>
+                                        City
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="city"
                                         type="text"
@@ -137,8 +146,11 @@ function Add() {
                                     )}
                                 </div>
 
-                                <div >
-                                    <label>Country<span className="text-red-600 ">*</span></label>
+                                <div className="mx-4">
+                                    <label>
+                                        Country
+                                        <span className="text-red-600 ">*</span>
+                                    </label>
                                     <input
                                         id="country"
                                         type="text"
@@ -153,11 +165,10 @@ function Add() {
                                         </div>
                                     )}
                                 </div>
-
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                <div className="mx-4">
                                     <label>Post Code</label>
                                     <input
                                         id="post_code"
@@ -169,14 +180,14 @@ function Add() {
                                     />
                                 </div>
 
-                                <div>
-                                    <label>Email</label>
+                                <div className="mx-4">
+                                    <label>State</label>
                                     <input
-                                        id="email"
-                                        type="email"
-                                        placeholder="Enter Email"
+                                        id="state"
+                                        type="text"
+                                        placeholder="Enter State"
                                         className="form-input"
-                                        value={values.email}
+                                        value={values.state}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -191,20 +202,7 @@ function Add() {
 
                             </div> */}
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-                                <div className="md:col-span-2">
-                                    <label>State</label>
-                                    <input
-                                        id="state"
-                                        type="text"
-                                        placeholder="Enter State"
-                                        className="form-input"
-                                        value={values.state}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* <div>
                                     <label>Phone Number</label>
                                     <select
@@ -219,10 +217,8 @@ function Add() {
                                         <option>5</option>
                                     </select>
                                 </div> */}
-                                <div className="md:col-span-2">
-                                    <label>
-                                        Phone Number
-                                    </label>
+                                <div className="mx-4">
+                                    <label>Phone Number</label>
                                     <input
                                         id="phone_no"
                                         type="number"
@@ -232,10 +228,21 @@ function Add() {
                                         onChange={handleChange}
                                     />
                                 </div>
+                                <div className="mx-4">
+                                    <label>Email</label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        placeholder="Enter Email"
+                                        className="form-input"
+                                        value={values.email}
+                                        onChange={handleChange}
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
+                                <div className="mx-4">
                                     <label>Website</label>
                                     <input
                                         id="website"
@@ -247,7 +254,7 @@ function Add() {
                                     />
                                 </div>
 
-                                <div>
+                                <div className="mx-4">
                                     <label>Currency</label>
                                     <input
                                         id="currency"
@@ -270,7 +277,7 @@ function Add() {
                                     </span>
                                 </label>
                             </div> */}
-                            <div>
+                            <div className="mx-4">
                                 <button
                                     type="submit"
                                     className="btn btn-primary !mt-6 ml-auto"
