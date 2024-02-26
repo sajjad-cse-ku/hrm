@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import Select from "react-select";
+import Select from 'react-select';
 
 function AllOrDeptLeaveApplication() {
-    const { flash, errors, departments } = usePage().props;
+    const {  flash,errors,departments } = usePage().props;
     const [values, setValues] = useState({
-        year: "",
-        month: "1",
+        year:"",
+        month:"1",
     });
 
     function handleChange(e) {
@@ -21,10 +21,10 @@ function AllOrDeptLeaveApplication() {
         }));
     }
 
+
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
-        router.get("/admin/employee-leave-details-month-year-report", values);
+        router.get("/admin/employee-leave-details-month-year-report",values);
     }
     return (
         <>
@@ -73,11 +73,11 @@ function AllOrDeptLeaveApplication() {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >
-                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label>Year</label>
                                     <input
@@ -85,7 +85,7 @@ function AllOrDeptLeaveApplication() {
                                         type="text"
                                         placeholder="2023"
                                         className="form-input"
-                                        value={values.year || ""}
+                                        value={values.year || ''}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -94,23 +94,25 @@ function AllOrDeptLeaveApplication() {
                                     <select
                                         id="month"
                                         className="form-select text-white-dark"
-                                        value={values.month || ""}
+                                        value={values.month || ''}
                                         onChange={handleChange}
                                     >
-                                        <option value="1">January</option>
-                                        <option value="2">February</option>
-                                        <option value="3">March</option>
-                                        <option value="4">April</option>
-                                        <option value="5">May</option>
-                                        <option value="6">June</option>
-                                        <option value="7">July</option>
-                                        <option value="8">August</option>
-                                        <option value="9">September</option>
-                                        <option value="10">October</option>
-                                        <option value="11">November</option>
-                                        <option value="12">December</option>
+
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
                                     </select>
                                 </div>
+
                             </div>
 
                             <div>

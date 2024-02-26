@@ -13,9 +13,24 @@ function Index() {
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const dayNamesArray = daysArray.map(day => {
         const date = new Date(new Date().getFullYear(), new Date().getMonth(), day);
-        // console.log(date)
         return date.toLocaleDateString('en-US', { weekday: 'short' }); // Adjust locale as needed
     });
+
+
+    const formatTime = (timeString) => {
+        // Parse the input time string into a Date object
+        const time = new Date(`1970-01-01T${timeString}`);
+        // Format the time as AM/PM time
+        const formattedTime = time.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        });
+
+        return formattedTime;
+    };
+
+
     return (
         <>
             <FlashMessage flash={flash} />
@@ -85,14 +100,14 @@ function Index() {
 
                                         </td>
                                         {attend.getAttendance.map((day, dayIndex) => {
-                                            // console.log(day.status)
                                             let statusBadge;
                                             if (day.status === 'Late') {
                                                 statusBadge = (
                                                     <p key={dayIndex} className={`inline-block badge whitespace-nowrap bg-yellow-500 text-center`}>
                                                         <b>{day.status}</b>
                                                         <br/>
-                                                        {day?.intime ? day?.intime : ""} - {day?.exittime ? day?.exittime : ""}
+                                                        {/*{day?.intime ? day?.intime : ""} - {day?.exittime ? day?.exittime : ""}*/}
+                                                        {day?.intime ? formatTime(day?.intime) : ""} - {day?.exittime ? formatTime(day?.exittime) : ""}
                                                     </p>
                                                 );
                                             } else if (day.status === 'Present' || day.status === 'Remote') {
@@ -101,7 +116,7 @@ function Index() {
                                                     <p key={dayIndex} className={`inline-block badge whitespace-nowrap text-center ${day.status === 'Remote'? "bg-purple-700" : "bg-green-700"}`} >
                                                         <b>{day.status}</b>
                                                         <br/>
-                                                        {day?.intime ? day?.intime : ""} - {day?.exittime ? day?.exittime : ""}
+                                                        {day?.intime ? formatTime(day?.intime) : ""} - {day?.exittime ? formatTime(day?.exittime) : ""}
                                                     </p>
                                                 );
                                             } else if (day.status === 'Upcomming') {

@@ -2,7 +2,9 @@
 
 namespace App\Console;
 
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -12,64 +14,43 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+
+        $now = Carbon::now('Asia/Dhaka');
+        Log::info($now);
+
+            // Start Day First Time
+            $startDayFirstTimeValue = SiteSettings()->value('start_day_first_time');
+            $carbonStartDayFirstTime = Carbon::createFromFormat('H:i:s', $startDayFirstTimeValue);
+            $startDayFirstHourComponent = $carbonStartDayFirstTime->format('H');
+
+            // Start Day Second Time
+            $startDaySecondTimeValue = SiteSettings()->value('start_day_second_time');
+            $carbonStartDaySecondTime = Carbon::createFromFormat('H:i:s', $startDaySecondTimeValue);
+            $startDaySecondHourComponent = $carbonStartDaySecondTime->format('H');
+
+            // End Day First Time
+            $endDayFirstTimeValue = SiteSettings()->value('end_day_first_time');
+            $carbonEndDayFirstTime = Carbon::createFromFormat('H:i:s', $endDayFirstTimeValue);
+            $endDayFirstHourComponent = $carbonEndDayFirstTime->format('H');
+
+            // End Day Second Time
+            $endDaySecondTimeValue = SiteSettings()->value('end_day_second_time');
+            $carbonEndDaySecondTime = Carbon::createFromFormat('H:i:s', $endDaySecondTimeValue);
+            $endDaySecondHourComponent = $carbonEndDaySecondTime->format('H');
+
+
+        if( ( $now->hour >= $startDayFirstHourComponent && $now->hour < $startDaySecondHourComponent ) || ( $now->hour >= $endDayFirstHourComponent && $now->hour < $endDaySecondHourComponent ) )
         {
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('09:50')
-                ->timezone('Asia/Dhaka');
-
+            Log::info("Inside If Condidtion");
+           $schedule->command('punchdetails:cron')
+               ->everyMinute()
+               ->timezone('Asia/Dhaka');
             $schedule->command('attendance:cron')
-                ->dailyAt('09:55')
+                ->everyMinute()
                 ->timezone('Asia/Dhaka');
 
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('10:05')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('10:10')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('10:15')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('10:20')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('11:00')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('11:05')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('18:10')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('18:20')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('18:55')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('19:00')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('punchdetails:cron')
-                ->dailyAt('22:25')
-                ->timezone('Asia/Dhaka');
-
-            $schedule->command('attendance:cron')
-                ->dailyAt('22:30')
-                ->timezone('Asia/Dhaka');
         }
+
     }
     /**
      * Register the commands for the application.

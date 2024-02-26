@@ -55,6 +55,12 @@ class HandleInertiaRequests extends Middleware
             'theme'=>"default",
             'site_settings' => SiteSettings::first(),
             'permissions' => checkPermissions(),
+            'count_notice' => UnreadalbeNotice(),
+            'count_task'=>CountTask(),
+            'count_late'=>CountLate(),
+//            'leave_acknowledge'=>'',
+//            'leave_recommend'=>'',
+//            'leave_approval'=>'',
         ]);
     }
 }

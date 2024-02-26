@@ -128,6 +128,17 @@ function Index({  }) {
                                     />
                                 </div>
                                 {
+                                    permissions.includes('super-admin') ? (
+                                        <a
+                                            href={`${base_url}/admin/employee/export-all-employee`}
+                                            method="get"
+                                            className="px-7 py-2 bg-green-600 text-white rounded-md text-[15px]"
+                                        >
+                                            Export
+                                        </a>
+                                    ) : null
+                                }
+                                {
                                     permissions.includes('employee-create') || permissions.includes('super-admin') ? (
                                         <Link
                                             href={`${base_url}/admin/employee/create`}
@@ -200,6 +211,28 @@ function Index({  }) {
                                         title: "Mobile",
                                     },
                                     {
+                                        accessor: "blood_group",
+                                        title:"Blood Group",
+                                        render: ({ personaldata }) => (
+                                            <div className="flex items-center w-max">
+                                                <span dangerouslySetInnerHTML={{ __html: `${personaldata?.blood_group}` }} />
+                                            </div>
+                                        ),
+                                    },
+                                    {
+                                        accessor: "address",
+                                        title:"Address",
+                                        render: ({ personaldata }) => (
+                                            <div className="flex items-center w-max">
+                                                <div>
+                                                    <p>{personaldata?.pr_address}</p>
+                                                    <p>{personaldata?.pr_police_station}</p>
+                                                    <p>{personaldata?.pr_district} - {personaldata?.pr_post_code}</p>
+                                                </div>
+                                            </div>
+                                        ),
+                                    },
+                                    {
                                         accessor: "status",
                                         title:"Status",
                                         titleClassName: "text-center",
@@ -264,6 +297,25 @@ function Index({  }) {
                                                         </Link>
                                                     ) : null
                                                 }
+                                                {
+                                                    permissions.includes('emp-promotion-view') || permissions.includes('super-admin') ? (
+                                                        <Link
+                                                            href={`${base_url}/admin/emp_promotion/`+result.id}
+                                                            method="get"
+                                                            className="btn btn-sm btn-outline-primary"
+                                                        >
+                                                            Promotion
+                                                        </Link>
+                                                    ) : null
+                                                }
+
+                                                <Link
+                                                    href={`${base_url}/admin/assign-roster/create/`+result.id}
+                                                    method="get"
+                                                    className="btn btn-sm btn-outline-info"
+                                                >
+                                                    Roster
+                                                </Link>
 
                                             </div>
                                         ),

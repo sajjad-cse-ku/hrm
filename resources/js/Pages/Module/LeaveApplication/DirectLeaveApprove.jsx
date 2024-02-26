@@ -203,7 +203,7 @@ function DirectLeaveApprove() {
                             }
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
-                                    <label>Leave From</label>
+                                    <label>Leave from Date</label>
                                     <input
                                         id="from_date"
                                         type="date"
@@ -214,7 +214,7 @@ function DirectLeaveApprove() {
                                     />
                                 </div>
                                 <div>
-                                    <label>Leave To</label>
+                                    <label>Leave to Date</label>
                                     <input
                                         id="to_date"
                                         type="date"

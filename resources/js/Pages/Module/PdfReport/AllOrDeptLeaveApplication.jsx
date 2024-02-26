@@ -28,7 +28,6 @@ function AllOrDeptLeaveApplication() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.get("/admin/all-or-dept-leave-report",values);
     }
     return (

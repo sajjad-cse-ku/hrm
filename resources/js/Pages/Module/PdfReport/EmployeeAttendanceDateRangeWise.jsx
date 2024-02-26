@@ -34,7 +34,6 @@ function EmployeeAttendanceDateRangeWise() {
     }));
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.get("/admin/employee-attendance/date-range-wise-report",values);
     }
     return (

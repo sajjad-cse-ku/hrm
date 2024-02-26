@@ -11,7 +11,7 @@ import axios from 'axios'; // Import Axios
 function Edit()
 {
     const {  flash,companies,users,titles,religions,bangladesh,department,designation,working_status,banks,result } = usePage().props;
-    // console.log(result)
+
     const { register, handleSubmit,setValue,formState: { errors } } = useForm({
         defaultValues: {
             user_id:result?.id,
@@ -68,8 +68,16 @@ function Edit()
     });
 
     const [presentThana, setPresentThana] = useState([]);
+    const [selectedPresentThana, setSelectedPresentThanaon] = useState('');
+
+
     const [parmanentThana, setParmanentThana] = useState([]);
+    const [selectedParmanentThana, setSelectedParmanentThana] = useState('');
+
+
     const [mailingThana, setMailingThana] = useState([]);
+    const [selectedMailingThana, setSelectedMailingThana] = useState('');
+
 
 
 
@@ -78,13 +86,13 @@ function Edit()
             try {
                 const response = await axios.get('/admin/get-thana/' + result?.personaldata?.pr_district);
                 setPresentThana(response.data);
+                setSelectedPresentThanaon(result?.personaldata?.pr_police_station || '');
             } catch (error) {
                 console.error(error);
             }
         };
 
         setValue('pr_post_code', result?.personaldata?.pr_post_code);
-        setValue('pr_police_station', result?.personaldata?.pr_police_station);
         fetchPrThana();
     }, [name]);
 
@@ -168,6 +176,7 @@ function Edit()
 
     function onSubmit(data) {
         router.post("/admin/employee/update", data);
+        console.log(data);
     }
 
     return (
@@ -235,10 +244,9 @@ function Edit()
                                     )}
                                 </Tab>
                             </Tab.List>
-
                             <Tab.Panels>
                                 <Tab.Panel>
-                                    <div className="active pt-5 first-panel">
+                                    <div className="pt-5 first-panel">
                                         <div className="mb-5">
                                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                                     <input

@@ -23,6 +23,8 @@ function Add() {
         task_assigned_user_comment:result.task_assigned_user_comment,
         task_status:result.task_status,
         task_remarks:result.task_remarks,
+        task_start_date_time:result.task_start_date_time,
+        task_end_date_time:result.task_end_date_time,
         // selectedAssignedUser: selectedAssignedUser,
     });
 
@@ -37,7 +39,6 @@ function Add() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/task/update_my_task", values);
     };
 
@@ -202,7 +203,7 @@ function Add() {
                                             id="task_title"
                                             type="text"
                                             disabled
-                                            placeholder="Enter Title"
+                                            placeholder="Review Task"
                                             className="form-input"
                                             value={values.task_remarks || ''}
                                             onChange={handleChange}
@@ -216,6 +217,74 @@ function Add() {
                                 )}
                             </div>
                             {values.task_status === "P" ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                    <div>
+                                        <label>Start Date<span className="text-red-600 ">*</span></label>
+                                        <input
+                                            id="task_approximate_start_date"
+                                            type="date"
+                                            placeholder="Start Date"
+                                            className="form-input"
+                                            value={values.task_approximate_start_date || ''}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.task_approximate_start_date && (
+                                            <div className="text-red-600 text-[14px]">
+                                                {errors.task_approximate_start_date}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label>Start Time<span className="text-red-600 ">*</span></label>
+                                        <input
+                                            id="task_start_date_time"
+                                            type="time"
+                                            placeholder="Start Time"
+                                            className="form-input"
+                                            value={values.task_start_date_time || ''}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.task_start_date_time && (
+                                            <div className="text-red-600 text-[14px]">
+                                                {errors.task_start_date_time}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label>End Date<span className="text-red-600 ">*</span></label>
+                                        <input
+                                            id="task_approximate_end_date"
+                                            type="date"
+                                            placeholder="End Date"
+                                            className="form-input"
+                                            value={values.task_approximate_end_date || ''}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.task_approximate_end_date && (
+                                            <div className="text-red-600 text-[14px]">
+                                                {errors.task_approximate_end_date}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label>End Time<span className="text-red-600 ">*</span></label>
+                                        <input
+                                            id="task_end_date_time"
+                                            type="time"
+                                            placeholder="End Time"
+                                            className="form-input"
+                                            value={values.task_end_date_time || ''}
+                                            onChange={handleChange}
+                                        />
+                                        {errors.task_end_date_time && (
+                                            <div className="text-red-600 text-[14px]">
+                                                {errors.task_end_date_time}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : null }
+                            {values.task_status === "P" ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                     <div>
                                         <label>Your Comment's<span className="text-red-600 ">*</span></label>
@@ -226,6 +295,11 @@ function Add() {
                                             value={values.task_assigned_user_comment || ''}
                                             onChange={handleChange}
                                         ></textarea>
+                                        {errors.task_assigned_user_comment && (
+                                            <div className="text-red-600 text-[14px]">
+                                                {errors.task_assigned_user_comment}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ) : null}

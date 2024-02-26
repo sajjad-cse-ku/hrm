@@ -74,15 +74,17 @@ function Index() {
                                     <td>{result?.reason}</td>
                                     <td className="text-center">
                                         <div className="flex items-center w-max mx-auto gap-2">
-                                            {permissions.includes('leave-recommend-update') || permissions.includes('super-admin') &&
-                                                <Link href={`${base_url}/admin/leave_application/approved-by-report/`+result.user_id} method="get" className="btn btn-sm btn-outline-success">
+                                            {permissions.includes('leave-recommend-update') || permissions.includes('super-admin') ? (
+                                                <Link href={`${base_url}/admin/leave_application/approved-by-report/`+result.id} method="get" className="btn btn-sm btn-outline-success">
                                                     Recommend
                                                 </Link>
+                                                ) : null
                                             }
-                                            {permissions.includes('leave-recommend-update') || permissions.includes('super-admin') &&
-                                                <Link href={`${base_url}/admin/leave_application/rejected-by-report/`+result.user_id} method="get" className="btn btn-sm btn-outline-danger">
+                                            {permissions.includes('leave-recommend-update') || permissions.includes('super-admin') ? (
+                                                <Link href={`${base_url}/admin/leave_application/rejected-by-report/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
                                                     Reject
                                                 </Link>
+                                                ) : null
                                             }
                                         </div>
                                     </td>

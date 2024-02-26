@@ -4,33 +4,33 @@ import { Link, router, usePage } from "@inertiajs/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import { useForm } from "react-hook-form";
-import axios from "axios"; // Import Axios
-import Select from "react-select";
-function Add() {
-    const { flash, departments } = usePage().props;
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors },
-    } = useForm();
+import { useForm  } from "react-hook-form";
+import axios from 'axios'; // Import Axios
+import Select from 'react-select';
+function Add()
+{
+    const {  flash,departments } = usePage().props;
+    const { register, handleSubmit,setValue,formState: { errors } } = useForm();
+
 
     const [values, setValues] = useState({
         get_attendance: "",
     });
 
+
     const options = [
-        { value: "all", label: "All" },
+        { value: 'all', label: 'All' },
         ...departments.map((item) => ({
-            value: item?.id,
-            label: item?.name ? `${item.name}` : "",
+          value: item?.id,
+          label: item?.name
+            ? `${item.name}`
+            : '',
         })),
         // Add a custom option
-    ];
+      ];
 
-    const handleSelectChange = (selectedOption) => {
-        const get_attendance = selectedOption ? selectedOption.value : ""; // Extract get_attendance
+      const handleSelectChange = (selectedOption) => {
+        const get_attendance = selectedOption ? selectedOption.value : ''; // Extract get_attendance
         setValues((prevValues) => ({
             ...prevValues,
             get_attendance,
@@ -39,11 +39,10 @@ function Add() {
 
     function onSubmit() {
         const data = {
-            get_attendance: values.get_attendance,
+          get_attendance: values.get_attendance,
         };
-        // console.log(data);
         router.get("/admin/attendance/report", data);
-    }
+      }
 
     return (
         <>
@@ -83,53 +82,41 @@ function Add() {
                     </li>
                 </ul>
             </div>
-            <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
-                <div className="panel" id="froms_grid">
-                    <div className="flex items-center justify-between mb-5">
-                        <h5 className="font-semibold text-lg dark:text-white-light">
-                            Employees Attendance Report
-                        </h5>
-                    </div>
-                    <div className="mb-4">
-                        <form
-                            className="space-y-5 form"
-                            onSubmit={handleSubmit(onSubmit)}
-                            method="post"
-                        >
-                            {/*Employee credentials*/}
-
-                            <div className="mb-5">
-                                <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                                    <div>
-                                        <label>
-                                            Check Attendance Attendance
-                                        </label>
-
-                                        <Select
-                                            placeholder="Select an option"
-                                            options={options}
-                                            value={options.find(
-                                                (option) =>
-                                                    option.value ===
-                                                    values.get_attendance
-                                            )}
-                                            onChange={handleSelectChange}
-                                        />
-                                    </div>
-                                </div>
-
+            <div className="pt-5 grid lg:grid-cols-3 grid-cols-3 gap-6">
+                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
+                    <div className="panel" id="forms_grid">
+                        {/*Employee credentials*/}
+                        <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                Employees Attendance Report
+                            </h5>
+                        </div>
+                        <div className="mb-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                 <div>
-                                    <button
-                                        type="submit"
-                                        className="btn btn-primary !mt-6 ml-auto"
-                                    >
-                                        Submit
-                                    </button>
+                                    <label>
+                                        Check Attendance Attendance
+                                    </label>
+
+                                    <Select placeholder="Select an option"
+                                        options={options}
+                                        value={options.find((option) => option.value === values.get_attendance)}
+                                        onChange={handleSelectChange}
+                                    />
                                 </div>
                             </div>
-                        </form>
+
+                            <div>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary !mt-6 ml-auto"
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </>
     );

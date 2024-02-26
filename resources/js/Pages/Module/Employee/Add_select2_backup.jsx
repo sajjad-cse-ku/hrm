@@ -18,18 +18,18 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
     const [mailingThana, setMailingThana] = useState([]);
     const [isSection, setSection] = useState([]);
 
-    
-    
 
 
-    
 
 
-   
+
+
+
+
     const genderOptions = [
         { value: "Male", label: "Male" },
         { value: "Female", label: "Female" },
-    ]; 
+    ];
 
     const departmentOptions = department.map((item) => ({
         value: item.id,
@@ -46,7 +46,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
     const workingStatusOptions = working_status.map((item) => ({
         value: item.id,
         label: item.name,
-    })); 
+    }));
     const bankOptions = banks.map((item) => ({
         value: item.id,
         label: item.name,
@@ -66,7 +66,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
     const lateAllowOptions = [
         { value: "1", label: "Late Allow Eligibility" },
         { value: "0", label: "Late Allow Not Eligibility" },
-    ]; 
+    ];
     const payScaleOptions = [
         { value: "0", label: "No" },
         { value: "1", label: "Yes" },
@@ -79,9 +79,9 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
         { value: "0", label: "No" },
         { value: "1", label: "Yes" },
       ];
-      
-    
-    
+
+
+
     const [selectedImage, setSelectedImage] = useState(null);
     const handleImageChange = (e) => {
         const file = e.target.files[0]; // Get the selected file
@@ -146,7 +146,6 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
     const sectionSelect =  async (id) => {
         try {
             const response = await axios.get('/admin/section-select/'+id);
-            // console.log(response);
             setSection(response.data);
         } catch (error) {
             console.error(error);
@@ -158,42 +157,42 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
 
 
 
-    
-    const [selectedGender, setSelectedGender] = useState(null);  
-    const handleGenderChange = (selectedOption) => { 
+
+    const [selectedGender, setSelectedGender] = useState(null);
+    const handleGenderChange = (selectedOption) => {
         setSelectedGender(selectedOption);
     };
 
-    const [selectedPresentDistrict, setSelectedPresentDistrict] = useState(null); 
+    const [selectedPresentDistrict, setSelectedPresentDistrict] = useState(null);
     const handlePresentDistrictChange = (selectedOption) => {
-        setSelectedPresentDistrict(selectedOption); 
+        setSelectedPresentDistrict(selectedOption);
     };
-    
-    const [selectedPresentPoliceStation, setSelectedPresentPoliceStation] = useState(null); 
+
+    const [selectedPresentPoliceStation, setSelectedPresentPoliceStation] = useState(null);
     const handlePresentPoliceStationChange = (selectedOption) => {
-      setSelectedPresentPoliceStation(selectedOption); 
+      setSelectedPresentPoliceStation(selectedOption);
     };
-    
-    const [selectedPermanentDistrict, setSelectedPermanentDistrict] = useState(null); 
+
+    const [selectedPermanentDistrict, setSelectedPermanentDistrict] = useState(null);
     const handlePermanentDistrictChange = (selectedOption) => {
-        setSelectedPermanentDistrict(selectedOption); 
+        setSelectedPermanentDistrict(selectedOption);
     };
-    
-    const [selectedPermanentPoliceStation, setSelectedPermanentPoliceStation] = useState(null); 
+
+    const [selectedPermanentPoliceStation, setSelectedPermanentPoliceStation] = useState(null);
     const handlePermanentPoliceStationChange = (selectedOption) => {
-      setSelectedPermanentPoliceStation(selectedOption); 
+      setSelectedPermanentPoliceStation(selectedOption);
     };
-     
 
-    const [selectedMailingDistrict, setSelectedMailingDistrict] = useState(null); 
+
+    const [selectedMailingDistrict, setSelectedMailingDistrict] = useState(null);
     const handleMailingDistrictChange = (selectedOption) => {
-        setSelectedMailingDistrict(selectedOption); 
+        setSelectedMailingDistrict(selectedOption);
     };
-   
 
-    const [selectedMailingPoliceStation, setSelectedMailingPoliceStation] = useState(null); 
+
+    const [selectedMailingPoliceStation, setSelectedMailingPoliceStation] = useState(null);
     const handleMailingPoliceStationChange = (selectedOption) => {
-        setSelectedMailingPoliceStation(selectedOption); 
+        setSelectedMailingPoliceStation(selectedOption);
     };
 
     function onSubmit(data) {
@@ -223,7 +222,6 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
         data.title_id = null;
         data.transport = null;
         data.working_status_id = null;
-        // console.log(data);
         // router.post("/admin/employee/store", data);
     }
 
@@ -429,7 +427,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("company_id")}
                                         options={[
                                             { value: '', label: 'Choose Option...' },
@@ -459,7 +457,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("title_id")}
                                         options={[
                                             { value: '', label: 'Choose Option...' },
@@ -489,7 +487,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("religion_id")}
                                         options={[
                                             { value: '', label: 'Choose Option...' },
@@ -610,7 +608,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                     <label>
                                         Present Police Station
                                     </label>
-                                    {/* <select 
+                                    {/* <select
                                         {...register("pr_police_station",{ required: "Present Police Station is required" })}
                                         onChange={(e) => presentThanaSelect(e.target.value)}
                                     >
@@ -928,7 +926,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="AB+">AB+</option>
                                         <option value="AB-">AB-</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("blood_group")}
                                         defaultValue={{ label: "A+", value: "A+" }}
                                         options={[
@@ -965,7 +963,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("is_printed")}
                                         defaultValue={{ label: "Yes", value: "1" }}
                                         options={[
@@ -1021,7 +1019,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("department_id")}
                                         onChange={(selectedOption) => {
                                             // Handle the selected option as needed, e.g., pass it to sectionSelect
@@ -1049,7 +1047,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("section_id")}
                                         options={sectionOptions}
                                         placeholder="Choose Option..."
@@ -1073,7 +1071,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("designation_id")}
                                         options={designationOptions}
                                         placeholder="Choose Option..."
@@ -1099,7 +1097,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("working_status_id")}
                                         options={workingStatusOptions}
                                         placeholder="Choose Option..."
@@ -1128,7 +1126,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("bank_id")}
                                         options={bankOptions}
                                         placeholder="Choose Option..."
@@ -1162,7 +1160,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                             </option>
                                         ))}
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("report_to")}
                                         options={userOptions}
                                         placeholder="Choose Option..."
@@ -1194,7 +1192,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="1">Overtime Eligibility</option>
                                         <option value="0">Overtime Not Eligibility</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("overtime")}
                                         options={overtimeOptions}
                                         defaultValue={overtimeOptions[0]} // Set the default value
@@ -1222,7 +1220,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="1">Transport Eligibility</option>
                                         <option value="0">Transport Not Eligibility</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("transport")}
                                         options={transportOptions}
                                         defaultValue={transportOptions[0]} // Set the default value
@@ -1254,7 +1252,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="1">Late Allow Eligibility</option>
                                         <option value="0">Late Allow Not Eligibility</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("late_allow")}
                                         options={lateAllowOptions}
                                         defaultValue={lateAllowOptions[0]} // Set the default value
@@ -1273,7 +1271,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("pay_scale")}
                                         options={payScaleOptions}
                                         defaultValue={payScaleOptions[0]} // Set the default value
@@ -1314,7 +1312,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="P">P</option>
                                         <option value="A">A</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("confirm_probation")}
                                         options={confirmProbationOptions}
                                         defaultValue={confirmProbationOptions[0]} // Set the default value
@@ -1333,7 +1331,7 @@ function Add({companies,users,titles,religions,bangladesh,department,section,des
                                         <option value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select> */}
-                                    <Select 
+                                    <Select
                                         {...register("confirm_period")}
                                         options={confirmPeriodOptions}
                                         defaultValue={confirmPeriodOptions[0]} // Set the default value

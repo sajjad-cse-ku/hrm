@@ -25,9 +25,10 @@ class OrgCalenderController extends Controller
     }
     public function store(OrgCalenderRequest $request){
         $result = $this->org_calender->store($request);
-        if($result['status']== true){
-            // return back()->with('success', $result['message']);
+        if($result['status'] === true){
             return to_route('admin.org_calender')->with('success', $result['message']);
+        }elseif($result['status']== 'same'){
+            return back()->with('error', $result['message']);
         }else{
             return back()->with('error', 'Data Does not Insert');
         }
@@ -38,10 +39,10 @@ class OrgCalenderController extends Controller
     }
     public function update(Request $request){
         $result=$this->org_calender->update($request);
-        if($result['status']== true){
-            return back()->with('success', $result['message']);
+        if($result['status'] === true){
             return to_route('admin.org_calender')->with('success', $result['message']);
-
+        }elseif($result['status']== 'same'){
+            return back()->with('error', $result['message']);
         }else{
             return back()->with('error', 'Data Does not Insert');
         }

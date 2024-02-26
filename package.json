@@ -21,12 +21,17 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.11",
+    "@fullcalendar/interaction": "^6.1.11",
+    "@fullcalendar/react": "^6.1.11",
+    "@fullcalendar/timegrid": "^6.1.11",
     "@inertiajs/react": "^1.0.11",
     "@mantine/core": "^5.10.5",
     "@tippyjs/react": "^4.2.6",
     "@vitejs/plugin-react": "^4.0.4",
     "apexcharts": "^3.37.1",
     "carbon": "^0.5.0",
+    "date-fns": "^3.3.1",
     "html-react-parser": "^4.2.2",
     "mantine-datatable": "^1.7.17",
     "react": "^18.2.0",

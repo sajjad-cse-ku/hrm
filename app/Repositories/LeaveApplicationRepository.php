@@ -7,6 +7,7 @@ use App\Models\LeaveApplication;
 use App\Models\LeaveCategory;
 use App\Models\LeaveRegister;
 use App\Models\PublicHoliday;
+use App\Models\SiteSettings;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -25,20 +26,30 @@ class LeaveApplicationRepository {
             $this->myLeaveData($id);
         }
         $c_year = date("Y");
-        return LeaveRegister::with('user','user.personaldata','user.professionaldata.designation','user.professionaldata.department','leavecategory')->where('user_id',$id)->where('leave_year',$c_year)->latest()->get();
-//        return $this->model::all();
+        return LeaveRegister::with('user','user.personaldata','user.professionaldata.designation','user.professionaldata.department','leavecategory')
+            ->where('user_id',$id)
+            ->where('leave_year',$c_year)
+            ->whereHas('leavecategory', function ($query) {
+                $query->where('status', 1);
+            })
+            ->latest()
+            ->get();
     }
     public function store($request){
         return $this->storeOrUpdate($request , $action="save");
     }
-    public function edit(int $id){
+    public function edit(int $id, int $leaveId){
         $c_year = date("Y");
-        return LeaveRegister::with('leavecategory')->where('id',$id)->where('leave_year',$c_year)->first();
+        return LeaveRegister::with('leavecategory')->where('user_id',$id)->where('leave_id',$leaveId)->where('leave_year',$c_year)->first();
     }
 
-    public function apply(int $id){
+    public function apply(int $id , int $leaveId){
+
         $c_year = date("Y");
-        $leave = LeaveRegister::with('leavecategory','user','user.personaldata','user.professionaldata','user.professionaldata.designation')->where('user_id',$id)->where('leave_year',$c_year)->first();
+        $leave = LeaveRegister::with('leavecategory','user','user.personaldata','user.professionaldata','user.professionaldata.designation')
+            ->where('user_id',$id)
+            ->where('leave_id',$leaveId)
+            ->where('leave_year',$c_year)->first();
         if (in_array($leave->leave_id, [1, 2, 3])) {
             if($leave->leave_balance > 0){
                 return ['status'=>true , 'leave'=>$leave];
@@ -64,6 +75,7 @@ class LeaveApplicationRepository {
         }
     }
     public function applyProcess($request){
+//        dd($request->all());
 
         $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');
         $c_year = date("Y");
@@ -74,33 +86,39 @@ class LeaveApplicationRepository {
         }else{
             $leave_attachment = '';
         }
-        if($leave_balance->leave_balance < $request->nods){
-            return ['status'=>true , 'message'=>'You have input more days than your vacation'];
-        }else{
-            $recommended_id = EmployeePosting::where('user_id',$request->user_id)->first();
-            LeaveApplication::create([
-                'company_id'=>$companyId,
-                'created_by'=>Auth::user()->id,
-                'leave_id'=>$request->leave_id,
-                'user_id'=>$request->user_id,
-                'alternate_id'=>$request->alternative_id,
-                'recommend_id'=>$recommended_id->report_to??Auth::id(),
-                'leave_year'=>$request->leave_year,
-                'from_date'=>$request->from_date,
-                'to_date'=>$request->to_date,
-                'nods'=>$request->nods,
-                'duty_date'=>$request->duty_date,
-                'reason'=>$request->reason,
-                'leave_attachment'=>$leave_attachment,
-                'location'=>$request->location,
-            ]);
-            return ['status'=>true , 'message'=>'Leave Application Apply Successfully'];
+
+        if (in_array($request->leave_id, [1, 2, 3])) {
+            if ($leave_balance->leave_balance < $request->days) {
+                return ['status' => true, 'message' => 'You have input more days than your vacation'];
+            }
         }
+
+        $recommended_id = EmployeePosting::where('user_id', $request->user_id)->first();
+
+        LeaveApplication::create([
+            'company_id' => $companyId,
+            'created_by' => Auth::user()->id,
+            'leave_id' => $request->leave_id,
+            'user_id' => $request->user_id,
+            'alternate_id' => $request->alternative_id ?? Auth::id(),
+            'recommend_id' => $recommended_id->report_to,
+            'leave_year' => $request->leave_year,
+            'from_date' => $request->from_date,
+            'to_date' => $request->to_date,
+            'nods' => $request->nods,
+            'duty_date' => $request->duty_date,
+            'reason' => $request->reason,
+            'leave_attachment' => $leave_attachment,
+            'location' => $request->location,
+        ]);
+
+        return ['status' => true, 'message' => 'Leave Application Apply Successfully'];
+
 
     }
 
     public function update($request){
-        LeaveRegister::where('id',$request->id)->update([
+        LeaveRegister::where('user_id',$request->user_id)->where('leave_id',$request->leave_id)->update([
             'leave_eligible' => $request->leave_eligible,
              'leave_balance' => DB::raw($request->leave_eligible . '- leave_enjoyed')
         ]);
@@ -113,10 +131,8 @@ class LeaveApplicationRepository {
                  return ['status'=>true , 'message'=>'Leave Category Delete successfully'];
             }
          } catch (\Throwable $th) {
-            //throw $th;
             return ['status' => false, 'errors' =>  $th->getMessage()];
          }
-
     }
     public function status($id){
         try {
@@ -136,37 +152,41 @@ class LeaveApplicationRepository {
         }
     }
     public function requestedUser(){
+        $currentYear = now()->year;
         $user = User::with('professionaldata')->where('id',Auth::id())->first();
         $departmentId = $user->professionaldata->department_id;
-        $commonUserIds = User::join('leave_applications', 'users.id', '=', 'leave_applications.user_id')
-            ->join('leave_categories', 'leave_applications.leave_id', '=', 'leave_categories.id') // Join with leave_category
-            ->whereHas('professionaldata', function ($query) use ($departmentId) {
-                $query->where('department_id', $departmentId);
-            })
-            ->where('leave_applications.status', 'R')
-            ->get()->toArray();
-        return $commonUserIds;
 
+        return $commonUserIds = LeaveApplication::with('user','leavecategory')
+            ->where('leave_applications.status', 'R')
+            ->where('leave_year', $currentYear)
+            ->get();
     }
 
 
     public function leaveAcknowledge(){
+        $currentYear = now()->year;
         return $leaveAcknowledge = LeaveApplication::with('user','leavecategory')
             ->where('status','C')
+            ->where('leave_year', $currentYear)
             ->where('alternate_id',Auth::id())->get();
     }
 
     public function reportTo(){
+        $currentYear = now()->year;
         return $leaveAcknowledge = LeaveApplication::with('user','leavecategory')
             ->where('status','AK')
-            ->where('alternate_id',Auth::id())->get();
+            ->where('leave_year', $currentYear)
+            ->where('recommend_id',Auth::id())->get();
     }
 
-
     public function approved($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         if ($user){
-            $leave_balance = LeaveRegister::where('user_id',$id)->first();
+            $leave_balance = LeaveRegister::where('user_id',$user->user_id)->first();
+            if($leave_balance->leave_balance < $user->nods ){
+                return ['status' => false, 'message' => 'No of days is bigger that leave balance'];
+            }
+
             $leave_balance->update([
                 'leave_enjoyed'=>$leave_balance->leave_enjoyed + $user->nods,
                'leave_balance'=>$leave_balance->leave_balance - $user->nods,
@@ -182,59 +202,56 @@ class LeaveApplicationRepository {
         }
     }
     public function rejected($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         $user->update(['status' => 'L']);
         return ['status' => true, 'message' => 'Application Cancelled Successfully'];
     }
 
     public function approvedByAlternate($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         $user->update(['status' => 'AK']);
         return ['status' => true, 'message' => 'Application Approved Successfully'];
     }
 
     public function rejectedByAlternate($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         $user->update(['status' => 'CA']);
         return ['status' => true, 'message' => 'Application Cancelled Successfully'];
     }
 
     public function approvedByReportTo($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         $user->update(['status' => 'R']);
         return ['status' => true, 'message' => 'Application Approved Successfully'];
     }
 
     public function rejectedByReportTo($id){
-        $user = LeaveApplication::where('user_id', $id)->first();
+        $user = LeaveApplication::where('id', $id)->first();
         $user->update(['status' => 'D']);
         return ['status' => true, 'message' => 'Application Cancelled Successfully'];
     }
 
-
-
-
     public function myLeaveData($id){
-        $c_year = date("Y");
-        $is_exist = LeaveRegister::where('id', $id)->where('leave_year',$c_year)->exists();
-        $companyId = \App\Models\User::where('id', $id)->value('company_id');
 
+        $sick_leave = SiteSettings::first();
+
+        $c_year = date("Y");
+        $is_exist = LeaveRegister::where('user_id', $id)->where('leave_year',$c_year)->exists();
+        $companyId = \App\Models\User::where('id', $id)->value('company_id');
         $currentDate = Carbon::now();
         $previousYear = $currentDate->subYear();
         $lastDateOfPreviousYear = $previousYear->endOfYear();
         $end_date = $lastDateOfPreviousYear->format('Y-m-d');
 
-        if (!$is_exist) {
-            return back();
-        }
+//        if ($is_exist) {
+//            return back();
+//        }
             $employees = User::with('personaldata','professionaldata')->where('company_id', $companyId)
                 ->where('id', $id)->first();
 
             $emp_leaves = LeaveCategory::where('company_id', $companyId)->get();
-
-
-
             foreach ($emp_leaves as $row) {
+
                 if (!LeaveRegister::where('user_id', $id)
                     ->where('leave_id', $row->id)->where('leave_year', $c_year)
                     ->exists()) {
@@ -258,14 +275,14 @@ class LeaveApplicationRepository {
             if ($join_date < $end_date) {
                 $end_day = Carbon::parse($end_date);
                 $w_day = $end_day->diffInDays($process_day);
-                $casaul = intval($w_day / 36);
-                $sick = intval($w_day / 26);
+                $casaul = intval($w_day / $sick_leave->value('casual'));
+                $sick = intval($w_day / $sick_leave->value('sick'));
             } else {
                 $join_day = Carbon::parse($join_date);
                 $w_d = $join_day->diffInDays($process_day);
                 $w_day = $w_d + 1;
-                $casaul = intval($w_day / 36);
-                $sick = intval($w_day / 26);
+                $casaul = intval($w_day / $sick_leave->value('casual'));
+                $sick = intval($w_day / $sick_leave->value('sick'));
             }
 
             foreach ($emp_leaves as $row) {

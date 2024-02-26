@@ -16,13 +16,10 @@ class RosterRepository {
     public function getAll(){
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
-         return $this->model::where(function ($query) use ($currentYear, $currentMonth) {
-            $query->where('r_year', '>=', $currentYear)
-                ->orWhere(function ($query) use ($currentYear, $currentMonth) {
-                    $query->where('r_year', $currentYear)
-                        ->where('month_id', '=<', $currentMonth);
-                });
-        })->pluck('user_id');
+
+        return $this->model::where('r_year', '=', $currentYear)
+            ->where('month_id', '=', $currentMonth)
+            ->pluck('user_id');
     }
     public function store($request){
         return $this->storeOrUpdate($request , $action="save");

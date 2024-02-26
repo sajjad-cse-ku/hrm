@@ -4,6 +4,8 @@ import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 import axios from "axios";
 import {useForm} from "react-hook-form";
+import Select from "react-select";
+import { components } from "react-select";
 
 function Add() {
     const {  flash ,user_id , errors,departments ,sections, users } = usePage().props;
@@ -20,10 +22,20 @@ function Add() {
             console.error(error);
         }
     };
+    const handleSelectUser = (selectedOption) => {
+        const userId = selectedOption.value;
+        setValue("report_to", userId);
+    };
+    const handleDepartmentChange = (selectedOption) => {
+        setValue("department_id", selectedOption.value);
+    };
+    const handleSectionChange = (selectedOption) => {
+        setValue("section_id", selectedOption.value);
+    };
     function onSubmit(data) {
-        // console.log(data);
          router.post("/admin/employee_posting/store", data);
     }
+
     return (
         <>
             <FlashMessage flash={flash} />
@@ -84,60 +96,46 @@ function Add() {
                                     <label>
                                        Department
                                     </label>
-                                    <select
-                                        // id="department_id"
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={departments.map((item) => ({
+                                            value: item.id,
+                                            label: item.name || '',
+                                        }))}
                                         {...register("department_id")}
-                                        onChange={(e) => sectionSelect(e.target.value)}
-                                    >
-                                        <option value="">Choose...</option>
-                                        {departments.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        onChange={(selectedOption) => {
+                                            handleDepartmentChange(selectedOption);
+                                            sectionSelect(selectedOption.value);
+                                        }}
+                                    />
                                 </div>
                                 <div>
                                     <label>
                                         Section
                                     </label>
-                                    <select
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={isSection.map((item) => ({
+                                            value: item.id,
+                                            label: item.name,
+                                        }))}
                                         {...register("section_id")}
-                                    >
-                                        <option value="">Choose Option...</option>
-                                        {isSection.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        onChange={(selectedOption) => handleSectionChange(selectedOption)}
+                                    />
                                 </div>
                                 <div>
                                     <label>
                                         Report To
                                     </label>
-                                    <select
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={users.map((item) => ({
+                                            value: item.id,
+                                            label: `${item.first_name} - ${item.id}`,
+                                        }))}
                                         {...register("report_to")}
-                                    >
-                                        <option value="">Choose Option...</option>
-                                        {users.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.first_name} - {item.id}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        onChange={handleSelectUser}
+                                    />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -197,7 +195,7 @@ function Add() {
                                         // onChange={handleChange}
                                     ></textarea>
                                 </div>
-                                </div>
+                            </div>
 
                             <div>
                                 <button
@@ -216,7 +214,7 @@ function Add() {
 }
 
 Add.layout = (page) => (
-    <MainLayout children={page} title="HR || Add Title" />
+    <MainLayout children={page} title="HR || Add Posting" />
 );
 
 export default Add;

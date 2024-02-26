@@ -16,7 +16,10 @@ class NoticeRepository {
     }
 
     public function getAll(){
-        return $this->model::with('company')->get();
+        $currentYear = now()->year;
+        return $this->model::with('company')
+            ->whereYear('notice_date', $currentYear)
+            ->get();
     }
     public function store($request){
         return $this->storeOrUpdate($request , $action="save");

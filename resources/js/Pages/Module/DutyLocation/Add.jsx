@@ -6,11 +6,11 @@ import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 
 function Add({ group_company_list }) {
-    const { flash } = usePage().props;
+    const {  flash } = usePage().props;
     const { errors } = usePage().props;
     const [values, setValues] = useState({
         location: "",
-        description: "",
+        description:""
     });
 
     function handleChange(e) {
@@ -26,8 +26,8 @@ function Add({ group_company_list }) {
         router.post("/admin/duty_locations/store", values);
         setValues({
             location: "",
-            description: "",
-        });
+            description:""
+        })
     }
     return (
         <>
@@ -76,16 +76,13 @@ function Add({ group_company_list }) {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >
                             <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                 <div>
-                                    <label>
-                                        Location
-                                        <span className="text-red-600 ">*</span>
-                                    </label>
+                                    <label>Location<span className="text-red-600 ">*</span></label>
                                     <input
                                         id="location"
                                         type="text"

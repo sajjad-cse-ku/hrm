@@ -73,16 +73,18 @@ function Index() {
                                         <td>{result?.reason}</td>
                                         <td className="text-center">
                                             <div className="flex items-center w-max mx-auto gap-2">
-                                                {permissions.includes('leave-acknowledge-update') || permissions.includes('super-admin') &&
-                                                    <Link href={`${base_url}/admin/leave_application/approved-by-alternate/`+result.user_id} method="get" className="btn btn-sm btn-outline-success">
+                                                {permissions.includes('leave-acknowledge-update') || permissions.includes('super-admin') ? (
+                                                    <Link href={`${base_url}/admin/leave_application/approved-by-alternate/`+result.id} method="get" className="btn btn-sm btn-outline-success">
                                                         Acknowledge
                                                     </Link>
+                                                    ) : null
                                                 }
 
-                                                {permissions.includes('leave-acknowledge-update') || permissions.includes('super-admin') &&
-                                                    <Link href={`${base_url}/admin/leave_application/rejected-by-alternate/`+result.user_id} method="get" className="btn btn-sm btn-outline-danger">
+                                                {permissions.includes('leave-acknowledge-update') || permissions.includes('super-admin') ? (
+                                                    <Link href={`${base_url}/admin/leave_application/rejected-by-alternate/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
                                                         Reject
                                                     </Link>
+                                                    ) : null
                                                 }
                                             </div>
                                         </td>

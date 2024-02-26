@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Console\Commands;
+use App\Models\RosterAssign;
 use App\Models\Shift;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -41,11 +42,12 @@ class AttendanceCron extends Command
      */
     public function handle()
     {
+        Log::info("attancdance details execution");
         date_default_timezone_set('Asia/Dhaka');
         $allow_minute = SiteSettings()->extra_time;
         $currentYear = date('Y');
         $currentMonth = date('m');
-        $currentDate = $request->set_date ?? Carbon::now()->toDateString();
+        $currentDate = Carbon::now()->toDateString();
         $currentDay = Carbon::parse($currentDate)->day;
         $currentOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
@@ -53,17 +55,17 @@ class AttendanceCron extends Command
 
         $companies = Company::with('user')->where('status', 1)->get();
         $isData = PunchDetails::whereDate('attendance_datetime',$currentDate)->get();
-        $general_time = Shift::where('id', 2)->first();
+        $general_time = Shift::where('id', SiteSettings()->general_shift)->first();
 
         if(count($isData) > 0){
             foreach ($companies as $company) {
 
                 $public_holiday = $this->getCompnayBasePublicHoliDays($currentOfMonth,$endOfMonth,$currentDate,$company->id);
-                $userAttendanceData = $this->userAttendanceData($company,$currentDate);
+                $userAttendanceData = $this->userAttendanceData($company,$currentDate,$currentOfMonth,$endOfMonth);
                 // New loop Add for testing
                 foreach ($userAttendanceData as $attendanceData) {
                     $user = $attendanceData['user'];
-                    $leaves = $attendanceData['leaves'];
+                    $leaves = $attendanceData['leaves']->where('status','A');
                     //Rostar and Shift Data
                     $userWithRoster = $this->userWithRoster($currentYear,$currentMonth,$user->id,$currentDay,$general_time);
                     $shift_id = $userWithRoster['shift_id'] ;
@@ -72,10 +74,24 @@ class AttendanceCron extends Command
                     $getUserLateData = $this->getUserLateData($shift_id,$userWithRoster['shift_entry_time'] ,$allow_minute,$enrtyExitData['entry_time'],$userWithRoster['shift_exit_time'],$enrtyExitData['exit_time'],$user);
 
                     $leave_flag = isset($leaves->id) ? 1 : 0;
-                    $leave_id = isset($leaves->id) ? 1 : 0;
-                    $offday_flag = $shift_id == 1 ? 1 : 0;
+                    $leave_id = $leaves->isNotEmpty() ? $leaves->first()->leave_id : 0;
+                    $days_name = RosterAssign::where('user_id', $user->id)->pluck('name');
+                    $days_name_array = $days_name->toArray();
+                    $currentDayName = Carbon::now()->format('D');
+
+                    if(isset($days_name_array)){
+                        if (in_array(strtolower($currentDayName), $days_name_array)) {
+                            $offday_flag  = 1;
+                        }else {
+                            $offday_flag = $shift_id == 1 ? 1 : 0;
+                        }
+                    }else{
+                        $offday_flag  = 1;
+                    }
+
                     $offday_present = ($offday_flag == 1 && $user->id) ? 1 : 0;
                     // Data Insert Or Update
+                    Log::info( $user->id . "attancdance insert start");
                     $this->attendanceDataDbInsert($user,$enrtyExitData,$userWithRoster,$getUserLateData,$leave_flag,$leave_id,$public_holiday,$offday_flag,$offday_present,$created_by,$currentDate);
 
                 }
@@ -87,55 +103,71 @@ class AttendanceCron extends Command
                 $public_holiday = $this->getCompnayBasePublicHoliDays($currentOfMonth,$endOfMonth,$currentDate,$company->id);
                 if($public_holiday != NULL){
                     foreach ($company->user as $user) {
+                        Log::info( $user->id . "attancdance insert start");
                         $this->publicHoliDayDataInsert($user,$currentDate,$created_by,$public_holiday);
                     }
                 }
             }
         }
+        Log::info("attancdance details execution end");
 
     }
 
     public function attendanceDataDbInsert($user,$enrtyExitData,$userWithRoster,$getUserLateData,$leave_flag,$leave_id,$public_holiday,$offday_flag,$offday_present,$created_by,$currentDate){
-
+        Log::info("attancdance insert funtion");
         try {
             DB::beginTransaction();
-            $save = Attendance::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
-                ],
-                [
-                    'company_id' => $user->company_id,
-                    'created_by' => $created_by,
-                    'user_id' => $user->id,
-                    'department_id' => $user->professionaldata->department_id,
-                    'device_id' => 1,
-                    'attendance_datetime' => $enrtyExitData['attend_date'] ?? null,
-                    'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
-                    'entry_date' => $enrtyExitData['entry_date'] ?? null,
-                    'entry_time' => $enrtyExitData['entry_time'] ?? null,
-                    'shift_entry_time' => $userWithRoster['shift_entry_time'] ?? null,
-                    'exit_date' => $enrtyExitData['exit_date'] ?? null,
-                    'exit_time' => $enrtyExitData['exit_time'] ?? null,
-                    'shift_exit_time' => $userWithRoster['shift_exit_time'] ?? null,
-                    'attend_status' => $enrtyExitData['attend_status'] ?? 0,
-                    'night_duty' => $enrtyExitData['night_duty'] ?? 0,
-                    'late_flag' => $getUserLateData['late_flag'] ?? 0,
-                    'late_allow' => $getUserLateData['late_allow'] ?? 0,
-                    'late_minute' => $getUserLateData['late_minute'] ?? 0,
-                    'over_time' => $getUserLateData['over_time'] ?? 0,
-                    'overtime_hour' => $getUserLateData['overtime_hour'] ?? 0,
-                    'leave_flag' => $leave_flag,
-                    'leave_id' => $leave_id,
-                    'holiday_flag' => count($public_holiday) == 0 ? 0 : 1,
-                    'offday_flag' => $offday_flag,
-                    'offday_present' => $offday_present,
-                    'shift_id' => $userWithRoster['shift_id'] ?? null,
-                ]
-            );
-            if ($save) {
+            $existingData = Attendance::where('user_id', $user->id)
+            ->where('attend_date', $currentDate)
+            ->first();
+
+            if (
+                isset($existingData) && isset($existingData['attend_status']) && $existingData['attend_status'] === "R"
+                // ($existingData['manual_update'] ?? null) === 1
+            ) {
                 DB::commit();
+                return false;
             }
+            else{
+                $save = Attendance::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
+                    ],
+                    [
+                        'company_id' => $user->company_id,
+                        'created_by' => $created_by,
+                        'user_id' => $user->id,
+                        'department_id' => $user->professionaldata->department_id ?? 1,
+                        'device_id' => 1,
+                        'attendance_datetime' => $enrtyExitData['attend_date'] ?? null,
+                        'attend_date' => $currentDate ?? $enrtyExitData['attend_date'],
+                        'entry_date' => $enrtyExitData['entry_date'] ?? null,
+                        'entry_time' => $enrtyExitData['entry_time'] ?? null,
+                        'shift_entry_time' => $userWithRoster['shift_entry_time'] ?? null,
+                        'exit_date' => $enrtyExitData['entry_date'] === $enrtyExitData['exit_date'] ? null : $enrtyExitData['exit_date'],
+                        'exit_time' => $enrtyExitData['entry_time'] === $enrtyExitData['exit_time'] ? null : $enrtyExitData['exit_time'],
+                        'shift_exit_time' => $userWithRoster['shift_exit_time'] ?? null,
+                        'attend_status' => $enrtyExitData['attend_status'] ?? 0,
+                        'night_duty' => $enrtyExitData['night_duty'] ?? 0,
+                        'late_flag' => ($existingData != null && $existingData->manual_late_allow) == 1 ? 0 : $getUserLateData['late_flag'] ?? 0,
+                        'late_allow' => $getUserLateData['late_allow'] ?? 0,
+                        'late_minute' => $getUserLateData['late_minute'] ?? 0,
+                        'over_time' => $getUserLateData['over_time'] ?? 0,
+                        'overtime_hour' => $getUserLateData['overtime_hour'] ?? 0,
+                        'leave_flag' => $leave_flag,
+                        'leave_id' => $leave_id,
+                        'holiday_flag' => count($public_holiday) == 0 ? 0 : 1,
+                        'offday_flag' => $offday_flag,
+                        'offday_present' => $offday_present,
+                        'shift_id' => $userWithRoster['shift_id'] ?? null,
+                    ]
+                );
+                if ($save) {
+                    DB::commit();
+                }
+            }
+
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
@@ -155,12 +187,23 @@ class AttendanceCron extends Command
         return $public_holiday;
     }
 
-    public function userAttendanceData($company,$currentDate){
+    public function userAttendanceData($company,$currentDate,$currentOfMonth,$endOfMonth){
 
         $userAttendanceData = []; // Array to store user attendance data
         foreach ($company->user as $user) {
             $punches = $user->punches()->whereDate('attendance_datetime', $currentDate)->get();
-            $leaves = $user->leaveapplication()->whereDate('from_date', $currentDate)->first();
+
+
+            $l_events = $user->leaveapplication()->where(function ($query) use ($currentOfMonth, $endOfMonth) {
+                $query->where('from_date', '<=', $endOfMonth)
+                    ->where('to_date', '>=', $currentOfMonth);
+            })->get();
+
+            $leaves = $l_events->filter(function ($event) use ($currentDate) {
+                return $event->from_date <= $currentDate && $event->to_date >= $currentDate;
+            });
+
+
             if (isset($punches)) {
                 $minAttendanceDetails = $punches->min('attendance_datetime');
                 $maxAttendanceDetails = $punches->max('attendance_datetime');
@@ -236,7 +279,8 @@ class AttendanceCron extends Command
         }
 
         $attend_status = $min_attendance_datetime != null ? 'P' : ($shift_id == 1 ? 'O' : (isset($leaves->id )? 'L' : 'A'));
-        $night_duty = in_array($shift_id, [5,9,11]) ? $shift_id : 0;
+//        $night_duty = in_array($shift_id,SiteSettings()->night_shift) ? $shift_id : SiteSettings()->general_shift;
+        $night_duty = in_array($shift_id, [5,9,11]) ? 1 : 0;
 
         $result['attend_date'] = $attend_date;
         $result['entry_date'] = $entry_date;
@@ -279,42 +323,54 @@ class AttendanceCron extends Command
     public function publicHoliDayDataInsert($user,$currentDate,$created_by,$public_holiday){
         try {
             DB::beginTransaction();
-            $save = Attendance::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'attend_date'=> $currentDate,
-                ],
-                [
-                    'company_id'=>$user->company_id,
-                    'created_by'=> $created_by,
-                    'user_id'=>$user->id,
-                    'department_id'=>$user->professionaldata->department_id,
-                    'device_id'=> 1 ,
-                    'attendance_datetime'=> null,
-                    'attend_date'=> $currentDate ,
-                    'entry_date'=> null,
-                    'entry_time'=> null,
-                    'shift_entry_time'=> null ,
-                    'exit_date'=> null ,
-                    'exit_time'=> null ,
-                    'shift_exit_time'=>  null ,
-                    'attend_status'=> "O" ,
-                    'night_duty'=> 0 ,
-                    'late_flag'=>0 ,
-                    'late_allow'=> 0 ,
-                    'late_minute'=> 0 ,
-                    'over_time'=> 0 ,
-                    'overtime_hour'=> 0 ,
-                    'leave_flag'=> 0 ,
-                    'leave_id'=>0 ,
-                    'holiday_flag'=>count($public_holiday) == 0 ? 0 : 1,
-                    'offday_flag'=> 1 ,
-                    'offday_present'=>1,
-                    'shift_id'=> null,
-                ]);
-            if($save){
+
+            $existingData = Attendance::where('user_id', $user->id)
+                ->where('attend_date', $currentDate)
+                ->first();
+
+            if (isset($existingData) && isset($existingData['attend_status']) && $existingData['attend_status'] === "R") {
                 DB::commit();
+                return false;
             }
+            else{
+                $save = Attendance::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'attend_date'=> $currentDate,
+                    ],
+                    [
+                        'company_id'=>$user->company_id,
+                        'created_by'=> $created_by,
+                        'user_id'=>$user->id,
+                        'department_id'=>$user->professionaldata->department_id ?? 1,
+                        'device_id'=> 1 ,
+                        'attendance_datetime'=> null,
+                        'attend_date'=> $currentDate ,
+                        'entry_date'=> null,
+                        'entry_time'=> null,
+                        'shift_entry_time'=> null ,
+                        'exit_date'=> null ,
+                        'exit_time'=> null ,
+                        'shift_exit_time'=>  null ,
+                        'attend_status'=> "O" ,
+                        'night_duty'=> 0 ,
+                        'late_flag'=>0 ,
+                        'late_allow'=> 0 ,
+                        'late_minute'=> 0 ,
+                        'over_time'=> 0 ,
+                        'overtime_hour'=> 0 ,
+                        'leave_flag'=> 0 ,
+                        'leave_id'=>0 ,
+                        'holiday_flag'=>count($public_holiday) == 0 ? 0 : 1,
+                        'offday_flag'=> 1 ,
+                        'offday_present'=>1,
+                        'shift_id'=> null,
+                    ]);
+                if($save){
+                    DB::commit();
+                }
+            }
+
         }
         catch (\Exception $e) {
             DB::rollback();

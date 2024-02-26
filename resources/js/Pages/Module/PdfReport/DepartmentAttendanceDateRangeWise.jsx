@@ -28,7 +28,6 @@ function DepartmentAttendanceDateRangeWise() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.get("/admin/department-attendance/date-range-wise-report",values);
     }
     return (

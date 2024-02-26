@@ -75,7 +75,7 @@ function CustomLateAllow() {
                     </li>
                 </ul>
             </div>
-            <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
+            <div className="pt-5 grid lg:grid-cols-2 grid-cols-1 gap-6">
                 <div className="panel" id="forms_grid">
                     <div className="flex items-center justify-between mb-5">
                         <h5 className="font-semibold text-lg dark:text-white-light">
@@ -84,7 +84,7 @@ function CustomLateAllow() {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >

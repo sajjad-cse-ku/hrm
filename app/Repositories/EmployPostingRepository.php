@@ -31,7 +31,7 @@ class EmployPostingRepository {
         try {
             $result=$this->edit($id)->delete();
             if($result){
-                 return ['status'=>true , 'message'=>'Employee Education Delete successfully'];
+                 return ['status'=>true , 'message'=>'Employee Posting Delete successfully'];
             }
          } catch (\Throwable $th) {
             //throw $th;
@@ -58,7 +58,6 @@ class EmployPostingRepository {
     }
     protected function storeOrUpdate($request, $action)
     {
-
         $professional = EmployeeProfessional::where('user_id', $request->user_id)->update([
             'department_id'=>$request->department_id,
             'section_id'=>$request->section_id,
@@ -83,7 +82,7 @@ class EmployPostingRepository {
                    ]
                 );
             if ($data) {
-                $message = $action == "save" ?"Employee Education Save Successfully" :"Employee Education Update Successfully";
+                $message = $action == "save" ?"Employee Posting Save Successfully" :"Employee Posting Update Successfully";
                 return ['status' => true, 'message' => $message,];
             }
 

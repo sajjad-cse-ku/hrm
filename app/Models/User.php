@@ -60,7 +60,7 @@ class User extends Authenticatable
     }
 
     public function professionaldata(){
-        return $this->hasOne(EmployeeProfessional::class,'user_id');
+        return $this->hasOne(EmployeeProfessional::class);
     }
 
     public function posting(){
@@ -99,6 +99,25 @@ class User extends Authenticatable
     }
     public function education(){
         return $this->hasMany(EmployeeEducation::class,'user_id');
+    }
+    public function breaktime(){
+        return $this->hasMany(BreakTime::class,'user_id');
+    }
+
+    public function task()
+    {
+        return $this->belongsToMany(TaskManagement::class, 'user_task', 'user_id', 'task_id');
+    }
+    public function salary(){
+        return $this->hasOne(SalarySetup::class,'user_id');
+    }
+    public function arears(){
+        return $this->hasOne(Arears::class,'user_id');
+    }
+
+    public function monthlysalary()
+    {
+           return $this->hasOne(MonthlySalary::class,'user_id');
     }
 
 }

@@ -34,7 +34,6 @@ function EmployeeLeaveApplication() {
     }));
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.get("/admin/emp-leave-report",values);
     }
     return (

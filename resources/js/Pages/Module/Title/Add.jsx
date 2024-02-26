@@ -76,7 +76,7 @@ function Add({ group_company_list }) {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >

@@ -164,7 +164,7 @@ function Index() {
                                                                                             <th key={dayOfWeek}>{dayOfWeek} - {weeks[weekNumber][dayOfWeek]}</th>
                                                                                         ))}
                                                                                         <th>Location</th>
-                                                                                        <th>Action</th>
+                                                                                        {/*<th>Action</th>*/}
                                                                                     </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -172,7 +172,7 @@ function Index() {
                                                                                         <tr key={idx}>
                                                                                             <td>
                                                                                                 <input type="hidden" value={roster.user.id} {...register(`[${roster.user.id}].user_id`)}/>
-                                                                                                {roster?.user.first_name}  {roster?.user.last_name} -  {roster?.user.id}
+                                                                                                {roster.user.first_name} {roster.user.last_name} - {roster.user.id} {roster?.user?.department?.name}
                                                                                             </td>
                                                                                             {Object.keys(weeks[weekNumber]).map((dayOfWeek) => (
 
@@ -226,15 +226,15 @@ function Index() {
                                                                                                     </select>
                                                                                                 </div>
                                                                                             </td>
-                                                                                            <td>
-                                                                                                <button
-                                                                                                    type="button"
-                                                                                                    className="px-3 py-2 bg-secondary text-white rounded-md text-[15px]"
-                                                                                                    onClick={() => individualUserData(roster.user.id)}
-                                                                                                >
-                                                                                                    Submit
-                                                                                                </button>
-                                                                                            </td>
+                                                                                            {/*<td>*/}
+                                                                                            {/*    <button*/}
+                                                                                            {/*        type="button"*/}
+                                                                                            {/*        className="px-3 py-2 bg-secondary text-white rounded-md text-[15px]"*/}
+                                                                                            {/*        onClick={() => individualUserData(roster.user.id)}*/}
+                                                                                            {/*    >*/}
+                                                                                            {/*        Submit*/}
+                                                                                            {/*    </button>*/}
+                                                                                            {/*</td>*/}
                                                                                         </tr>
                                                                                     ))}
                                                                                     </tbody>

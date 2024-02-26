@@ -14,6 +14,8 @@ use App\Models\Title;
 use App\Models\User;
 use App\Models\WorkingStatus;
 use App\Repositories\EmployeeRepository;
+use App\Exports\EmployeeExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -100,5 +102,8 @@ class EmployeeController extends Controller
     public function status($id){
         $result = $this->employee->status($id);
         return back()->with('success', $result['message']);
+    }
+    public function exportAllEmployee(){
+        return Excel::download(new EmployeeExport, 'employees.xlsx');
     }
 }

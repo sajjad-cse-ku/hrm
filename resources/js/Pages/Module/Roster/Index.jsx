@@ -161,7 +161,7 @@ function Index() {
 
                                                                                                 ))}
                                                                                                 <th>Location</th>
-                                                                                                <th>Action</th>
+                                                                                                {/*<th>Action</th>*/}
                                                                                             </tr>
                                                                                             </thead>
                                                                                             <tbody>
@@ -169,7 +169,8 @@ function Index() {
                                                                                                 <tr key={idx}>
                                                                                                     <td>
                                                                                                         <input type="hidden" value={user.id} {...register(`[${user.id}].user_id`)}/>
-                                                                                                        {user.first_name}  {user.last_name} -  {user.id}
+                                                                                                        {user.first_name} {user.last_name} - {user.id} ({user?.professionaldata?.designation?.name})
+
                                                                                                     </td>
                                                                                                     {Object.keys(weeks[weekNumber]).map((dayOfWeek) => (
                                                                                                         <td key={dayOfWeek}>
@@ -217,15 +218,15 @@ function Index() {
                                                                                                             </select>
                                                                                                         </div>
                                                                                                     </td>
-                                                                                                    <td>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            className="px-3 py-2 bg-secondary text-white rounded-md text-[15px]"
-                                                                                                            onClick={() => individualUserData(user.id)}
-                                                                                                        >
-                                                                                                            Submit
-                                                                                                        </button>
-                                                                                                    </td>
+                                                                                                    {/*<td>*/}
+                                                                                                    {/*    <button*/}
+                                                                                                    {/*        type="button"*/}
+                                                                                                    {/*        className="px-3 py-2 bg-secondary text-white rounded-md text-[15px]"*/}
+                                                                                                    {/*        onClick={() => individualUserData(user.id)}*/}
+                                                                                                    {/*    >*/}
+                                                                                                    {/*        Submit*/}
+                                                                                                    {/*    </button>*/}
+                                                                                                    {/*</td>*/}
                                                                                                 </tr>
                                                                                             ))}
                                                                                             </tbody>

@@ -2,13 +2,18 @@ import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import Select from "react-select";
+import Select from 'react-select';
 
 function PunchDetailsDateRangeWise() {
-    const { flash, errors } = usePage().props;
+    const {  flash,errors, users } = usePage().props;
+
+    const [singleDate , setSingleDate] = useState(true)
+    const [rangeDate , setRangeDate] = useState(false)
     const [values, setValues] = useState({
-        from_date: "",
-        to_date: "",
+        user_id:"",
+        from_date:"",
+        to_date:"",
+        date_range:"single",
     });
 
     function handleChange(e) {
@@ -20,10 +25,40 @@ function PunchDetailsDateRangeWise() {
         }));
     }
 
+    const handleSelectChange = (selectedOption) => {
+        const user_id = selectedOption ? selectedOption.value : ''; // Extract user_id
+        setValues((prevValues) => ({
+            ...prevValues,
+            user_id,
+        }));
+    };
+    const options = users.map((user) => ({
+        value: user?.id,
+        label: user?.first_name ? `${user.first_name} ${user.last_name} - ${user.id}` : '',
+    }));
+
+
     function handleSubmit(e) {
         e.preventDefault();
-        router.get("/admin/punch-details/date-range-wise-report", values);
+        router.get("/admin/punch-details/date-range-wise-report",values);
     }
+
+    const handleSelectDateChange = (e) => {
+        const selectedValue = e.target.value;
+        setValues((prevSelectedValues) => ({
+            ...prevSelectedValues,
+            date_range: selectedValue,
+        }));
+
+        if (selectedValue === "range") {
+            setSingleDate(false);
+            setRangeDate(true);
+        } else if (selectedValue === "single") {
+            setRangeDate(false);
+            setSingleDate(true);
+        }
+    };
+
     return (
         <>
             <FlashMessage flash={flash} />
@@ -71,22 +106,48 @@ function PunchDetailsDateRangeWise() {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >
-                            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label>
-                                        From Date
-                                        <span className="text-red-600 ">*</span>
+                                        Set Date Range
                                     </label>
+                                    <select
+                                        id="date_range"
+                                        className="form-select text-white-dark"
+                                        onChange={handleSelectDateChange}
+                                        defaultValue={"single"}
+                                    >
+                                        <option value="single">Single Date</option>
+                                        <option value="range">Range Date</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label>Employee<span className="text-red-600 ">*</span></label>
+                                    <Select placeholder="Select an option"
+                                            options={options}
+                                            value={options.find((option) => option.value === values.user_id)}
+                                            onChange={handleSelectChange}
+                                    />
+                                    {errors.user_id && (
+                                        <div className="text-red-600 text-[14px]">
+                                            {errors.user_id}
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <label>From Date<span className="text-red-600 ">*</span></label>
                                     <input
                                         id="from_date"
                                         type="date"
                                         placeholder="Enter effect date"
                                         className="form-input"
-                                        value={values.from_date || ""}
+                                        value={values.from_date || ''}
                                         onChange={handleChange}
                                     />
                                     {errors.from_date && (
@@ -95,25 +156,28 @@ function PunchDetailsDateRangeWise() {
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label>
-                                        To Date
-                                        <span className="text-red-600 ">*</span>
-                                    </label>
-                                    <input
-                                        id="to_date"
-                                        type="date"
-                                        placeholder="Enter effect date"
-                                        className="form-input"
-                                        value={values.to_date}
-                                        onChange={handleChange}
-                                    />
-                                    {errors.to_date && (
-                                        <div className="text-red-600 text-[14px]">
-                                            {errors.to_date}
+                                {
+                                    rangeDate && (
+                                        <div>
+                                            <label>To Date<span className="text-red-600 ">*</span></label>
+                                            <input
+                                                id="to_date"
+                                                type="date"
+                                                placeholder="Enter effect date"
+                                                className="form-input"
+                                                value={values.to_date}
+                                                onChange={handleChange}
+                                            />
+                                            {errors.to_date && (
+                                                <div className="text-red-600 text-[14px]">
+                                                    {errors.to_date}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    )
+                                }
+
+
                             </div>
 
                             <div>

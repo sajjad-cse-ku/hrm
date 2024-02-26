@@ -20,9 +20,11 @@ class EmployeePostingController extends Controller
 
 
     public function index($id){
-        $user_id = $id;
+        $user = User::with('professionaldata','personaldata','professionaldata.department','professionaldata.designation')
+            ->where('id',$id)
+            ->first();
         $result = $this->employee_posting->getAll($id);
-        return Inertia::render('Module/EmployeePosting/Index',['result' => $result , 'user_id' => $user_id]);
+        return Inertia::render('Module/EmployeePosting/Index',['result' => $result , 'user' => $user]);
     }
     public function create($id){
         $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');

@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\LateApply;
+use App\Models\Notice;
 use App\Models\SiteSettings;
+use App\Models\TaskManagement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -75,3 +78,32 @@ if (!function_exists('SiteSettings')) {
     }
 }
 
+if (!function_exists('UnreadalbeNotice')) {
+    function UnreadalbeNotice()
+    {
+        $Ids= Notice::pluck('id');
+        $read_notice = DB::table('read_notices')->where('user_id',Auth::id())->pluck('notice_id');
+        $diff = collect($Ids)->diff(collect($read_notice));
+        return count($diff);
+    }
+}
+
+if (!function_exists('CountTask')) {
+    function CountTask()
+    {
+        $userId = Auth::id();
+        $tasks = TaskManagement::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->where('task_status', 'C')->with('project')->get();
+        return count($tasks);
+    }
+}
+
+
+if (!function_exists('CountLate')) {
+    function CountLate()
+    {
+        $results = LateApply::with('user','user.professionaldata.department')->where('status',0)->get();
+        return count($results);
+    }
+}

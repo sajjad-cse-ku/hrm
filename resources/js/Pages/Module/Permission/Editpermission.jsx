@@ -1,6 +1,6 @@
-import { Link, router, usePage } from "@inertiajs/react";
-import React, { useState, useEffect } from "react"; // Import useEffect
-import MainLayout from "../../Layout/Mainlayout";
+import { Link, router, usePage } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
+import MainLayout from '../../Layout/Mainlayout';
 
 function Editpermission() {
     const { permission, permissions, modules } = usePage().props;
@@ -15,9 +15,9 @@ function Editpermission() {
     }, [permission]);
 
     const [formData, setFormData] = useState({
-        permissionID: "",
-        permission_name: "", // Add a state field for permission name
-        module_id: "",
+        permissionID: '',
+        permission_name: '', // Add a state field for permission name
+        module_id: '',
     });
 
     const handleChange = (e) => {
@@ -30,25 +30,19 @@ function Editpermission() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log(formData);
-        router.post("/admin/permissions/update", formData);
+        router.post('/admin/permissions/update', formData);
     };
 
     return (
         <div className="grid xl:grid-cols-1 gap-6 grid-cols-1">
             {/* Simple */}
-            <div className="panel" id="forms_grid">
+            <div className="panel">
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-lg dark:text-white-light">
-                        Edit Permission
-                    </h5>
+                    <h5 className="font-semibold text-lg dark:text-white-light">Edit Permission</h5>
                 </div>
                 <div className="createuser-form">
                     <div className="w-full mx-auto">
-                        <form
-                            onSubmit={handleSubmit}
-                            className="form"
-                        >
+                        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                             <input
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 type="hidden"

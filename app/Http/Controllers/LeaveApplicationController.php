@@ -10,6 +10,7 @@ use App\Models\LeaveApplication;
 use App\Models\LeaveCategory;
 use App\Models\LeaveRegister;
 use App\Models\PublicHoliday;
+use App\Models\SiteSettings;
 use App\Models\User;
 use App\Repositories\LeaveApplicationRepository;
 use Carbon\Carbon;
@@ -58,17 +59,18 @@ class LeaveApplicationController extends Controller
             return back()->with('error', 'Data Does not Insert');
         }
     }
-    public function edit($id){
-        $result = $this->leave_application->edit($id);
+    public function edit($id,$leaveID){
+        $result = $this->leave_application->edit($id,$leaveID);
         return Inertia::render('Module/LeaveApplication/Edit',['result'=>$result]);
     }
     public function apply($id,$leaveId){
+//        dd($id,$leaveId);
         $user = User::with('professionaldata')->where('id',Auth::user()->id)->first();
         $departmentId = $user->professionaldata->department_id;
         $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
         })->get();
-        $result = $this->leave_application->apply($id);
+        $result = $this->leave_application->apply($id,$leaveId);
         $leave_name = LeaveCategory::where('id', $leaveId)->value('name');
         $pre_leave_applications = LeaveApplication::where('leave_id', $leaveId)
             ->where('user_id', $id)
@@ -82,6 +84,7 @@ class LeaveApplicationController extends Controller
         }
     }
     public function applyProcess(Request $request){
+
         $result = $this->leave_application->applyProcess($request);
         if($result['status']== true){
             return to_route('admin.leave_application')->with('success', $result['message']);
@@ -90,6 +93,7 @@ class LeaveApplicationController extends Controller
         }
     }
     public function update(Request $request){
+//        dd($request->all());
         $result=$this->leave_application->update($request);
         if($result['status']== true){
             return back()->with('success', $result['message']);
@@ -128,8 +132,11 @@ class LeaveApplicationController extends Controller
     }
     public function approved($id){
         $results = $this->leave_application->approved($id);
+
         if($results['status'] == true){
             return back()->with('success', $results['message']);
+        }else{
+            return back()->with('error', $results['message']);
         }
     }
     public function rejected($id){
@@ -163,8 +170,9 @@ class LeaveApplicationController extends Controller
         }
     }
     public function getUserLeaveDate($id){
+        $sick_leave = SiteSettings::first();
         $c_year = date("Y");
-        $is_exist = LeaveRegister::where('id', $id)->where('leave_year',$c_year)->exists();
+        $is_exist = LeaveRegister::where('user_id', $id)->where('leave_year',$c_year)->exists();
         $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');
 
         $currentDate = Carbon::now();
@@ -172,9 +180,11 @@ class LeaveApplicationController extends Controller
         $lastDateOfPreviousYear = $previousYear->endOfYear();
         $end_date = $lastDateOfPreviousYear->format('Y-m-d');
 
-
-        if (!$is_exist) {
-            return back();
+        if ($is_exist) {
+            $result = $this->leave_application->getAll($id);
+            $pre_leave_applications = LeaveApplication::where('user_id', $id)
+                ->get();
+            return response()->json([$result,$pre_leave_applications]);
         }
             $employees = User::with('personaldata','professionaldata')->where('company_id', $companyId)
                 ->where('id', $id)->first();
@@ -199,17 +209,18 @@ class LeaveApplicationController extends Controller
             $process_day = Carbon::parse($process_date);
             $join_date = $employees->professionaldata->joining_date;
 
+
             if ($join_date < $end_date) {
                 $end_day = Carbon::parse($end_date);
                 $w_day = $end_day->diffInDays($process_day);
-                $casaul = intval($w_day / 36);
-                $sick = intval($w_day / 26);
+                $casaul = intval($w_day / $sick_leave->value('casual'));
+                $sick = intval($w_day / $sick_leave->value('sick'));
             } else {
                 $join_day = Carbon::parse($join_date);
                 $w_d = $join_day->diffInDays($process_day);
                 $w_day = $w_d + 1;
-                $casaul = intval($w_day / 36);
-                $sick = intval($w_day / 26);
+                $casaul = intval($w_day / $sick_leave->value('casual'));
+                $sick = intval($w_day / $sick_leave->value('sick'));
             }
 
             foreach ($emp_leaves as $row) {
@@ -318,9 +329,10 @@ class LeaveApplicationController extends Controller
         ]);
     }
     public function directLeaveApproveApply(Request $request){
+
         $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');
         $c_year = date("Y");
-        $leave_balance = LeaveRegister::where('id',$request->user_id)->first();
+        $leave_balance = LeaveRegister::where('user_id',$request->user_id)->where('leave_id',$request->leave_id)->first();
 
 
         if($leave_balance->leave_balance < $request->nods){
@@ -329,16 +341,18 @@ class LeaveApplicationController extends Controller
         }else{
             $save  = LeaveApplication::create([
                 'company_id'=>$companyId,
-                'created_by'=>Auth::user()->id,
+                'created_by'=>Auth::id(),
                 'leave_id'=>$request->leave_id,
                 'user_id'=>$request->user_id,
-                'alternate_id'=>Auth::user()->id,
-                'recommend_id'=>Auth::user()->id,
+                'alternate_id'=>Auth::id(),
+                'recommend_id'=>Auth::id(),
+                'approve_id'=>Auth::id(),
                 'leave_year'=>$c_year,
                 'from_date'=>$request->from_date,
                 'to_date'=>$request->to_date,
                 'nods'=>$request->nods,
                 'reason'=>$request->reason,
+                'approve_date' => date('Y-m-d'),
                 'status'=>'A'
             ]);
             if($save){
@@ -351,6 +365,14 @@ class LeaveApplicationController extends Controller
             }
             return to_route('admin.leave_application')->with('success','Leave Application Apply Successfully');
         }
+    }
+
+    public function leaveList(){
+        $leaveApplications = LeaveApplication::with('user','leavecategory')->get();
+
+        return Inertia::render('Module/LeaveApplication/LeaveList',[
+            'leaveApplications' => $leaveApplications
+        ]);
     }
 
 }

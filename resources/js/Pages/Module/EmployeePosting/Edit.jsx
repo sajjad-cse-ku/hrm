@@ -6,34 +6,36 @@ import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import Select from "react-select";
 
 function Edit() {
     const {  flash,departments ,sections, users,result,errors } = usePage().props;
-    const [isSection, setSection] = useState([]);
 
+    const [isSection, setSection] = useState([]);
     const [selectedSection, setSelectedSection] = useState('');
 
-
-    const { register, handleSubmit,setValue} = useForm({
+    const { register, handleSubmit, setValue, formState } = useForm({
         defaultValues: {
-            id: result.id,
-            user_id: result.user_id,
-            department_id:result.department_id,
-            // section_id:result.section_id,php php
-            report_to:result.report_to,
-            posting_start_date:result.posting_start_date,
-            posting_end_date:result.posting_end_date,
-            posting_notes:result.posting_notes,
-            descriptions:result.descriptions,
-
+            id: result?.id,
+            user_id: result?.user_id,
+            section_id: result?.section_id,
+            department_id: result?.department_id,
+            report_to: result?.report_to,
+            posting_start_date: result?.posting_start_date,
+            posting_end_date: result?.posting_end_date,
+            posting_notes: result?.posting_notes,
+            descriptions: result?.descriptions,
         },
     });
+    // console.log(result);
+
 
 
     useEffect(() => {
         const sectionSelectUsingDept = async () => {
             try {
                 const response = await axios.get('/admin/section-select/' + result?.department_id);
+                // console.log(response.data);
                 setSection(response.data);
                 setSelectedSection(result?.section_id || '');
             } catch (error) {
@@ -51,9 +53,31 @@ function Edit() {
             console.error(error);
         }
     };
+    const handleDepartmentChange = (selectedOption) => {
+        setValue("department_id", selectedOption.value);
+    };
+    const handleSectionChange = (selectedOption) => {
+        setValue("section_id", selectedOption.value);
+    };
+    const handleSelectUser = (selectedOption) => {
+        setValue("report_to", selectedOption?.value);
+    };
+    const department = departments.map((department) => ({
+        value: department?.id,
+        label: department?.name,
+    }));
+    const report = users.map((user) => ({
+        value: user?.id,
+        label: `${user?.first_name} ${user?.last_name} - ${user?.id}`,
+    }));
+
+    const section = isSection.map((section) => ({
+        value: section?.id,
+        label: section?.name,
+    }));
 
     function onSubmit(data) {
-
+        // console.log(data)
         router.post("/admin/employee_posting/update", data);
     }
 
@@ -117,63 +141,41 @@ function Edit() {
                                     <label>
                                         Department
                                     </label>
-                                    <select
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={department}
                                         {...register("department_id")}
-                                        defaultValue={result?.department_id || ''}
-                                        onChange={(e) => sectionSelect(e.target.value)}
-                                    >
-                                        <option value="">Choose Option...</option>
-                                        {departments.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        defaultValue={department.find(department => department.value === result?.department_id)}
+                                        onChange={(selectedOption) => {
+                                            handleDepartmentChange(selectedOption);
+                                            sectionSelect(selectedOption.value);
+                                        }}
+                                    />
+
                                 </div>
                                 <div>
                                     <label>
                                         Section
                                     </label>
-                                    <select
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={section}
+                                        defaultValue={section.find((s) => s.value === selectedSection)}
                                         {...register("section_id")}
-                                        value={selectedSection}
-                                        onChange={(e) => setSelectedSection(e.target.value)}
-
-                                    >
-                                        <option value="">Choose Option...</option>
-                                        {isSection.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        onChange={(selectedOption) => handleSectionChange(selectedOption)}
+                                    />
                                 </div>
                                 <div>
                                     <label>
                                         Report To
                                     </label>
-                                    <select
-                                        className="form-select text-white-dark"
+                                    <Select
+                                        isSearchable={true}
+                                        options={report}
+                                        defaultValue={report.find(report => report.value === result?.report_to)}
                                         {...register("report_to")}
-                                    >
-                                        <option value="">Choose Option...</option>
-                                        {users.map((item) => (
-                                            <option
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.first_name} - {item.id}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        onChange={handleSelectUser}
+                                    />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

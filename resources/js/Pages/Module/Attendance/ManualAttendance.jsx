@@ -37,7 +37,6 @@ function Add() {
     }));
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.post("/admin/manual-attendance/update", values);
         setValues({
             attendance_date:"",

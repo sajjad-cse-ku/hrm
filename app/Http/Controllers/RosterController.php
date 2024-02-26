@@ -28,6 +28,7 @@ class RosterController extends Controller
 
         $user = User::with(['professionaldata.department:id,roster_month_id,roster_year'])
             ->where('id', Auth::user()->id)
+            ->where('status',1)
             ->first();
 
         $rosterMonthId = $user->professionaldata->department->roster_month_id;
@@ -55,11 +56,13 @@ class RosterController extends Controller
 
             $authUser = Auth::user();
 
-            $users = User::whereHas('professionaldata', function ($query) use ($authUser) {
+            $users = User::with('professionaldata.designation')->whereHas('professionaldata', function ($query) use ($authUser) {
                 $query->where('department_id', $authUser->professionaldata->department_id);
             })->whereNotIn('id', $idsArray)->get();
+
             $shifts = Shift::where('status',1)->get();
             $locations = DutyLocations::all();
+
             return Inertia::render('Module/Roster/Index',[
                 'permissions' => checkPermissions(),
                 'weeks'=>$weeks,
@@ -88,7 +91,7 @@ class RosterController extends Controller
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
 
-        $user = User::with(['professionaldata.department:id,roster_month_id,roster_year'])
+        $user = User::with(['professionaldata.department:id,name,roster_month_id,roster_year'])
             ->where('id', Auth::user()->id)
             ->first();
         $rosterMonthId = $user->professionaldata->department->roster_month_id;

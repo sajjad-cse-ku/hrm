@@ -28,7 +28,7 @@ class PunchDetails extends Command
      */
     public function handle()
     {
-//        $companyId = User::where('id',Auth::id())->value('company_id');
+        Log::info("punch details execution");
         date_default_timezone_set('Asia/Dhaka');
         $zk = new ZKLibrary(SiteSettings()->ip, SiteSettings()->port, SiteSettings()->protocol);
         $zk->connect();

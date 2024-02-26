@@ -40,7 +40,6 @@ function ManualComment() {
     }));
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/manual-comment/update", values);
     };
 

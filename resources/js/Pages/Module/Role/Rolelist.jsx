@@ -11,9 +11,6 @@ function Rolelist() {
     const { roles, flash, permissions } = usePage().props
     const { t } = useTranslation();
 
-    // console.log(roles.Permissions);
-
-
     const isRtl = themeConfig.rtlClass === 'rtl' ? true : false;
 
      const [tabs, setTabs] = useState([]);
@@ -35,7 +32,7 @@ function Rolelist() {
             <div className="panel">
                 <div className="flex items-center justify-between mb-5">
                     <h5 className="font-semibold text-lg dark:text-white-light">Roles List</h5>
-                        {permissions.includes('role-create') || permissions.includes('super-admin') &&
+                        {permissions.includes('role-create') || permissions.includes('super-admin') ? (
                              <Link
                              href={`/admin/roles/create`}
                              method="get"
@@ -43,6 +40,7 @@ function Rolelist() {
                          >
                          {t('Create')}
                          </Link>
+                            ) : null
                         }
                 </div>
                 <div className="table-responsive mb-5">
@@ -76,7 +74,7 @@ function Rolelist() {
                                     </td>
                                     <td className="text-center action-btns">
                                         <div className="flex items-center w-max mx-auto gap-2">
-                                            {permissions.includes('role-edit') || permissions.includes('super-admin') &&
+                                            {permissions.includes('role-edit') || permissions.includes('super-admin') ? (
                                                 <Link
                                                     href={`/admin/roles/${data.id}/edit`}
                                                     method="get"
@@ -84,9 +82,10 @@ function Rolelist() {
                                                 >
                                                     Edit
                                                 </Link>
+                                                ) : null
                                             }
 
-                                            {permissions.includes('role-delete') || permissions.includes('super-admin') &&
+                                            {permissions.includes('role-delete') || permissions.includes('super-admin') ? (
                                                 <Link
                                                     href={`/admin/roles/${data.id}/delete`}
                                                     method="get"
@@ -94,6 +93,7 @@ function Rolelist() {
                                                 >
                                                     Delete
                                                 </Link>
+                                                ) : null
                                             }
                                         </div>
                                     </td>

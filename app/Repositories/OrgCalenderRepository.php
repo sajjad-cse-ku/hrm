@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 
 use App\Models\OrgCalender;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class OrgCalenderRepository {
@@ -14,7 +15,11 @@ class OrgCalenderRepository {
     }
 
     public function getAll(){
-        return $this->model::all();
+        return $this->model::orderBy('id', 'DESC')
+            ->when($this->model->salary_open === 'O', function ($query) {
+                return $query->orderBy('salary_open', 'ASC');
+            })
+            ->get();
     }
     public function store($request){
         return $this->storeOrUpdate($request , $action="save");
@@ -57,33 +62,41 @@ class OrgCalenderRepository {
     }
     protected function storeOrUpdate($request, $action)
     {
-        try {
+//        try {
+//        dd($request->all());
+            if($request->salary_open == 'O'){
+                $check_so = OrgCalender::where('salary_open',$request->salary_open)->first();
+                if($check_so){
+                    $monthId = $check_so->month_id;
+                    $monthName = Carbon::createFromFormat('m', $monthId)->format('F');
+                    return ['status' => 'same', 'message' =>  "Already $monthName,$check_so->calender_year opened...Please close first"];
+                }
+            }
+
             $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');
-               $data = $this->model::updateOrCreate(
-                   ['id' =>isset( $request->id)?  $request->id : ''],
-                   [
-                        'calender_year' => $request->calender_year,
-                        'month_id' => $request->month_id,
-                        'c_month_id' => $request->c_month_id,
-//                        'month_name' => $request->month_name,
-                        'start_from' => $request->start_from,
-                        'ends_on' => $request->ends_on,
-                        'salary_open' => $request->salary_open,
-                        'salary_update' => $request->salary_update,
-                        'food_open' => $request->food_open,
-                        'created_by'=>Auth::user()->id,
-                        'company_id'=>$companyId
-                   ]
-                );
+            $data = $this->model::updateOrCreate(
+                ['id' =>isset( $request->id)?  $request->id : ''],
+                [
+                    'calender_year' => $request->calender_year,
+                    'month_id' => $request->month_id,
+                    'c_month_id' => $request->c_month_id,
+                    'start_from' => $request->start_from,
+                    'ends_on' => $request->ends_on,
+                    'salary_open' => $request->salary_open,
+                    'salary_update' => $request->salary_update,
+                    'food_open' => $request->food_open,
+                    'created_by'=>Auth::user()->id,
+                    'company_id'=>$companyId
+                ]
+            );
             if ($data) {
                 $message = $action == "save" ?"Org Calender Save Successfully" :"Org Calender Update Successfully";
                 return ['status' => true, 'message' => $message,];
             }
 
-
-        } catch (\Exception $e) {
-            return ['status' => false, 'errors' =>  $e->getMessage()];
-        }
+//        } catch (\Exception $e) {
+//            return ['status' => false, 'errors' =>  $e->getMessage()];
+//        }
     }
 
 

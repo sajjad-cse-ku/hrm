@@ -7,7 +7,7 @@ import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage";
 
 function Index() {
-    const { base_url, flash , user_id , result, permissions } = usePage().props;
+    const { base_url, flash , user , result, permissions } = usePage().props;
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [page2, setPage2] = useState(1);
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);
@@ -106,8 +106,8 @@ function Index() {
                             <div className="panel">
                                 <div className="mb-5">
                                     <div className="flex flex-col justify-center items-center">
-                                        <img src={result[0]?.user?.avatar ? `/storage/profile/${result[0]?.user?.avatar}` : '/assets/images/user-profile.jpeg'} alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-                                        <p className="font-semibold text-primary text-xl">{result[0]?.user?.first_name} {result[0]?.user?.last_name}</p>
+                                        <img src={result[0]?.user?.avatar ? `/storage/profile/${user?.avatar}` : '/assets/images/user-profile.jpeg'} alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
+                                        <p className="font-semibold text-primary text-xl">{user?.first_name} {user?.last_name}</p>
                                     </div>
                                     <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
                                         <li className="flex items-center gap-2">
@@ -141,7 +141,7 @@ function Index() {
                                                     strokeLinejoin="round"
                                                 />
                                             </svg>{' '}
-                                            {result[0]?.user?.professionaldata?.designation?.name}
+                                            {user?.professionaldata?.designation?.name}
                                         </li>
                                         <li className="flex items-center gap-2">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
@@ -154,7 +154,7 @@ function Index() {
                                                 <path opacity="0.5" d="M17 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                                                 <path opacity="0.5" d="M2 9H22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                                             </svg>
-                                            {result[0]?.user?.professionaldata?.joining_date}
+                                            {user?.professionaldata?.joining_date}
                                         </li>
                                         <li className="flex items-center gap-2">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0">
@@ -176,7 +176,7 @@ function Index() {
                                                     strokeLinecap="round"
                                                 />
                                             </svg>
-                                            {result[0]?.user?.personaldata?.pr_address} , {result[0]?.user?.personaldata?.pr_district}
+                                            {user?.personaldata?.pr_address} , {user?.personaldata?.pr_district}
                                         </li>
                                         <li>
                                             <button className="flex items-center gap-2">
@@ -194,7 +194,7 @@ function Index() {
                                                         strokeLinecap="round"
                                                     />
                                                 </svg>
-                                                <span className="text-primary truncate">{result[0]?.user?.email}</span>
+                                                <span className="text-primary truncate">{user?.email}</span>
                                             </button>
                                         </li>
                                         <li className="flex items-center gap-2">
@@ -212,7 +212,7 @@ function Index() {
                                                 />
                                             </svg>
                                             <span className="whitespace-nowrap" dir="ltr">
-                                            {result[0]?.user?.mobile ?? "N/A"}
+                                            {user?.mobile ?? "N/A"}
                                             </span>
                                         </li>
                                     </ul>
@@ -228,7 +228,7 @@ function Index() {
                                             {
                                                 permissions.includes('emp-posting-create') || permissions.includes('super-admin') ? (
                                                     <Link
-                                                        href={`${base_url}/admin/employee_posting/create/`+user_id}
+                                                        href={`${base_url}/admin/employee_posting/create/${user.id}`}
                                                         method="get"
                                                         className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
                                                     >

@@ -123,7 +123,7 @@ function HeaderV3({ handleToggleSidebar, isToggleSidebar }) {
                                     alt="logo"
                                 />
                                 <span className="hidden text-xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle dark:text-white-light transition-all duration-300 sm:block">
-                                    LUMINOUS HRM
+                                HR PAYROLL
                                 </span>
                             </Link>
                             {/* <button

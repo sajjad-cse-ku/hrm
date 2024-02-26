@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PasswordChangeRequest;
+use App\Models\EmployeePersonal;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ use Inertia\Inertia;
 class UserProfileController extends Controller
 {
     public function userProfile(){
-        $user = User::where('id',Auth::id())->first();
+        $user = User::with('personaldata')->where('id',Auth::id())->first();
         return Inertia::render('Module/Profile/Index',[
             'user'=>$user,
         ]);
@@ -26,7 +27,7 @@ class UserProfileController extends Controller
             $avatar = $user->avatar;
         }
         try {
-            User::where('id',Auth::id())->update([
+            $user = User::where('id',Auth::id())->update([
                 'first_name'    => $request->first_name,
                 'last_name' => $request->last_name,
                 'mobile'    => $request->mobile,
@@ -34,6 +35,16 @@ class UserProfileController extends Controller
                 'gender'    => $request->gender,
                 'avatar' => $avatar
             ]);
+
+            if($user){
+                EmployeePersonal::where('user_id',Auth::id())->update([
+                    'blood_group'=> $request->blood_group ?? '',
+                   'pr_address'=>$request->pr_address ?? '',
+                   'pr_district'=>$request->pr_district ?? '',
+                   'pr_police_station'=>$request->pr_police_station ?? '',
+                   'pr_post_code'=>$request->pr_post_code ?? '',
+                ]);
+            }
             return back()->with('success','profile updated');
 
         } catch (\Exception $e) {

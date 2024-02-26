@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('ip')->default('192.168.0.1');
             $table->integer('port')->default('7436');
             $table->string('protocol')->default('UDP');
+            $table->integer('general_shift')->default('2');
+            $table->string('night_shift')->nullable();
 
             $table->timestamps();
         });

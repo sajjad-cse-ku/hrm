@@ -1,80 +1,81 @@
-import { Link, router, usePage } from "@inertiajs/react";
-import React, { Fragment, useState } from "react";
-import MainLayout from "../../Layout/Mainlayout";
+import { Link, router, usePage } from '@inertiajs/react';
+import React, { useState } from 'react'
+import MainLayout from '../../Layout/Mainlayout';
 
 function Createrole() {
-    const { permissions } = usePage().props;
-    const [activeBtn, setActiveBtn] = useState("Manage Employee");
+    const { allPermissions } = usePage().props
+
     const [formData, setFormData] = useState({
-        role_name: "", // Add a state field for permission name
+        role_name: '', // Add a state field for permission name
         selectedPermissions: [],
+
     });
     const handlePermissionChange = (permissionID, checked) => {
         if (checked) {
-            setFormData((prevData) => ({
-                ...prevData,
-                selectedPermissions: [
-                    ...prevData.selectedPermissions,
-                    permissionID,
-                ],
-            }));
+          setFormData((prevData) => ({
+            ...prevData,
+            selectedPermissions: [...prevData.selectedPermissions, permissionID],
+          }));
         } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                selectedPermissions: prevData.selectedPermissions.filter(
-                    (id) => id !== permissionID
-                ),
-            }));
+          setFormData((prevData) => ({
+            ...prevData,
+            selectedPermissions: prevData.selectedPermissions.filter(
+              (id) => id !== permissionID
+            ),
+          }));
         }
-    };
+      };
 
-    const handleChange = (e) => {
+      const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
-            ...formData,
-            [name]: value,
+          ...formData,
+          [name]: value,
         });
-    };
+      };
 
-    const handleSubmit = async (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
+        router.post('/admin/roles/store', formData)
+      };
 
-        // console.log(formData);
-        router.post("/admin/roles/store", formData);
-    };
 
-    return (
-        <div className="create-roles grid xl:grid-cols-1 gap-6 grid-cols-1">
+  return (
+
+    <div className="grid xl:grid-cols-1 gap-6 grid-cols-1">
+
+
+
+
             {/* Simple */}
-            <div className="panel" id="forms_grid">
-                <div className="flex items-center justify-between mb-5 mx-4">
-                    <h5 className="font-semibold text-lg dark:text-white-light">
-                        Create Role
-                    </h5>
+            <div className="panel">
+                <div className="flex items-center justify-between mb-5">
+                    <h5 className="font-semibold text-lg dark:text-white-light">Create Role</h5>
                 </div>
-                <div className="mx-4">
-                    <div className="">
-                        <form onSubmit={handleSubmit} className="">
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2">
-                                    Role Name
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    type="text"
-                                    name="role_name"
-                                    id="role_name"
-                                    value={formData.role_name}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
+                <div className="createuser-form">
+                    <div className="w-full mx-auto">
+                        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2">
+                                Role Name
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text"
+                                name="role_name"
+                                id="role_name"
+                                value={formData.role_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
                                 <h4 className="block text-gray-700 text-sm font-bold mb-2">
-                                    Permissions
+                                Permissions
                                 </h4>
                                 <div>
-                                    {/* <div className='all-permission-lists'>
+                                {/* <div className='all-permission-lists'>
                                 {permissions.map((data) => (
                                     <label key={data.id} className="inline-flex mr-3" data-moduleid={data.module_id}>
                                         <input
@@ -89,7 +90,7 @@ function Createrole() {
                                     </label>
                                 ))}
                                 </div> */}
-                                    {/* <div className='all-permission-lists'>
+                                {/* <div className='all-permission-lists'>
                                     {permissions
                                       .sort((a, b) => a.module_id - b.module_id) // Sort the permissions array based on module_id
                                       .map((data) => (
@@ -107,137 +108,36 @@ function Createrole() {
                                       ))}
                                   </div>  */}
 
-                                    {/* Button */}
-                                    <Actions
-                                        activeBtn={activeBtn}
-                                        setActiveBtn={setActiveBtn}
-                                    />
+<div className="all-permission-lists">
+  {allPermissions
+    .sort((a, b) => a.module_id - b.module_id)
+    .map((data, index, array) => (
+      <React.Fragment key={data.id}>
+        {index === 0 || data.module_id !== array[index - 1].module_id ? (
+          <div className="module-title" id={`moduleid-${data.module_id}`}>
+            <h4>{data?.module?.name}</h4>
+          </div>
+        ) : null}
+        <label className="inline-flex mr-3" data-moduleid={data.module_id}>
+          <input
+            type="checkbox"
+            className="form-checkbox"
+            name="permissions[]"
+            id={`permission-${data.id}`}
+            checked={formData.selectedPermissions.includes(data.id)}
+            onChange={(e) => handlePermissionChange(data.id, e.target.checked)}
+          />
+          <span>{data.permission_name}</span>
+        </label>
+      </React.Fragment>
+    ))}
+</div>
 
-                                    <div className="all-permission-lists">
-                                        {permissions
-                                            .sort(
-                                                (a, b) =>
-                                                    a.module_id - b.module_id
-                                            )
-                                            .filter(
-                                                (data) =>
-                                                    data.module.name ===
-                                                    activeBtn
-                                            )
-                                            .map((data, index, array) => {
-                                                return (
-                                                    <Fragment key={index}>
-                                                        {index === 0 && (
-                                                            <>
-                                                                <div
-                                                                    className="module-title"
-                                                                    id={`moduleid-${data.module_id}`}
-                                                                >
-                                                                    <h4>
-                                                                        {
-                                                                            data
-                                                                                ?.module
-                                                                                ?.name
-                                                                        }
-                                                                    </h4>
-                                                                </div>
-                                                                <br />
-                                                            </>
-                                                        )}
-                                                        <label
-                                                            className="inline-flex mr-3 mb-4 cursor-pointer"
-                                                            data-moduleid={
-                                                                data.module_id
-                                                            }
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                className="form-checkbox"
-                                                                name="permissions[]"
-                                                                id={`permission-${data.id}`}
-                                                                checked={formData.selectedPermissions.includes(
-                                                                    data.id
-                                                                )}
-                                                                onChange={(e) =>
-                                                                    handlePermissionChange(
-                                                                        data.id,
-                                                                        e.target
-                                                                            .checked
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span>
-                                                                {
-                                                                    data.permission_name
-                                                                }
-                                                            </span>
-                                                        </label>
-                                                    </Fragment>
-                                                );
-                                            })}
-                                    </div>
 
-                                    
-                                    {/* <div className="all-permission-lists">
-                                        {permissions
-                                            .sort(
-                                                (a, b) =>
-                                                    a.module_id - b.module_id
-                                            )
-                                            .map((data, index, array) => (
-                                                <React.Fragment key={data.id}>
-                                                    {console.log(
-                                                        data,
-                                                        index,
-                                                        array
-                                                    )}
-                                                    {index === 0 ||
-                                                    data.module_id !==
-                                                        array[index - 1]
-                                                            .module_id ? (
-                                                        <div
-                                                            className="module-title"
-                                                            id={`moduleid-${data.module_id}`}
-                                                        >
-                                                            <h4>
-                                                                {
-                                                                    data?.module
-                                                                        ?.name
-                                                                }
-                                                            </h4>
-                                                        </div>
-                                                    ) : null}
-                                                    <label
-                                                        className="inline-flex mr-3"
-                                                        data-moduleid={
-                                                            data.module_id
-                                                        }
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            className="form-checkbox"
-                                                            name="permissions[]"
-                                                            id={`permission-${data.id}`}
-                                                            checked={formData.selectedPermissions.includes(
-                                                                data.id
-                                                            )}
-                                                            onChange={(e) =>
-                                                                handlePermissionChange(
-                                                                    data.id,
-                                                                    e.target
-                                                                        .checked
-                                                                )
-                                                            }
-                                                        />
-                                                        <span>
-                                                            {
-                                                                data.permission_name
-                                                            }
-                                                        </span>
-                                                    </label>
-                                                </React.Fragment>
-                                            ))}
-                                    </div> */}
+
+
+
+
                                 </div>
                             </div>
 
@@ -252,156 +152,13 @@ function Createrole() {
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
-    );
+  )
 }
 
 // import { Link, usePage } from '@inertiajs/react';
-Createrole.layout = (page) => <MainLayout children={page} />;
+Createrole.layout = page => <MainLayout children={page} />
 
-export default Createrole;
-
-const Actions = ({ activeBtn, setActiveBtn }) => {
-    return (
-        <div className="roles flex flex-wrap items-center pt-2 border-b border-solid border-gray-300">
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Manage Employee"
-                        ? " btn-after font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Manage Employee")}
-            >
-                Employee
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Leave Manage"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Leave Manage")}
-            >
-                Leave
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Auth" ? " btn-after  font-extrabold" : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Auth")}
-            >
-                Auth
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Roster Manage"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Roster Manage")}
-            >
-                Roster Manage
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Attendance Management"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Attendance Management")}
-            >
-                Attend. Manage
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Task Module"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Task Module")}
-            >
-                Task Module
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Configuration"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Configuration")}
-            >
-                Configuration
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Company" ? " btn-after  font-extrabold" : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Company")}
-            >
-                Company
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Department"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Department")}
-            >
-                Department
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Roster and Shift"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Roster and Shift")}
-            >
-                Roster and Shift
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Late Manage"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Late Manage")}
-            >
-                Late Manage
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Attendance"
-                        ? " btn-after  font-extrabold"
-                        : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Attendance")}
-            >
-                Attendance
-            </button>
-            <button
-                type="button"
-                className={`${
-                    activeBtn === "Module" ? " btn-after  font-extrabold" : ""
-                } btn bg-transparent border-0 relative`}
-                onClick={() => setActiveBtn("Module")}
-            >
-                Module
-            </button>
-        </div>
-    );
-};
+export default Createrole

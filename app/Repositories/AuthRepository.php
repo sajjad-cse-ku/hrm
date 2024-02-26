@@ -14,8 +14,7 @@ class AuthRepository {
         $this->model=$model;
     }
     public function login($request){
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password
-        ])){
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             Session::put('adminLogin', 'user_log_in');
             $user = Auth::user();
             $response['message']="Logging Successfully";

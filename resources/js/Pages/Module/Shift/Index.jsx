@@ -6,7 +6,6 @@ import FlashMessage from "../../Component/FlashMessage";
 
 function Index() {
     const { base_url, flash,result, permissions } = usePage().props;
-    // console.log(result);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [page2, setPage2] = useState(1);
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);
@@ -57,9 +56,9 @@ function Index() {
     // function deleteData(result) {
     //     router.get("/admin/shift/delete/" + result.id);
     // }
-    // function statusChanged(result) {
-    //     router.get("/admin/shift/status/" + result.id);
-    // }
+    function statusChanged(result) {
+        router.get("/admin/shift/status/" + result.id);
+    }
 
     const formatTime = (timeString) => {
         // Parse the input time string into a Date object
@@ -127,7 +126,7 @@ function Index() {
                                 onChange={(e) => setSearch2(e.target.value)}
                             />
                         </div>
-                        {permissions.includes('shift-create') || permissions.includes('super-admin') &&
+                        {permissions.includes('shift-create') || permissions.includes('super-admin') ? (
                             <Link
                                 href={`${base_url}/admin/shift/create`}
                                 method="get"
@@ -135,6 +134,7 @@ function Index() {
                             >
                                 Add
                             </Link>
+                            ) : null
                         }
                     </div>
                 </div>
@@ -193,15 +193,17 @@ function Index() {
                                 render: (result) => (
                                     <div className="flex items-center w-max mx-auto gap-2">
 
-                                        {permissions.includes('shift-edit') || permissions.includes('super-admin') &&
+                                        {permissions.includes('shift-edit') || permissions.includes('super-admin') ? (
                                             <Link href={`${base_url}/admin/shift/edit/`+result.id} method="get" className="btn btn-sm btn-outline-primary">
                                                 Edit
                                             </Link>
+                                            ) : null
                                         }
-                                        {permissions.includes('shift-delete') || permissions.includes('super-admin') &&
+                                        {permissions.includes('shift-delete') || permissions.includes('super-admin') ? (
                                         <Link href={`${base_url}/admin/shift/delete/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
                                             Delete
                                         </Link>
+                                            ) : null
                                         }
 
                                     </div>

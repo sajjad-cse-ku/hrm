@@ -34,7 +34,6 @@ function Edit({ result }) {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/section/update", values);
     }
     return (

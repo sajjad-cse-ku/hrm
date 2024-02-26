@@ -86,9 +86,6 @@ class UsersController extends Controller
                     $mergedPermissions = array_merge($mergedPermissions, $permission);
                 }
             }
-        } else {
-            // The 'roleBasedPermissions' key does not exist or is empty in the request
-            // Handle the case where there is no data
         }
 
         $uniquePermissions = array_unique($mergedPermissions);
@@ -96,7 +93,6 @@ class UsersController extends Controller
 
         $individualPermissions = $request->selectedPermissions;
 
-        // $allPermssions = array_merge($roleBasedPermissions, $individualPermissions);
 
         $allPermissions = [];
 
@@ -108,7 +104,6 @@ class UsersController extends Controller
             if (empty($allPermissions)) {
                 $allPermissions = $individualPermissions;
             } else {
-                // Merge the two arrays if both are not empty
                 $allPermissions = array_merge($allPermissions, $individualPermissions);
             }
         }
@@ -274,7 +269,7 @@ class UsersController extends Controller
 
         $currentuser = Auth::id();
         $roles = Role::all();
-        $permissions = Permission::all();
+        $all_permissions = Permission::with('module:id,name')->get();
 
         $ids = [];
         foreach ($roles as $role) {
@@ -317,7 +312,7 @@ class UsersController extends Controller
         return Inertia::render('Module/User/Edituser', [
             'currentuser' => $currentuser,
             'roles' => $roles,
-            'permissions' => $permissions,
+            'all_permissions' => $all_permissions,
             'rolewisepermission' => $rolePermissionMapWithNames,
             'user' => $user,
         ]);
@@ -361,7 +356,7 @@ class UsersController extends Controller
             'gender' => $request->gender,
             'date_of_birth' => $request->dateOfBirth,
             'avatar' => $request->avatar,
-            'password' => Hash::make($request->password), // Hash the password
+//            'password' => Hash::make($request->password), // Hash the password
             'updated_at' => now(),
         ]);
 

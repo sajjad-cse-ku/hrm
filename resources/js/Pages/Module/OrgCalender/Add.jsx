@@ -12,7 +12,7 @@ function Add() {
         calender_year: "",
         month_id:1,
         c_month_id:"",
-        month_name:"",
+        // month_name:"",
         start_from:"",
         ends_on:"",
         salary_open:'F',
@@ -65,19 +65,7 @@ function Add() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.post("/admin/org_calender/store", values);
-        // setValues({
-        //     calender_year: "",
-        //     month_id:1,
-        //     c_month_id:"",
-        //     month_name:"",
-        //     start_from:"",
-        //     ends_on:"",
-        //     salary_open:'F',
-        //     salary_update:'F',
-        //     food_open:'F',
-        // })
     }
     return (
         <>

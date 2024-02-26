@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NoticeRequest;
 use App\Models\Company;
 use App\Models\Notice;
+use App\Models\ReadNotice;
 use App\Repositories\NoticeRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class NoticeController extends Controller
@@ -57,6 +60,15 @@ class NoticeController extends Controller
     }
 
     public function view($id){
+        $authId = Auth::id();
+        $notice = DB::table('read_notices')->where('notice_id',$id)->where('user_id',$authId)->exists();
+
+        if(!$notice){
+            DB::table('read_notices')->insert([
+                'user_id'=>$authId,
+                'notice_id'=>$id,
+            ]);
+        }
         $notice = Notice::where('id', $id)->first();
         return Inertia::render('Module/Notice/View',['notice'=>$notice]);
     }

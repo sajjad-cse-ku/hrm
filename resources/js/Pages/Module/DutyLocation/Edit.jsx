@@ -6,12 +6,13 @@ import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 
 function Edit({ result }) {
-    const { flash } = usePage().props;
+    const {  flash } = usePage().props;
     const { errors } = usePage().props;
     const [values, setValues] = useState({
         id: result.id,
         location: result.location,
-        description: result.description,
+        description:result.description,
+
     });
 
     function handleChange(e) {
@@ -73,12 +74,12 @@ function Edit({ result }) {
                     </div>
                     <div className="mb-5">
                         <form
-                            className="space-y-5 form"
+                            className="space-y-5"
                             onSubmit={handleSubmit}
                             method="post"
                         >
                             <div className="grid grid-cols-1 sm:grid-cols-1">
-                                <div className="mb-2">
+                                <div>
                                     <label>Location</label>
                                     <input
                                         id="location"

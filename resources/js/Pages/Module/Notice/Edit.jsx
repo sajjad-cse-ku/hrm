@@ -55,7 +55,6 @@ function Edit({}) {
             confidentiality: selectedOptionConfidentiality ? selectedOptionConfidentiality.value : "",
             receiver: selectedOptionReceiver ? selectedOptionReceiver.value : ""
         };
-        // console.log(updatedValues)
 
         router.post("/admin/notice/update", updatedValues);
 

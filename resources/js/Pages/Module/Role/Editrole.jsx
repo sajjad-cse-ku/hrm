@@ -1,9 +1,10 @@
-import { Link, router, usePage } from "@inertiajs/react";
-import React, { useState, useEffect } from "react"; // Import useEffect
-import MainLayout from "../../Layout/Mainlayout";
+import { Link, router, usePage } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
+import MainLayout from '../../Layout/Mainlayout';
+
 
 function Editrole() {
-    const { role, permissions, currentpermission } = usePage().props;
+    const { role, allPermissions, currentpermission } = usePage().props;
 
     // Initialize formData with existing data when the component is mounted
     useEffect(() => {
@@ -14,28 +15,27 @@ function Editrole() {
         });
     }, [role]);
 
+
     const handlePermissionChange = (permissionID, checked) => {
         if (checked) {
-            setFormData((prevData) => ({
-                ...prevData,
-                selectedPermissions: [
-                    ...prevData.selectedPermissions,
-                    permissionID,
-                ],
-            }));
+          setFormData((prevData) => ({
+            ...prevData,
+            selectedPermissions: [...prevData.selectedPermissions, permissionID],
+          }));
         } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                selectedPermissions: prevData.selectedPermissions.filter(
-                    (id) => id !== permissionID
-                ),
-            }));
+          setFormData((prevData) => ({
+            ...prevData,
+            selectedPermissions: prevData.selectedPermissions.filter(
+              (id) => id !== permissionID
+            ),
+          }));
         }
-    };
+      };
+
 
     const [formData, setFormData] = useState({
-        id: "",
-        role_name: "", // Add a state field for role name
+        id: '',
+        role_name: '', // Add a state field for role name
         selectedPermissions: [],
     });
 
@@ -49,22 +49,19 @@ function Editrole() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log(formData);
-        router.post("/admin/roles/update", formData);
+        router.post('/admin/roles/update', formData);
     };
 
     return (
-        <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
+        <div className="grid xl:grid-cols-1 gap-6 grid-cols-1">
             {/* Simple */}
-            <div className="panel" id="forms_grid">
+            <div className="panel">
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-lg dark:text-white-light">
-                        Edit Role
-                    </h5>
+                    <h5 className="font-semibold text-lg dark:text-white-light">Edit Role</h5>
                 </div>
-                <div className="mb-4">
-                    <div className="mx-4">
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="createuser-form">
+                    <div className="w-full mx-auto">
+                        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                             <input
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 type="hidden"
@@ -88,42 +85,30 @@ function Editrole() {
                                     required
                                 />
                             </div>
-
-                            <div className="mb-4">
-                                <h4 className="block text-gray-700 text-sm font-bold mb-2">
-                                    Permissions
-                                </h4>
-                                {/* <label className="inline-flex">
-                                    <input type="checkbox" className="form-checkbox" defaultChecked />
-                                    <span>Primary</span>
-                                </label> */}
-                                <div className="all-permission-lists">
-                                    {permissions.map((data) => (
-                                        <label
-                                            key={data.id}
-                                            className="inline-flex mr-3 mb-6"
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="form-checkbox"
-                                                name="permissions[]"
-                                                id={`permission-${data.id}`}
-                                                checked={formData.selectedPermissions.includes(
-                                                    data.id
-                                                )}
-                                                onChange={(e) =>
-                                                    handlePermissionChange(
-                                                        data.id,
-                                                        e.target.checked
-                                                    )
-                                                }
-                                            />
-                                            <span>{data.permission_name}</span>
-                                        </label>
+                            <div className="all-permission-lists">
+                                {allPermissions
+                                    .sort((a, b) => a.module_id - b.module_id)
+                                    .map((data, index, array) => (
+                                        <React.Fragment key={data.id}>
+                                            {index === 0 || data.module_id !== array[index - 1].module_id ? (
+                                                <div className="module-title" id={`moduleid-${data.module_id}`}>
+                                                    <h4>{data?.module?.name}</h4>
+                                                </div>
+                                            ) : null}
+                                            <label className="inline-flex mr-3" data-moduleid={data.module_id}>
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-checkbox"
+                                                    name="permissions[]"
+                                                    id={`permission-${data.id}`}
+                                                    checked={formData.selectedPermissions.includes(data.id)}
+                                                    onChange={(e) => handlePermissionChange(data.id, e.target.checked)}
+                                                />
+                                                <span>{data.permission_name}</span>
+                                            </label>
+                                        </React.Fragment>
                                     ))}
-                                </div>
                             </div>
-
                             <div className="flex items-center justify-end">
                                 <button
                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

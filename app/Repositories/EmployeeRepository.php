@@ -20,7 +20,7 @@ class EmployeeRepository {
     public function getAll(){
         return User::with('personaldata','professionaldata','professionaldata.designation','professionaldata.department','professionaldata.working')
             ->where('is_show',1)
-            ->orderBy('first_name','ASC')
+            ->orderByRaw('status DESC, first_name ASC')
             ->get();
     }
     public function store($request){
@@ -86,6 +86,7 @@ class EmployeeRepository {
 
 
             $companyId = \App\Models\User::where('id', auth()->user()->id)->value('company_id');
+            
             $user = User::updateOrCreate(
                 [
                     'id'=>$request->user_id,
@@ -100,7 +101,7 @@ class EmployeeRepository {
                 'machine_user_id'=>$request->machine_user_id,
                 'gender'=>$request->gender,
                 'date_of_birth'=>$request->date_of_birth,
-                'password' => Hash::make('12345678'),
+                // 'password' => Hash::make('12345678'),
                 'avatar'=>$avatar ?? "",
             ]);
             if($user){

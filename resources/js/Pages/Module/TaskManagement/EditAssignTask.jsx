@@ -45,7 +45,6 @@ function Add() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/task/update", values);
     };
 

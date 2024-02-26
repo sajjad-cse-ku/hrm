@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, {Fragment, useState} from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import FlashMessage from "../../Component/FlashMessage";
 import {Link, usePage} from "@inertiajs/react";
 import HtmlReactParser from "html-react-parser";
 import axios from "axios";
+import {Dialog, Transition} from "@headlessui/react";
 
 function TodayAttendance() {
-    const { flash , results,general_time } = usePage().props;
+    const { flash , results,general_time,base_url } = usePage().props;
 
     const [isTadayAttendance , setTodayAttendance] = useState(results)
+    const [data , setData] = useState([])
+
+    const [isModal , setModal] = useState(false)
+
     const formatTime = (timeString) => {
         // Parse the input time string into a Date object
         const time = new Date(`1970-01-01T${timeString}`);
@@ -31,6 +36,16 @@ function TodayAttendance() {
             console.error(error);
         }
     };
+
+      const handleAttendance = async (result) => {
+          try {
+              const response = await axios.get('/admin/get-breaking-time/'+result?.id);
+              setData(response.data)
+              setModal(true)
+          } catch (error) {
+              console.error(error);
+          }
+      }
 
     return (
         <>
@@ -70,8 +85,6 @@ function TodayAttendance() {
                     </li>
                 </ul>
             </div>
-
-
             <div className="mb-5 panel mt-6 flex flex-wrap items-center justify-between overflow-x-auto whitespace-nowrap p-3 ">
 
                     <ul className="flex w-full space-x-2 rtl:space-x-reverse basis-[35%]">
@@ -99,7 +112,6 @@ function TodayAttendance() {
                             </Link>
                     </div>
                 </div>
-
             <div className="pt-5">
                 <div className="grid lg:grid-cols-1 grid-cols-1 gap-6">
                     <div className="panel h-full w-full">
@@ -117,6 +129,7 @@ function TodayAttendance() {
                                     <th>User Check Out</th>
                                     <th>Comment</th>
                                     <th className="ltr:rounded-r-md rtl:rounded-l-md">Status</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -136,11 +149,11 @@ function TodayAttendance() {
                                         </td>
 
                                         <td>
-                                            {result?.attendance?.entry_time ? <span className="text-green-950 font-bold">{formatTime(result?.attendance?.entry_time)}</span> : <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">N/A</span> }
+                                            {result?.attendance?.entry_time ? <span className="text-green-950 font-bold">{formatTime(result?.attendance?.entry_time)}</span> : <span className="badge bg-black shadow-md dark:group-hover:bg-transparent">N/A</span> }
                                         </td>
 
                                         <td>
-                                            {result?.attendance?.exit_time ? <span className="text-green-950 font-bold">{formatTime(result?.attendance?.exit_time)}</span>: <span className="badge bg-red-800 shadow-md dark:group-hover:bg-transparent">N/A</span> }
+                                            {result?.attendance?.exit_time ? <span className="text-green-950 font-bold">{formatTime(result?.attendance?.exit_time)}</span>: <span className="badge bg-black shadow-md dark:group-hover:bg-transparent">N/A</span> }
                                         </td>
                                         {/*<td className="text-black">{result?.attendance?.manual_update_remarks}</td>*/}
                                         <td className="text-black">
@@ -174,6 +187,15 @@ function TodayAttendance() {
                                                 <span className="badge bg-red-600 shadow-md dark:group-hover:bg-transparent">Absent</span>
                                             )}
                                         </td>
+                                        <td>
+                                            {result?.attendance?.home_attendance === 1 ? (
+                                                <button className="badge bg-indigo-600 shadow-md dark:group-hover:bg-transparent py-1 px-2" onClick={() => handleAttendance(result)}>
+                                                    Check Break
+                                                </button>
+                                            ) : (
+                                                <span className="badge bg-black shadow-md dark:group-hover:bg-transparent">N/A</span>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>
@@ -182,6 +204,71 @@ function TodayAttendance() {
                     </div>
                 </div>
             </div>
+
+            { data?.breaktime && data?.breaktime?.length > 0 && (
+                <div>
+                    <Transition appear show={isModal} as={Fragment}>
+                        <Dialog as="div" open={isModal} onClose={() => setModal(false)}>
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <div className="fixed inset-0" />
+                            </Transition.Child>
+                            <div className="fixed inset-0 bg-[black]/60 z-[999]">
+                                <div className="flex items-start justify-center min-h-screen px-4">
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0 scale-95"
+                                        enterTo="opacity-100 scale-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100 scale-100"
+                                        leaveTo="opacity-0 scale-95"
+                                    >
+                                        <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8 text-black dark:text-white-dark">
+                                            <div className="p-5">
+                                                <div className="table-responsive mb-5">
+                                                    <h1>{data?.first_name} {data?.last_name} ({data?.id})</h1>
+                                                    <br/>
+                                                    <table>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Reason</th>
+                                                            <th>Start Time</th>
+                                                            <th>End Time</th>
+                                                            <th>Duration</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        {data?.breaktime?.map((data,index) => {
+                                                            return (
+                                                                <tr key={index}>
+                                                                    <td>{data?.comment}</td>
+                                                                    <td>{data?.start_time}</td>
+                                                                    <td>{data?.end_time}</td>
+                                                                    <td>{data?.duration}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </Dialog.Panel>
+                                    </Transition.Child>
+                                </div>
+                            </div>
+                        </Dialog>
+                    </Transition>
+                </div>
+            ) }
         </>
     );
 }

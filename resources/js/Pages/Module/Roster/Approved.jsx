@@ -208,7 +208,7 @@ function Index() {
                                                                                             </td>
                                                                                             <td>
                                                                                                 {/*<input type="hidden" value={roster.user.id} {...register(`[${roster.user.id}].user_id`)}/>*/}
-                                                                                                {roster?.user.first_name}  {roster?.user.last_name} -  {roster?.user.id}
+                                                                                                {roster.user.first_name} {roster.user.last_name} - {roster.user.id}
                                                                                             </td>
                                                                                             {Object.keys(weeks[weekNumber]).map((dayOfWeek) => (
 

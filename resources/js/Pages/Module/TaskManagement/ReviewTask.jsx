@@ -19,11 +19,12 @@ function Add() {
         task_priority:result.task_priority,
         task_author_comment:result.task_author_comment,
         task_assigned_user_comment:result.task_assigned_user_comment,
-        task_status:"",
+        task_status:"C",
         task_marking:result.task_marking,
         task_remarks:result.task_remarks,
         task_total_hours:result.task_total_hours,
         task_start_date_time:result.task_start_date_time,
+        task_end_date_time:result.task_end_date_time,
     });
 
     const handleChange = (e) => {
@@ -37,7 +38,6 @@ function Add() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/task/update_review_task", values);
     };
 
@@ -222,6 +222,59 @@ function Add() {
                                 )}
                             </div>
                         </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label>Start Time</label>
+                                <input
+                                    id="task_start_date_time"
+                                    type="time"
+                                    disabled
+                                    placeholder="Empty Time Duration"
+                                    className="form-input"
+                                    value={values.task_start_date_time || ''}
+                                    onChange={handleChange}
+                                />
+                                {errors.task_start_date_time && (
+                                    <div className="text-red-600 text-[14px]">
+                                        {errors.task_start_date_time}
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <label>End Time</label>
+                                <input
+                                    id="task_end_date_time"
+                                    type="time"
+                                    disabled
+                                    placeholder="End Time"
+                                    className="form-input"
+                                    value={values.task_end_date_time || ''}
+                                    onChange={handleChange}
+                                />
+                                {errors.task_end_date_time && (
+                                    <div className="text-red-600 text-[14px]">
+                                        {errors.task_end_date_time}
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <label>Time Duration</label>
+                                <input
+                                    id="task_total_hours"
+                                    type="text"
+                                    disabled
+                                    placeholder="Start Time"
+                                    className="form-input"
+                                    value={values.task_total_hours || ''}
+                                    onChange={handleChange}
+                                />
+                                {errors.task_total_hours && (
+                                    <div className="text-red-600 text-[14px]">
+                                        {errors.task_total_hours}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                             <div>
                                 <label>Your Comment's<span className="text-red-600 ">*</span></label>
@@ -234,6 +287,11 @@ function Add() {
                                     value={values.task_assigned_user_comment || ''}
                                     onChange={handleChange}
                                 ></textarea>
+                                {errors.task_assigned_user_comment && (
+                                    <div className="text-red-600 text-[14px]">
+                                        {errors.task_assigned_user_comment}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -263,9 +321,9 @@ function Add() {
                                         value={values.task_remarks || ''}
                                         onChange={handleChange}
                                     />
-                                    {errors.task_link && (
+                                    {errors.task_remarks && (
                                         <div className="text-red-600 text-[14px]">
-                                            {errors.task_link}
+                                            {errors.task_remarks}
                                         </div>
                                     )}
                                 </div>
@@ -279,9 +337,9 @@ function Add() {
                                         value={values.task_marking || ''}
                                         onChange={handleChange}
                                     />
-                                    {errors.task_approximate_start_date && (
+                                    {errors.task_marking && (
                                         <div className="text-red-600 text-[14px]">
-                                            {errors.task_approximate_start_date}
+                                            {errors.task_marking}
                                         </div>
                                     )}
                                 </div>
@@ -309,14 +367,7 @@ function Add() {
                                     type="submit"
                                     className="btn btn-primary !mt-6 ml-auto"
                                 >
-                                    {values.task_status === "C"
-                                        ? "Start Task"
-                                        : values.task_status === "P"
-                                        ? "Submit For Review"
-                                        : values.task_status === "R"
-                                        ? "Complete Task"
-                                        : "Submit" // Add a default message for other statuses if needed
-                                    }
+                                   Submit
                                 </button>
                             </div>
                         </form>

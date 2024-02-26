@@ -63,7 +63,7 @@ function Sidebar({ handleToggleSidebar }) {
                                 alt="logo"
                             />
                             <span className="text-xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">
-                                {t("LUMINOUS HRM")}
+                                {t("HR PAYROLL")}
                             </span>
                         </Link>
                         <button

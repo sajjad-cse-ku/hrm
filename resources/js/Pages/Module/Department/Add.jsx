@@ -9,6 +9,7 @@ import Select from 'react-select';
 function Add({ group_company_list }) {
     const {  flash ,users } = usePage().props;
     const { errors } = usePage().props;
+
     const users_list = users.map((item) => ({
         value: item.id,
         label: item.first_name+' '+item.last_name,
@@ -64,7 +65,6 @@ function Add({ group_company_list }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values);
         const updatedValues = {
             ...values,
             report_to: selectedReportTo ? selectedReportTo.value : null,

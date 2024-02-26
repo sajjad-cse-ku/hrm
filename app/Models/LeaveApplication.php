@@ -29,4 +29,5 @@ class LeaveApplication extends Model
     public function leavecategory(){
         return $this->belongsTo(LeaveCategory::class,'leave_id');
     }
+
 }

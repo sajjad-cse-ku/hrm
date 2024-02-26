@@ -1,20 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage.jsx";
 import { useForm } from "react-hook-form";
+import Select from "react-select";
 
 function Index() {
-    const { flash, result } = usePage().props;
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors },
-    } = useForm();
+    const { flash, result, shifts } = usePage().props;
+    const {register, handleSubmit, setValue, formState: { errors },} = useForm();
+
+    const [values, setValues] = useState({
+        selectedAssignedShift: result?.night_shift,
+        general_shift: result?.general_shift,
+    });
+
+    const handleSelectShift = (selectedOption) => {
+        const shiftId = selectedOption.value;
+        setValues((prevValues) => ({
+            ...prevValues,
+            general_shift: shiftId,
+        }));
+    };
+
+    const handleSelectMultiShift = (selectedAssignedShift) => {
+        setValues((prevValues) => ({
+            ...prevValues,
+            selectedAssignedShift,
+        }));
+    };
+
+    const shiftOptions = shifts.map((shift) => ({
+        value: shift?.id,
+        label: shift?.name ? `${shift.name} - ${shift.id}` : "",
+    }));
 
     function onSubmit(data) {
-        // console.log(data);
+        data.selectedAssignedShift = values.selectedAssignedShift;
+        data.general_shift = values.general_shift;
+        console.log(data);
+
         router.post("/admin/site-settings/update", data);
     }
 
@@ -57,12 +81,8 @@ function Index() {
                 </ul>
             </div>
 
-            <div className="pt-5 grid gap-6 gr-col-1 items-center justify-center">
-                <form
-                    className="space-y-5"
-                    onSubmit={handleSubmit(onSubmit)}
-                    method="post"
-                >
+            <div className="pt-5 grid lg:grid-cols-2 grid-cols-2 gap-6">
+                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -95,11 +115,7 @@ function Index() {
                     </div>
                 </form>
 
-                <form
-                    className="space-y-5"
-                    onSubmit={handleSubmit(onSubmit)}
-                    method="post"
-                >
+                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -115,9 +131,7 @@ function Index() {
                                         type="number"
                                         className="form-input"
                                         placeholder="26"
-                                        defaultValue={Math.floor(
-                                            365 / result?.sick
-                                        )}
+                                        defaultValue={Math.floor(365/result?.sick)}
                                         {...register("sick")}
                                     />
                                 </div>
@@ -127,9 +141,7 @@ function Index() {
                                         type="number"
                                         className="form-input"
                                         placeholder="36"
-                                        defaultValue={Math.floor(
-                                            365 / result?.casual
-                                        )}
+                                        defaultValue={Math.floor(365/result?.casual)}
                                         {...register("casual")}
                                     />
                                 </div>
@@ -147,12 +159,8 @@ function Index() {
                 </form>
             </div>
 
-            <div className="pt-5 grid gap-6 gr-col-1 items-center justify-center">
-                <form
-                    className="space-y-5"
-                    onSubmit={handleSubmit(onSubmit)}
-                    method="post"
-                >
+            <div className="pt-5 grid lg:grid-cols-2 grid-cols-2 gap-6">
+                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
                     <div className="panel" id="forms_grid">
                         {/*Employee credentials*/}
                         <div className="flex items-center justify-between mb-5">
@@ -204,7 +212,135 @@ function Index() {
                         </div>
                     </div>
                 </form>
+
+                <form
+                    className="space-y-5"
+                    onSubmit={handleSubmit(onSubmit)}
+                    method="post"
+                >
+                    <div className="panel" id="forms_grid">
+                        <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                Shift
+                            </h5>
+                        </div>
+                        <div className="mb-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label>Assigned Shifts<span className="text-red-600 ">*</span></label>
+                                    <Select
+                                        placeholder="Select an option"
+                                        options={shiftOptions}
+                                        isMulti
+                                        isSearchable={true}
+                                        defaultValue={shiftOptions.filter(option => result?.night_shift.includes(option.value))}
+                                        onChange={handleSelectMultiShift}
+                                    />
+                                    {errors.selectedAssignedShift && (
+                                        <div className="text-red-600 text-[14px]">
+                                            {errors.selectedAssignedShift}
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <label>Shift<span className="text-red-600 ">*</span></label>
+                                    <Select
+                                        placeholder="Select an option"
+                                        options={shiftOptions}
+                                        isSearchable={true}
+                                        defaultValue={shiftOptions.find(option => option.value === result?.general_shift)}
+                                        onChange={(selectedOption) => {
+                                            setValue("general_shift", selectedOption.value);
+                                            handleSelectShift(selectedOption);
+                                        }}
+                                    />
+
+                                    {errors.general_shift && (
+                                        <div className="text-red-600 text-[14px]">
+                                            {errors.general_shift}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button
+                                type="submit"
+                                className="btn btn-primary !mt-6 ml-auto"
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
+            <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
+                <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} method="post" >
+                    <div className="panel" id="forms_grid">
+                        {/*Employee credentials*/}
+                        <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                Schedule Time Setup
+                            </h5>
+                        </div>
+                        <div className="mb-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                <div>
+                                    <label>Start Day 1st Time</label>
+                                    <input
+                                        type="time"
+                                        className="form-input"
+                                        placeholder="192.168.0.1"
+                                        defaultValue={result?.start_day_first_time}
+                                        {...register("start_day_first_time")}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Start Day 2nd Time</label>
+                                    <input
+                                        type="time"
+                                        className="form-input"
+                                        placeholder="7436"
+                                        defaultValue={result?.start_day_second_time}
+                                        {...register("start_day_second_time")}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>End Day 1st Time</label>
+                                    <input
+                                        type="time"
+                                        className="form-input"
+                                        placeholder="UDP/TCP"
+                                        defaultValue={result?.end_day_first_time}
+                                        {...register("end_day_first_time")}
+                                    />
+                                </div>
+                                <div>
+                                    <label>End Day 2nd Time</label>
+                                    <input
+                                        type="time"
+                                        className="form-input"
+                                        placeholder="UDP/TCP"
+                                        defaultValue={result?.end_day_second_time}
+                                        {...register("end_day_second_time")}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button
+                                type="submit"
+                                className="btn btn-primary !mt-6 ml-auto"
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </>
     );
 }

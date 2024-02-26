@@ -17,11 +17,10 @@ class PermissionsController extends Controller
 {
     public function index(){
 
-        $permissions = Permission::with('module')->get();
+        $allPermissions = Permission::with('module')->get();
 
         return Inertia::render('Module/Permission/Permissionlist', [
-            'permissionscheck' => checkPermissions(),
-            'permissions' => $permissions,
+            'allPermissions' => $allPermissions,
         ]);
 
     }
@@ -62,10 +61,10 @@ class PermissionsController extends Controller
         // Validate the incoming request data
         $permission = DB::table('permissions')->where('id', $id)->first();
         $modules = Module::all();
-        $permissions = Permission::all();
+        $allPermissions = Permission::all();
         return Inertia::render('Module/Permission/Editpermission', [
             'permission' => $permission,
-            'permissions' => $permissions,
+            'allPermissions' => $allPermissions,
             'modules' => $modules,
         ]);
 
@@ -110,20 +109,20 @@ class PermissionsController extends Controller
     public function testpermission(){
         // dd('Hello');
 
-        $permissions = User::with('permission')->where('id',Auth::id())->get();
+        $allPermissions = User::with('permission')->where('id',Auth::id())->get();
 
 
-        foreach ($permissions->first()->permission as $item) {
-            $permissionIds[] = $item->pivot->permission_id;
+        foreach ($allPermissions->first()->permission as $item) {
+            $allPermissions[] = $item->pivot->permission_id;
         }
 
         // if(in_array(1,permissisonsId) || in_array(2,$permissionIds)){
         //     Insert/Update
         // }
 
-        if (in_array(15, $permissionIds)) {
+        if (in_array(15, $allPermissions)) {
             return Inertia::render('Permission/Rolelist', [
-                'permissions' => $permissionIds
+                'allPermissions' => $allPermissions
             ]);
         } else {
             dd('Permission Denied');

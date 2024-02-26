@@ -37,20 +37,42 @@ class TaskManagementController extends Controller
         $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
             $query->where('department_id', $departmentId);
         })->get();
-//        $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
-//            $query->where('department_id', $departmentId);
-//        })->where('id','!=',Auth::id())->get();
+
         $projects = Project::select('id','name')->where('status',1)->get();
         return Inertia::render('Module/TaskManagement/Add',[
             'users'=>$users,
             'projects'=>$projects,
         ]);
     }
+    public function MyTaskCreate(){
+
+        $user = User::with('professionaldata')->where('id',Auth::user()->id)->first();
+        $departmentId = $user->professionaldata->department_id;
+        $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->get();
+        $projects = Project::select('id','name')->where('status',1)->get();
+        return Inertia::render('Module/TaskManagement/MyTaskAdd',[
+            'users'=>$users,
+            'projects'=>$projects,
+        ]);
+    }
     public function store(TaskManagementRequest $request){
+
+
         $result = $this->task_management->store($request);
         if($result['status']== true){
             // return back()->with('success', $result['message']);
-            return to_route('admin.dashboard')->with('success', $result['message']);
+            return to_route('admin.task.assign')->with('success', $result['message']);
+        }else{
+            return back()->with('error', 'Data Does not Insert');
+        }
+    }
+    public function myStore(TaskManagementRequest $request){
+        $result = $this->task_management->store($request);
+        if($result['status']== true){
+            // return back()->with('success', $result['message']);
+            return to_route('admin.my.task')->with('success', $result['message']);
         }else{
             return back()->with('error', 'Data Does not Insert');
         }
@@ -96,7 +118,7 @@ class TaskManagementController extends Controller
             $task->taskuser()->sync($userIds);
 
 //            return ['status' => true, 'message' => 'Update successfully'];
-            return back()->with('success', 'Update successfully');
+            return to_route('admin.task.assign')->with('success', 'Update successfully');
         }
     }
     public function review($id)
@@ -113,7 +135,28 @@ class TaskManagementController extends Controller
         return Inertia::render('Module/TaskManagement/ReviewTask',['result' => $result, 'users'=>$users,
             'projects'=>$projects]);
     }
+    public function CompleteView($id)
+    {
+        $user = User::with('professionaldata')->where('id',Auth::user()->id)->first();
+        $departmentId = $user->professionaldata->department_id;
+        $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })->get();
+        $projects = Project::select('id','name')->where('status',1)->get();
+        $result = TaskManagement::with('users','project')
+            ->where('id',$id)
+            ->first();
+        return Inertia::render('Module/TaskManagement/ViewCompleteTask',['result' => $result, 'users'=>$users,
+            'projects'=>$projects]);
+    }
     public function update_review_task(Request $request){
+        $request->validate([
+            'task_remarks' => 'required',
+            'task_marking' => 'required',
+            'task_status' => 'required',
+
+        ]);
+
         $task = TaskManagement::findOrFail($request->id);
         $task->update([
             'task_remarks' => $request->task_remarks,
@@ -122,13 +165,13 @@ class TaskManagementController extends Controller
         ]);
         if ($task) {
             if ($task->task_status === "P") {
-                return to_route('admin.my.task')->with('success', 'Back To Progress');
+                return to_route('admin.task.assign')->with('success', 'Back To Progress');
             }
             else if ($task->task_status === "C") {
-                return to_route('admin.my.task')->with('success', 'Back To Assign Again');
+                return to_route('admin.task.assign')->with('success', 'Back To Assign Again');
             }
             else if ($task->task_status === "A") {
-                return to_route('admin.my.task')->with('success', 'Task Complete');
+                return to_route('admin.task.assign')->with('success', 'Task Complete');
             }
         }
     }
@@ -139,8 +182,6 @@ class TaskManagementController extends Controller
         if ($task->task_status == "C")
         {
             $task->update([
-                'task_approximate_start_date' => now('Asia/Dhaka'),
-                'task_start_date_time' => now('Asia/Dhaka')->toTimeString(),
                 'task_assigned_user_comment' => $request->task_assigned_user_comment,
                 'task_status' => 'P',
             ]);
@@ -148,47 +189,53 @@ class TaskManagementController extends Controller
                 return to_route('admin.my.task')->with('success', 'Task In Progress');
 
             }
-        }else if($task->task_status == "P"){
+        }else if ($task->task_status == "P") {
+            $request->validate([
+                'task_link' => 'required',
+                'task_approximate_start_date' => 'required',
+                'task_start_date_time' => 'required',
+                'task_approximate_end_date' => 'required',
+                'task_end_date_time' => 'required',
+                'task_assigned_user_comment' => 'required',
+            ]);
+
             $task->update([
                 'task_link' => $request->task_link,
-                'task_approximate_end_date' => now('Asia/Dhaka'),
-                'task_end_date_time' => now('Asia/Dhaka')->toTimeString(),
+                'task_approximate_start_date' => $request->task_approximate_start_date,
+                'task_start_date_time' => $request->task_start_date_time,
+                'task_approximate_end_date' => $request->task_approximate_end_date,
+                'task_end_date_time' => $request->task_end_date_time,
                 'task_assigned_user_comment' => $request->task_assigned_user_comment,
                 'task_status' => 'R',
             ]);
-            if ($task->task_start_date_time && $task->task_end_date_time) {
-                $start = Carbon::createFromFormat('H:i:s', $task->task_start_date_time);
-                $end = Carbon::createFromFormat('H:i:s', $task->task_end_date_time);
 
-                $duration = $end->diff($start);
-                $formattedDuration = $duration->format('%H:%I:%S');
+            if ($task->task_start_date_time && $task->task_end_date_time) {
+                $startDateTime = Carbon::parse( $task->task_approximate_start_date . ' ' . $task->task_start_date_time);
+                $endDateTime = Carbon::parse($task->task_approximate_end_date . ' ' . $task->task_end_date_time);
+
+                if (!$startDateTime || !$endDateTime) {
+                    // Handle the case where the parsing fails
+                    return to_route('admin.my.task')->with('error', 'Invalid date/time format');
+                }
+
+                $duration = $endDateTime->diff($startDateTime);
+
+                $totalSeconds = $duration->days * 24 * 60 * 60 + $duration->h * 60 * 60 + $duration->i * 60 + $duration->s;
+
+                $formattedDuration = sprintf('%02d:%02d:%02d', floor($totalSeconds / 3600), floor(($totalSeconds % 3600) / 60), $totalSeconds % 60);
             } else {
                 $formattedDuration = null;
             }
 
             $task->update(['task_total_hours' => $formattedDuration]);
 
-            if ($task) {
-                return to_route('admin.my.task')->with('success', 'Task In Review');
-
-            }
+            return to_route('admin.my.task')->with('success', 'Task In Review');
         }
-        else if($task->task_status == "R"){
-            $task->update([
-                'task_link' => $request->task_link,
-                'task_approximate_start_date' => $request->task_approximate_start_date,
-                'task_approximate_end_date' => $request->task_approximate_end_date,
-                'task_assigned_user_comment' => $request->task_assigned_user_comment,
-                'task_status' => 'A',
-            ]);
-            if ($task) {
-                return to_route('admin.my.task')->with('success', 'Task Approved');
 
-            }
-        }
     }
     public function viewMyTask(int $id)
     {
+//        dd('ok');
         $user = User::with('professionaldata')->where('id',Auth::user()->id)->first();
         $departmentId = $user->professionaldata->department_id;
         $users =User::whereHas('professionaldata', function ($query) use ($departmentId) {
@@ -206,6 +253,7 @@ class TaskManagementController extends Controller
         $tasks = TaskManagement::with('users','project')->
         where('task_creator_id',Auth::id())
             ->where('task_status','C')
+            ->latest('created_at')
                 ->get();
         if(isset($tasks)){
             return Inertia::render('Module/TaskManagement/AssignTask',[
@@ -218,7 +266,7 @@ class TaskManagementController extends Controller
         $userId = Auth::id();
         $tasks = TaskManagement::whereHas('users', function ($query) use ($userId) {
             $query->where('user_id', $userId);
-        })->where('task_status', 'C')->with('project')->get();
+        })->where('task_status', 'P')->with('project')->latest('created_at')->get();
 
         if(isset($tasks)){
             return Inertia::render('Module/TaskManagement/MyTask',[
@@ -231,6 +279,7 @@ class TaskManagementController extends Controller
         $tasks = TaskManagement::with('users','project')->
         where('task_creator_id',Auth::id())
             ->where('task_status','C')
+            ->latest('created_at')
             ->get();
          return response()->json($tasks);
     }
@@ -238,20 +287,34 @@ class TaskManagementController extends Controller
         $tasks = TaskManagement::with('users','project')->
         where('task_creator_id',Auth::id())
             ->where('task_status','P')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
     public function getReviewTask(){
-        $tasks = TaskManagement::with('users','project')->
-        where('task_creator_id',Auth::id())
-            ->where('task_status','R')
+        $user = User::with('professionaldata')->where('id', Auth::user()->id)->first();
+        $departmentId = $user->professionaldata->department_id;
+
+        $tasks = TaskManagement::with('users', 'project')
+            ->where(function ($query) use ($departmentId) {
+                $query->where('task_creator_id', Auth::id())
+                    ->orWhere('department_id', $departmentId);
+            })
+            ->where('task_status', 'R')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
     public function getDoneTask(){
-        $tasks = TaskManagement::with('users','project')->
-        where('task_creator_id',Auth::id())
-            ->where('task_status','A')
+        $user = User::with('professionaldata')->where('id', Auth::user()->id)->first();
+        $departmentId = $user->professionaldata->department_id;
+        $tasks = TaskManagement::with('users', 'project')
+            ->where(function ($query) use ($departmentId) {
+                $query->where('task_creator_id', Auth::id())
+                    ->orWhere('department_id', $departmentId);
+            })
+            ->where('task_status', 'A')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
@@ -263,6 +326,7 @@ class TaskManagementController extends Controller
         })
             ->where('task_status', 'C')
             ->with('project')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
@@ -273,6 +337,7 @@ class TaskManagementController extends Controller
         })
             ->where('task_status', 'P')
             ->with('project')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
@@ -283,6 +348,7 @@ class TaskManagementController extends Controller
         })
             ->where('task_status', 'R')
             ->with('project')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }
@@ -293,6 +359,7 @@ class TaskManagementController extends Controller
         })
             ->where('task_status', 'A')
             ->with('project')
+            ->latest('created_at')
             ->get();
         return response()->json($tasks);
     }

@@ -15,7 +15,6 @@ function Index() {
     const [recordsData2, setRecordsData2] = useState(initialRecords2);
 
 
-    // console.log(result);
 
     const [search2, setSearch2] = useState("");
     const [sortStatus2, setSortStatus2] = useState({

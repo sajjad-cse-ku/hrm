@@ -1,57 +1,64 @@
 import React, { useState } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import FlashMessage from "../../Component/FlashMessage";
-import { Link, usePage } from "@inertiajs/react";
+import {Link, usePage} from "@inertiajs/react";
 import HtmlReactParser from "html-react-parser";
 import axios from "axios";
 
 function MyTask() {
-    const { base_url, flash, tasks, auth } = usePage().props;
-    const [isTask, setTask] = useState(tasks);
-    const [isTitle, setTitle] = useState("Assigned Task");
+    const { base_url,flash,tasks,auth, permissions } = usePage().props;
+    const [isTask,setTask]=useState(tasks)
+    const [isTitle,setTitle]=useState('Assigned Task')
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${day}-${month}-${year}`;
+    }
 
     const createdTask = async () => {
         try {
-            const response = await axios.get("/admin/task/get-created-myTask/");
-            setTask(response.data);
-            setTitle("Created Task");
+            const response = await axios.get('/admin/task/get-created-myTask/');
+            setTask(response.data)
+            setTitle('Created Task')
         } catch (error) {
             console.error(error);
         }
-    };
+    }
 
     const processingTask = async () => {
         try {
-            const response = await axios.get(
-                "/admin/task/get-processing-myTask/"
-            );
-            // console.log(response.data)
-            setTask(response.data);
-            setTitle("Processing Task");
+            const response = await axios.get('/admin/task/get-processing-myTask/');
+            setTask(response.data)
+            setTitle('Processing Task')
         } catch (error) {
             console.error(error);
         }
-    };
+    }
 
     const reviewTask = async () => {
         try {
-            const response = await axios.get("/admin/task/get-review-myTask/");
-            setTask(response.data);
-            setTitle("Review Task");
+            const response = await axios.get('/admin/task/get-review-myTask/');
+            setTask(response.data)
+            setTitle('Review Task')
         } catch (error) {
             console.error(error);
         }
-    };
+    }
 
     const doneTask = async () => {
         try {
-            const response = await axios.get("/admin/task/get-done-myTask/");
-            setTask(response.data);
-            setTitle("Approved Task");
+            const response = await axios.get('/admin/task/get-done-myTask/');
+            setTask(response.data)
+            setTitle('Approved Task')
         } catch (error) {
             console.error(error);
         }
-    };
+    }
+
 
     return (
         <>
@@ -92,179 +99,156 @@ function MyTask() {
                 </ul>
             </div>
 
-            <div className="mb-5 panel mt-6 flex flex-wrap items-center justify-between overflow-x-auto whitespace-nowrap p-3 gap-2">
-                <div className="">
+            <div className="mb-5 panel mt-6  flex flex-wrap  md:flex-row gap-[20px] items-start md:items-center  overflow-x-auto whitespace-nowrap p-3">
+
+                {/* <div className=""> */}
+
+                    {/*<button*/}
+                    {/*    className="px-7 py-2 bg-yellow-600 text-white rounded-md text-[15px]" onClick={createdTask}>*/}
+                    {/*    Assigned Task*/}
+                    {/*</button>*/}
                     <button
-                        className="px-7 py-2 bg-yellow-600 text-white rounded-md text-[15px]"
-                        onClick={createdTask}
-                    >
-                        Assigned Task
+                        className="px-7 py-2 bg-red-600 text-white rounded-md text-[15px] ml-2" onClick={processingTask}>
+                        Task List
                     </button>
                     <button
-                        className="px-7 py-2 bg-red-600 text-white rounded-md text-[15px] ml-2"
-                        onClick={processingTask}
-                    >
-                        Processing
-                    </button>
-                    <button
-                        className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
-                        onClick={reviewTask}
-                    >
+                        className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2" onClick={reviewTask}>
                         Review
                     </button>
                     <button
-                        className="px-7 py-2 bg-green-600 text-white rounded-md text-[15px] ml-2"
-                        onClick={doneTask}
-                    >
+                        className="px-7 py-2 bg-green-600 text-white rounded-md text-[15px] ml-2" onClick={doneTask}>
                         Done
                     </button>
-                </div>
-                <div className="">
-                    <Link href={`${base_url}/admin/task/create`} method="get">
-                        <button
-                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] "
-                            onClick={doneTask}
-                        >
-                            Create Task
-                        </button>
-                    </Link>
-                </div>
+
+
+                    {permissions.includes('my-task-create') || permissions.includes('super-admin') ? (
+                        <Link href={`${base_url}/admin/task/my_create`} method="get" className="ml-start md:ml-auto px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ">
+                            Create My Task
+                        </Link>
+                    ) : null
+                    }
+                {/* </div> */}
+                {/* <div className="">
+                    {permissions.includes('my-task-create') || permissions.includes('super-admin') ? (
+                        <Link href={`${base_url}/admin/task/my_create`} method="get" className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2">
+                            Create My Task
+                        </Link>
+                    ) : null
+                    }
+                </div> */}
             </div>
 
             <div className="pt-5">
                 <div className="grid lg:grid-cols-1 grid-cols-1 gap-6">
                     <div className="panel h-full w-full">
                         <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">
-                                {isTitle}
-                            </h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">{isTitle}</h5>
                         </div>
-                        <div className="table-responsive custom-scroll">
-                            <table>
-                                <thead>
+                        {permissions.includes('my-task-view') || permissions.includes('super-admin') ? (
+                            <div className="table-responsive custom-scroll">
+                                <table>
+                                    <thead>
                                     <tr>
+                                        <th>Task Date</th>
                                         <th>Project name</th>
                                         <th>Task Title</th>
                                         <th>priority</th>
                                         <th>Time Duration</th>
-                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">
-                                            Action
-                                        </th>
+                                        <th className="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {isTask &&
-                                        isTask.length > 0 &&
-                                        isTask?.map((task, index) => (
-                                            <tr
-                                                key={index}
-                                                className="text-white-dark hover:text-black dark:hover:text-white-light/90 group"
-                                            >
-                                                <td className="min-w-[150px] text-black dark:text-white">
-                                                    <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">
-                                                            {
-                                                                task?.project
-                                                                    ?.name
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </td>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        isTask && isTask.length > 0 &&
+                                        isTask?.map((task, index) => {
+                                            const currentDate = formatDate(task?.created_at);
 
-                                                <td className="min-w-[150px] text-black dark:text-white">
-                                                    <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">
-                                                            {task?.task_title}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="min-w-[150px] text-black dark:text-white">
-                                                    <div className="flex items-center">
-                                                        <span className="whitespace-nowrap">
-                                                            {
-                                                                task?.task_priority
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td className="min-w-[150px] text-black dark:text-white">
-                                                    {task.task_status ===
-                                                    "C" ? (
-                                                        <span className="whitespace-nowrap">
-                                                            Assigned
-                                                        </span>
-                                                    ) : task.task_status ===
-                                                      "P" ? (
-                                                        <div className="flex items-center">
-                                                            <span className="whitespace-nowrap">
-                                                                Start at :-{" "}
-                                                                {
-                                                                    task?.task_start_date_time
-                                                                }
-                                                            </span>
-                                                        </div>
-                                                    ) : task.task_status ===
-                                                          "R" ||
-                                                      task.task_status ===
-                                                          "A" ? (
-                                                        <div className="flex items-center">
-                                                            <span className="whitespace-nowrap">
-                                                                {
-                                                                    task?.task_total_hours
-                                                                }
-                                                            </span>
-                                                        </div>
-                                                    ) : null}
-                                                </td>
-                                                <td>
-                                                    {task.task_status === "C" ||
-                                                    task.task_status === "P" ? (
-                                                        <Link
-                                                            href={
-                                                                `${base_url}/admin/task/view_my_task/` +
-                                                                task.id
-                                                            }
-                                                            method="get"
-                                                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
-                                                        >
-                                                            View
-                                                        </Link>
-                                                    ) : task.task_status ===
-                                                      "R" ? (
-                                                        task?.task_creator_id ===
-                                                        auth.id ? (
-                                                            <Link
-                                                                href={
-                                                                    `${base_url}/admin/task/view_my_task/` +
-                                                                    task.id
-                                                                }
-                                                                method="get"
-                                                                className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
-                                                            >
-                                                                View
-                                                            </Link>
-                                                        ) : (
-                                                            <div className="text-primary">
-                                                                Under Review
+                                            const hasPreviousTask = index > 0;
+                                            const previousDate = hasPreviousTask ? formatDate(isTask[index - 1].created_at) : null;
+
+                                            return (
+                                                <React.Fragment key={index}>
+                                                    {currentDate && previousDate && currentDate !== previousDate && (
+                                                        <tr key={`br_${index}`} className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                                            <td colSpan="7">
+                                                                <hr className='border-[5px] border-indigo-700' />
+                                                                {/*<br />*/}
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    <tr key={index} className="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                                        <td className="min-w-[150px] text-black dark:text-white">
+                                                            <div className="flex items-center">
+                                                                <span className="whitespace-nowrap">{task?.created_at && formatDate(task.created_at)}</span>
                                                             </div>
-                                                        )
-                                                    ) : task.task_status ===
-                                                      "A" ? (
-                                                        <div className="text-success">
-                                                            Complete
-                                                        </div>
-                                                    ) : null}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                                        </td>
+                                                        <td className="min-w-[150px] text-black dark:text-white">
+                                                            <div className="flex items-center">
+                                                                <span className="whitespace-nowrap">{task?.project?.name}</span>
+                                                            </div>
+                                                        </td>
+
+                                                        <td className="min-w-[150px] text-black dark:text-white">
+                                                            <div className="flex items-center">
+                                                                <span className="whitespace-nowrap">{task?.task_title}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="min-w-[150px] text-black dark:text-white">
+                                                            <div className="flex items-center">
+                                                                <span className="whitespace-nowrap">{task?.task_priority}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="min-w-[150px] text-black dark:text-white">
+                                                            {task.task_status === "C" ? (
+                                                                <span className="whitespace-nowrap">Assigned</span>
+                                                            ) : task.task_status === "P"  ? (
+                                                                <div className="flex items-center">
+                                                                    <span className="whitespace-nowrap">Processing</span>
+                                                                </div>
+                                                            ) : task.task_status === "R" || task.task_status === "A" ? (
+                                                                <div className="flex items-center">
+                                                                    <span className="whitespace-nowrap">{task?.task_total_hours}</span>
+                                                                </div>
+                                                            ) : null}
+                                                        </td>
+                                                        {permissions.includes('my-task-edit') || permissions.includes('super-admin') ? (
+                                                            <td>
+                                                                {task.task_status === "C" || task.task_status === "P" ? (
+                                                                    <Link
+                                                                        href={`${base_url}/admin/task/view_my_task/` + task.id}
+                                                                        method="get"
+                                                                        className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2"
+                                                                    >
+                                                                        View
+                                                                    </Link>
+                                                                ) : task.task_status === "R" ? (
+                                                                    <div className="text-primary">Under Review</div>
+                                                                ) : task.task_status === "A" ? (
+                                                                    <Link href={`${base_url}/admin/task/complete_view/` + task.id} method="get" className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px] ml-2">
+                                                                        View
+                                                                    </Link>
+                                                                ) : null}
+                                                            </td>
+                                                        ) : null
+                                                        }
+                                                    </tr>
+                                                </React.Fragment>
+                                            );
+                                        })
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : null
+                        }
                     </div>
                 </div>
             </div>
         </>
     );
 }
-MyTask.layout = (page) => <MainLayout children={page} title="HR || My Task" />;
+MyTask.layout = (page) => (
+    <MainLayout children={page} title="HR || My Task" />
+);
 export default MyTask;
+

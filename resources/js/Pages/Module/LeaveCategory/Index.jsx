@@ -4,8 +4,8 @@ import { DataTable } from "mantine-datatable";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage";
 
-function Index({ result }) {
-    const { base_url, flash, permissions } = usePage().props;
+function Index() {
+    const { base_url, flash, result, permissions } = usePage().props;
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [page2, setPage2] = useState(1);
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);
@@ -113,15 +113,14 @@ function Index({ result }) {
                                 onChange={(e) => setSearch2(e.target.value)}
                             />
                         </div>
-                        {permissions.includes('leave-category-create') || permissions.includes('super-admin') &&
-                            <Link
+                        {permissions.includes('leave-category-create') || permissions.includes('super-admin') ? (
+                            <a
                                 href={`${base_url}/admin/leave_category/create`}
-                                method="get"
-                                className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
+                                className="px-7 py-2 bg-indigo-600 text-white rounded-md text-15px"
                             >
                                 Add
-                            </Link>
-                        }
+                            </a>
+                        ) : null}
                     </div>
                 </div>
                 <div className="datatables">
@@ -161,15 +160,17 @@ function Index({ result }) {
                                 titleClassName: "!text-center",
                                 render: (result) => (
                                     <div className="flex items-center w-max mx-auto gap-2">
-                                        {permissions.includes('leave-category-edit') || permissions.includes('super-admin') &&
+                                        {permissions.includes('leave-category-edit') || permissions.includes('super-admin') ? (
                                             <Link href={`${base_url}/admin/leave_category/edit/`+result.id} method="get" className="btn btn-sm btn-outline-primary">
                                                 Edit
                                             </Link>
+                                        ): null
                                         }
-                                        {permissions.includes('leave-category-delete') || permissions.includes('super-admin') &&
+                                        {permissions.includes('leave-category-delete') || permissions.includes('super-admin') ? (
                                             <Link href={`${base_url}/admin/leave_category/delete/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
                                                 Delete
                                             </Link>
+                                            ): null
                                         }
 
 
@@ -191,9 +192,7 @@ function Index({ result }) {
                         }
                     />
 
-                    ) : (
-                        <h3>You are not authorized to see this page conent</h3>
-                    )
+                    ) : null
                 }
                 </div>
             </div>

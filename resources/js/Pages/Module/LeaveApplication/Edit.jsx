@@ -8,7 +8,8 @@ import FlashMessage from "../../Component/FlashMessage.jsx";
 function Edit() {
     const {  flash , result , errors } = usePage().props;
     const [values, setValues] = useState({
-        id: result.id,
+        user_id: result.user_id,
+        leave_id:result.leave_id,
         leave_eligible: result.leave_eligible,
     });
 
@@ -22,7 +23,6 @@ function Edit() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        // console.log(values)
         router.post("/admin/leave_application/update", values);
     }
     return (

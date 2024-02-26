@@ -6,6 +6,7 @@ import axios from "axios";
 
 function Index() {
     const { base_url, flash ,results, permissions } = usePage().props;
+    console.log(results)
     return (
         <>
             <FlashMessage flash={flash} />
@@ -68,23 +69,25 @@ function Index() {
                                 <tbody>
                                 {results.map((result,idx)=>(
                                     <tr key={idx}>
-                                        <td>{result?.first_name} {result?.last_name}</td>
-                                        <td>{result?.name}</td>
+                                        <td>{result?.user?.first_name} {result?.user?.last_name}</td>
+                                        <td>{result?.leavecategory?.name}</td>
                                         <td>{result?.from_date}</td>
                                         <td>{result?.to_date}</td>
                                         <td>{result?.nods}</td>
                                         <td>{result?.reason}</td>
                                         <td className="text-center">
                                             <div className="flex items-center w-max mx-auto gap-2">
-                                                {permissions.includes('leave-approve-update') || permissions.includes('super-admin') &&
-                                                    <Link href={`${base_url}/admin/leave_application/approved/`+result.user_id} method="get" className="btn btn-sm btn-outline-success">
+                                                {permissions.includes('leave-approve-update') || permissions.includes('super-admin') ? (
+                                                    <Link href={`${base_url}/admin/leave_application/approved/`+result.id} method="get" className="btn btn-sm btn-outline-success">
                                                         Accept
                                                     </Link>
+                                                    ) : null
                                                 }
-                                                {permissions.includes('leave-approve-update') || permissions.includes('super-admin') &&
-                                                    <Link href={`${base_url}/admin/leave_application/rejected/`+result.user_id} method="get" className="btn btn-sm btn-outline-danger">
+                                                {permissions.includes('leave-approve-update') || permissions.includes('super-admin') ? (
+                                                    <Link href={`${base_url}/admin/leave_application/rejected/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
                                                         Reject
                                                     </Link>
+                                                    ) : null
                                                 }
                                             </div>
                                         </td>

@@ -1,10 +1,8 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState,Fragment } from "react";
 import MainLayout from "../../Layout/Mainlayout";
 import { DataTable } from "mantine-datatable";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage";
-import { CiViewList } from "react-icons/ci";
-import { MdOutlineDelete, MdOutlineEditNote } from "react-icons/md";
 
 function Index() {
     const { base_url, flash, result, permissions } = usePage().props;
@@ -34,22 +32,14 @@ function Index() {
         setInitialRecords2(() => {
             return result.filter((item) => {
                 return (
-                    (item.title &&
-                        item.title
-                            .toLowerCase()
-                            .includes(search2.toLowerCase())) ||
-                    (item.notice_date &&
-                        item.notice_date
-                            .toLowerCase()
-                            .includes(search2.toLowerCase())) ||
-                    (item.company?.name &&
-                        item.company?.name
-                            .toLowerCase()
-                            .includes(search2.toLowerCase()))
+                    (item.title && item.title.toLowerCase().includes(search2.toLowerCase())) ||
+                    (item.notice_date && item.notice_date.toLowerCase().includes(search2.toLowerCase())) ||
+                    (item.company?.name && item.company?.name.toLowerCase().includes(search2.toLowerCase()))
                 );
             });
         });
     }, [search2]);
+
 
     const formatDate = (date) => {
         if (date) {
@@ -76,8 +66,7 @@ function Index() {
     return (
         <>
             <FlashMessage flash={flash} />
-
-            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3">
+            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 ">
                 <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
                     <svg
                         width="24"
@@ -112,215 +101,131 @@ function Index() {
                     </li>
                 </ul>
             </div>
-            {permissions.includes("notice-view") ||
-            permissions.includes("super-admin") ? (
-                <div className="panel mt-6">
-                    <div className="flex md:items-center flex-col sm:flex-row justify-between mb-5 gap-5">
-                        <h5 className="font-semibold text-lg dark:text-white-light">
-                            Notice
-                        </h5>
-                        <div className="flex md:items-center gap-5">
-                            <div>
-                                <input
-                                    type="text"
-                                    className="form-input md:w-auto"
-                                    placeholder="Search..."
-                                    value={search2}
-                                    onChange={(e) => setSearch2(e.target.value)}
-                                />
+            {
+                permissions.includes('notice-view') || permissions.includes('super-admin') ? (
+                    <div className="panel mt-6">
+                        <div className="flex md:items-center flex-col sm:flex-row justify-between mb-5 gap-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                Notice
+                            </h5>
+                            <div className="flex md:items-center gap-5">
+                                <div>
+                                    <input
+                                        type="text"
+                                        className="form-input md:w-auto"
+                                        placeholder="Search..."
+                                        value={search2}
+                                        onChange={(e) => setSearch2(e.target.value)}
+                                    />
+                                </div>
+                                {
+                                    permissions.includes('notice-create') || permissions.includes('super-admin') ? (
+                                        <Link
+                                            href={`${base_url}/admin/notice/create`}
+                                            method="get"
+                                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
+                                        >
+                                            Add
+                                        </Link>
+                                    ) : null
+                                }
                             </div>
-                            {permissions.includes("notice-create") ||
-                            permissions.includes("super-admin") ? (
-                                <Link
-                                    href={`${base_url}/admin/notice/create`}
-                                    method="get"
-                                    className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
-                                >
-                                    Add
-                                </Link>
-                            ) : null}
+                        </div>
+                        <div className="datatables">
+                            <DataTable
+                                className="whitespace-nowrap table-hover"
+                                records={recordsData2}
+                                columns={[
+                                    {
+                                        accessor: "company_id",
+                                        title: "Company Name",
+                                        render: ({ company }) => (
+                                            <div className="flex items-center w-max">
+                                                <div>{company?.name}</div>
+                                            </div>
+                                        ),
+                                    },
+                                    {
+                                        accessor: "title",
+                                        title: "Title",
+                                        render: ({ title }) => (
+                                            <div className="flex items-center w-max">
+                                                <div>{title}</div>
+                                            </div>
+                                        ),
+                                    },
+                                    {
+                                        accessor: "notice_date",
+                                        title: "Noticce Date",
+                                        render: ({ notice_date }) => (
+                                            <div className="flex items-center w-max">
+                                                <div>{notice_date}</div>
+                                            </div>
+                                        ),
+                                    },
+                                    {
+                                        accessor: "status",
+                                        title:"Status",
+                                        titleClassName: "text-center",
+                                        render: (result) => (
+                                            <label className="w-12 h-6 relative"
+                                                   onClick={() =>
+                                                       statusChanged(result)
+                                                   }
+                                            >
+                                                <input defaultChecked={result.status === 1} type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="custom_switch_checkbox1"  />
+                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                            </label>
+                                        ),
+                                    },
+                                    {
+                                        accessor: "action",
+                                        title: "Action",
+                                        titleClassName: "!text-center",
+                                        render: (result) => (
+                                            <div className="flex items-center w-max mx-auto gap-2">
+                                                <Link href={`${base_url}/admin/notice/view/`+result.id} method="get" className="btn btn-sm btn-outline-primary">
+                                                    View
+                                                </Link>
+                                                {
+                                                    permissions.includes('notice-edit') || permissions.includes('super-admin') ? (
+                                                        <Link href={`${base_url}/admin/notice/edit/`+result.id} method="get" className="btn btn-sm btn-outline-primary">
+                                                            Edit
+                                                        </Link>
+                                                    ) : null
+                                                }
+                                                {
+                                                    permissions.includes('notice-delete') || permissions.includes('super-admin') ? (
+                                                        <Link href={`${base_url}/admin/notice/delete/`+result.id} method="get" className="btn btn-sm btn-outline-danger">
+                                                            Delete
+                                                        </Link>
+                                                    ) : null
+                                                }
+                                            </div>
+                                        ),
+                                    },
+                                ]}
+                                totalRecords={initialRecords2.length}
+                                recordsPerPage={pageSize2}
+                                page={page2}
+                                onPageChange={(p) => setPage2(p)}
+                                recordsPerPageOptions={PAGE_SIZES}
+                                onRecordsPerPageChange={setPageSize2}
+                                onSortStatusChange={setSortStatus2}
+                                minHeight={200}
+                                paginationText={({ from, to, totalRecords }) =>
+                                    `Showing  ${from} to ${to} of ${totalRecords} entries`
+                                }
+                            />
                         </div>
                     </div>
-                    <div className="datatables">
-                        <DataTable
-                            className="whitespace-nowrap table-hover"
-                            records={recordsData2}
-                            columns={[
-                                {
-                                    accessor: "company_id",
-                                    title: "Company Name",
-                                    render: ({ company }) => (
-                                        <div className="flex items-center w-max">
-                                            <div>{company?.name}</div>
-                                        </div>
-                                    ),
-                                },
-                                {
-                                    accessor: "title",
-                                    title: "Title",
-                                    render: ({ title }) => (
-                                        <div className="flex items-center w-max">
-                                            <div>{title}</div>
-                                        </div>
-                                    ),
-                                },
-                                {
-                                    accessor: "notice_date",
-                                    title: "Noticce Date",
-                                    render: ({ notice_date }) => (
-                                        <div className="flex items-center w-max">
-                                            <div>{notice_date}</div>
-                                        </div>
-                                    ),
-                                },
-                                {
-                                    accessor: "status",
-                                    title: "Status",
-                                    titleClassName: "text-center",
-                                    render: (result) => (
-                                        <label
-                                            className="w-12 h-6 relative"
-                                            onClick={() =>
-                                                statusChanged(result)
-                                            }
-                                        >
-                                            <input
-                                                defaultChecked={
-                                                    result.status === 1
-                                                }
-                                                type="checkbox"
-                                                className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
-                                                id="custom_switch_checkbox1"
-                                            />
-                                            <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
-                                        </label>
-                                    ),
-                                },
-                                // {
-                                //     accessor: "action",
-                                //     title: "Action",
-                                //     titleClassName: "!text-center",
-                                //     render: (result) => (
-                                //         <div className="flex items-center w-max mx-auto gap-2">
-                                //             <Link
-                                //                 href={
-                                //                     `${base_url}/admin/notice/view/` +
-                                //                     result.id
-                                //                 }
-                                //                 method="get"
-                                //                 className="btn btn-sm btn-outline-primary"
-                                //             >
-                                //                 View
-                                //             </Link>
-                                //             {permissions.includes(
-                                //                 "notice-edit"
-                                //             ) ||
-                                //             permissions.includes(
-                                //                 "super-admin"
-                                //             ) ? (
-                                //                 <Link
-                                //                     href={
-                                //                         `${base_url}/admin/notice/edit/` +
-                                //                         result.id
-                                //                     }
-                                //                     method="get"
-                                //                     className="btn btn-sm btn-outline-primary"
-                                //                 >
-                                //                     Edit
-                                //                 </Link>
-                                //             ) : null}
-                                //             {permissions.includes(
-                                //                 "notice-delete"
-                                //             ) ||
-                                //             permissions.includes(
-                                //                 "super-admin"
-                                //             ) ? (
+                ) : null
+            }
 
-                                //                 <Link
-                                //                     href={
-                                //                         `${base_url}/admin/notice/delete/` +
-                                //                         result.id
-                                //                     }
-                                //                     method="get"
-                                //                     className="btn btn-sm btn-outline-danger"
-                                //                 >
-                                //                     Delete
-                                //                 </Link>
-                                //             ) : null}
-                                //         </div>
-                                //     ),
-                                // },
-                                {
-                                    accessor: "action",
-                                    title: "Action",
-                                    titleClassName: "!text-center",
-                                    render: (result) => (
-                                        <div className="flex items-center w-max mx-auto gap-2 icon-box">
-                                            <Link
-                                                href={
-                                                    `${base_url}/admin/notice/view/` +
-                                                    result.id
-                                                }
-                                                method="get"
-                                                className="btn-outline-primary"
-                                            >
-                                                <CiViewList />
-                                            </Link>
-                                            {permissions.includes(
-                                                "notice-edit"
-                                            ) ||
-                                            permissions.includes(
-                                                "super-admin"
-                                            ) ? (
-                                                <Link
-                                                    href={
-                                                        `${base_url}/admin/notice/edit/` +
-                                                        result.id
-                                                    }
-                                                    method="get"
-                                                    className="btn-outline-primary"
-                                                >
-                                                    <MdOutlineEditNote />
-                                                </Link>
-                                            ) : null}
-                                            {permissions.includes(
-                                                "notice-delete"
-                                            ) ||
-                                            permissions.includes(
-                                                "super-admin"
-                                            ) ? (
-                                                <Link
-                                                    href={
-                                                        `${base_url}/admin/notice/delete/` +
-                                                        result.id
-                                                    }
-                                                    method="get"
-                                                    className="btn-outline-danger"
-                                                >
-                                                    <MdOutlineDelete />
-                                                </Link>
-                                            ) : null}
-                                        </div>
-                                    ),
-                                },
-                            ]}
-                            totalRecords={initialRecords2.length}
-                            recordsPerPage={pageSize2}
-                            page={page2}
-                            onPageChange={(p) => setPage2(p)}
-                            recordsPerPageOptions={PAGE_SIZES}
-                            onRecordsPerPageChange={setPageSize2}
-                            onSortStatusChange={setSortStatus2}
-                            minHeight={200}
-                            paginationText={({ from, to, totalRecords }) =>
-                                `Showing  ${from} to ${to} of ${totalRecords} entries`
-                            }
-                        />
-                    </div>
-                </div>
-            ) : null}
         </>
     );
 }
-Index.layout = (page) => <MainLayout children={page} title="HR || Notice" />;
+Index.layout = (page) => (
+    <MainLayout children={page} title="HR || Notice" />
+);
 export default Index;

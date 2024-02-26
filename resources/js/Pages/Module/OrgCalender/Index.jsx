@@ -3,10 +3,10 @@ import MainLayout from "../../Layout/Mainlayout";
 import { DataTable } from "mantine-datatable";
 import { Link, router, usePage } from "@inertiajs/react";
 import FlashMessage from "../../Component/FlashMessage";
+import {format} from "date-fns";
 
 function Index() {
     const { base_url, flash , result, permissions } = usePage().props;
-    // console.log(result)
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [page2, setPage2] = useState(1);
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);
@@ -52,20 +52,6 @@ function Index() {
         }
         return "";
     };
-
-    // const randomStatus = () => {
-    //     const status = [
-    //         "PAID",
-    //         "APPROVED",
-    //         "FAILED",
-    //         "CANCEL",
-    //         "SUCCESS",
-    //         "PENDING",
-    //         "COMPLETE",
-    //     ];
-    //     const random = Math.floor(Math.random() * status.length);
-    //     return status[random];
-    // };
 
     function editData(result) {
         router.get("/admin/org_calender/edit/" + result.id);
@@ -156,6 +142,29 @@ function Index() {
                                         render: ({ calender_year }) => (
                                             <div className="flex items-center w-max">
                                                 <div>{calender_year}</div>
+                                            </div>
+                                        ),
+                                    },
+                                    {
+                                        accessor: " month",
+                                        title: "Month Name",
+                                        render: ({ month_id }) => {
+                                            const monthId = month_id;
+                                            const date = new Date(0, monthId - 1, 1); // Months are 0-based in JavaScript Date object
+                                            const monthName = format(date, 'MMMM');
+                                            return (
+                                                <div className="flex items-center w-max">
+                                                    <div>{monthName}</div>
+                                                </div>
+                                            );
+                                        },
+                                    },
+                                    {
+                                        accessor: "salary_open",
+                                        title: "Salary Open",
+                                        render: ({ salary_open }) => (
+                                            <div className="flex items-center w-max">
+                                                <div>{salary_open == 'O' ? "Open" : (salary_open == 'F' ? "Future" : "Close")}</div>
                                             </div>
                                         ),
                                     },

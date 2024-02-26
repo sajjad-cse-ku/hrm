@@ -35,7 +35,7 @@ class LateApplyController extends Controller
             'message'=>$request->late_message
         ]);
         if($save){
-            return to_route('admin.late.list')->with('success',"Apply Successfully");
+            return to_route('admin.apply.list')->with('success',"Apply Successfully");
         }
     }
     public function applyList(){
@@ -61,7 +61,9 @@ class LateApplyController extends Controller
         ]);
         if($updateDate){
             Attendance::where('user_id',$data->user_id)->whereDate('attend_date',$data->late_date)->update([
-                'late_flag'=> 0
+                'late_flag'=> 0,
+                'manual_late_allow'=>1,
+                'manual_late_update_by'=>Auth::id()
             ]);
             return back()->with('success','Late Application Approved');
         }

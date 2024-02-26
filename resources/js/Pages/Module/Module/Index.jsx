@@ -170,8 +170,8 @@ function Index({ result }) {
                     />
                 </div>
             </div>
-        </> :
-        <h1>Loadig ...</h1>
+            </> :
+            <h1>Loadig ...</h1>
         }
         </>
     );

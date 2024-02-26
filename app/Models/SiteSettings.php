@@ -15,5 +15,11 @@ class SiteSettings extends Model
         'ip',
         'port',
         'protocol',
+        'general_shift',
+        'night_shift',
+        'start_day_first_time',
+        'start_day_second_time',
+        'end_day_first_time',
+        'end_day_second_time',
     ];
 }

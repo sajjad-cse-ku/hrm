@@ -4,14 +4,14 @@ import { Link, router, usePage } from "@inertiajs/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import FlashMessage from "../../Component/FlashMessage.jsx";
-import Select from "react-select";
+import Select from 'react-select';
 
 function Add({ group_company_list }) {
-    const { errors, flash } = usePage().props;
+    const { errors,flash } = usePage().props;
     const group_companies = group_company_list.map((item) => ({
         value: item.id,
         label: item.name,
-    }));
+      }));
 
     const [values, setValues] = useState({
         group_id: "",
@@ -28,6 +28,7 @@ function Add({ group_company_list }) {
     });
     const [selectedOption, setSelectedOption] = useState(group_companies[0]);
 
+
     function handleChange(e) {
         const key = e.target.id;
         const value = e.target.value;
@@ -40,11 +41,11 @@ function Add({ group_company_list }) {
     const handleSelectChange = (selectedOption) => {
         // Update the selected option state
         setSelectedOption(selectedOption);
-    };
-    const updatedValues = {
+      };
+      const updatedValues = {
         ...values,
         group_id: selectedOption.value, // Use the selectedOption's value
-    };
+      };
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -91,7 +92,7 @@ function Add({ group_company_list }) {
             </div>
             <div className="pt-5 grid lg:grid-cols-1 grid-cols-1 gap-6">
                 <div className="panel" id="forms_grid">
-                    <div className="flex items-center justify-between mb-5 mx-4">
+                    <div className="flex items-center justify-between mb-5">
                         <h5 className="font-semibold text-lg dark:text-white-light">
                             Company
                         </h5>
@@ -103,8 +104,10 @@ function Add({ group_company_list }) {
                             method="post"
                         >
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="mx-4">
-                                    <label>Group Company</label>
+                                <div>
+                                    <label>
+                                        Group Company
+                                    </label>
                                     <Select
                                         id="group_id"
                                         value={selectedOption}
@@ -119,11 +122,8 @@ function Add({ group_company_list }) {
                                         </div>
                                     )}
                                 </div>
-                                <div className="mx-4">
-                                    <label>
-                                        Name
-                                        <span className="text-red-600 ">*</span>
-                                    </label>
+                                <div>
+                                    <label>Name<span className="text-red-600 ">*</span></label>
                                     <input
                                         id="name"
                                         type="text"
@@ -139,87 +139,60 @@ function Add({ group_company_list }) {
                                     )}
                                 </div>
                             </div>
-
+                            <div>
+                                <label>Address<span className="text-red-600 ">*</span></label>
+                                <input
+                                    id="address"
+                                    type="text"
+                                    placeholder="Enter address"
+                                    className="form-input"
+                                    value={values.address}
+                                    onChange={handleChange}
+                                />
+                                {errors.address && (
+                                    <div className="text-red-600 text-[14px]">
+                                        {errors.address}
+                                    </div>
+                                )}
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="mx-4">
-                                    <label>
-                                        Address
-                                        <span className="text-red-600 ">*</span>
-                                    </label>
+                                <div>
+                                    <label>City<span className="text-red-600 ">*</span></label>
                                     <input
-                                        id="address"
+                                        id="city"
                                         type="text"
-                                        placeholder="Enter address"
+                                        placeholder="Enter city"
                                         className="form-input"
-                                        value={values.address}
+                                        value={values.city}
                                         onChange={handleChange}
                                     />
-                                    {errors.address && (
+                                    {errors.city && (
                                         <div className="text-red-600 text-[14px]">
-                                            {errors.address}
+                                            {errors.city}
                                         </div>
                                     )}
                                 </div>
-                                <div className="mx-4 flex items-center nowrap">
-                                    <div className="mr-1 w-[50%]">
-                                        <label>
-                                            City
-                                            <span className="text-red-600 ">
-                                                *
-                                            </span>
-                                        </label>
-                                        <input
-                                            id="city"
-                                            type="text"
-                                            placeholder="Enter city"
-                                            className="form-input"
-                                            value={values.city}
-                                            onChange={handleChange}
-                                        />
-                                        {errors.city && (
-                                            <div className="text-red-600 text-[14px]">
-                                                {errors.city}
-                                            </div>
-                                        )}
-                                    </div>
 
-                                    <div className="ml-1 w-[50%]">
-                                        <label>
-                                            Country
-                                            <span className="text-red-600 ">
-                                                *
-                                            </span>
-                                        </label>
-                                        <input
-                                            id="country"
-                                            type="text"
-                                            placeholder="Enter Country"
-                                            className="form-input"
-                                            value={values.country}
-                                            onChange={handleChange}
-                                        />
-                                        {errors.country && (
-                                            <div className="text-red-600 text-[14px]">
-                                                {errors.country}
-                                            </div>
-                                        )}
-                                    </div>
+                                <div>
+                                    <label>Country<span className="text-red-600 ">*</span></label>
+                                    <input
+                                        id="country"
+                                        type="text"
+                                        placeholder="Enter Country"
+                                        className="form-input"
+                                        value={values.country}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.country && (
+                                        <div className="text-red-600 text-[14px]">
+                                            {errors.country}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="mx-4">
-                                    <label>State</label>
-                                    <input
-                                        id="state"
-                                        type="text"
-                                        placeholder="Enter State"
-                                        className="form-input"
-                                        value={values.state}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <div className="mx-4">
+                                <div>
                                     <label>Post Code</label>
                                     <input
                                         id="post_code"
@@ -227,6 +200,18 @@ function Add({ group_company_list }) {
                                         placeholder="Enter Post Code"
                                         className="form-input"
                                         value={values.post_code}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label>Email</label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        placeholder="Enter Email"
+                                        className="form-input"
+                                        value={values.email}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -241,9 +226,22 @@ function Add({ group_company_list }) {
 
                             </div> */}
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="mx-4">
-                                    <label>Phone Number</label>
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <div className="md:col-span-2">
+                                    <label>State</label>
+                                    <input
+                                        id="state"
+                                        type="text"
+                                        placeholder="Enter State"
+                                        className="form-input"
+                                        value={values.state}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label>
+                                        Phone Number
+                                    </label>
                                     <input
                                         id="phone_no"
                                         type="number"
@@ -253,21 +251,10 @@ function Add({ group_company_list }) {
                                         onChange={handleChange}
                                     />
                                 </div>
-                                <div className="mx-4">
-                                    <label>Email</label>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        placeholder="Enter Email"
-                                        className="form-input"
-                                        value={values.email}
-                                        onChange={handleChange}
-                                    />
-                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="mx-4">
+                                <div>
                                     <label>Website</label>
                                     <input
                                         id="website"
@@ -279,7 +266,7 @@ function Add({ group_company_list }) {
                                     />
                                 </div>
 
-                                <div className="mx-4">
+                                <div>
                                     <label>Currency</label>
                                     <input
                                         id="currency"
@@ -318,6 +305,8 @@ function Add({ group_company_list }) {
     );
 }
 
-Add.layout = (page) => <MainLayout children={page} title="HR || Add Company" />;
+Add.layout = (page) => (
+    <MainLayout children={page} title="HR || Add Company" />
+);
 
 export default Add;

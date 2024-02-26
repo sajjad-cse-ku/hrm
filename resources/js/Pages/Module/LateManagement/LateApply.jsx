@@ -8,7 +8,7 @@ import axios from "axios";
 import Select from "react-select";
 
 function LateApply() {
-    const {  flash,auth,errors,auth_user,all_users } = usePage().props;
+    const {  flash,auth,errors,auth_user,all_users, permissions } = usePage().props;
 
     const[anotherUserData , setAnotherUserData] = useState({})
     const [selectedValue, setSelectedValue] = useState(null);
@@ -64,7 +64,6 @@ function LateApply() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(values);
         router.post("/admin/late-apply/send", values);
     };
 
@@ -116,30 +115,33 @@ function LateApply() {
                     </li>
                 </ul>
             </div>
-            <div className="mb-5 panel mt-6 flex flex-wrap items-center whitespace-nowrap p-3 ">
+            {permissions.includes('late-other-view') || permissions.includes('super-admin') ? (
+                <div className="mb-5 panel mt-6 flex flex-wrap items-center whitespace-nowrap p-3 ">
 
-                <ul className="flex w-full md:w-1/2 space-x-2 rtl:space-x-reverse my-2">
-                    <li className="text-red-600 hover:underline">
-                        <b><span className="text-[18px]">Apply for another person</span></b>
-                    </li>
-                </ul>
-                <div className="w-full md:w-1/2 flex my-2">
-                    <Select
-                        className="w-full mr-2"
-                        id="userSelect"
-                        placeholder="Select an option"
-                        options={options}
-                        isSearchable={true}
-                        onChange={handleSelectUserChange} // Set the onChange handler
-                    />
-                    <button
-                        className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
-                        onClick={handleFindUsersClick}
-                    >
-                        Find Users
-                    </button>
+                    <ul className="flex w-full md:w-1/2 space-x-2 rtl:space-x-reverse">
+                        <li className="text-red-600 hover:underline">
+                            <b><span className="text-[18px]">Apply for another person</span></b>
+                        </li>
+                    </ul>
+                    <div className="w-full md:w-1/2 flex">
+                        <Select
+                            className="w-full mr-2"
+                            id="userSelect"
+                            placeholder="Select an option"
+                            options={options}
+                            isSearchable={true}
+                            onChange={handleSelectUserChange} // Set the onChange handler
+                        />
+                        <button
+                            className="px-7 py-2 bg-indigo-600 text-white rounded-md text-[15px]"
+                            onClick={handleFindUsersClick}
+                        >
+                            Find Users
+                        </button>
+                    </div>
                 </div>
-            </div>
+            ) : null
+            }
             {
                 isVisible &&
                 <div className="pt-5">

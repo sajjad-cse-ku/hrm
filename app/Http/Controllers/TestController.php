@@ -30,14 +30,6 @@ class TestController extends Controller
 
     }
 
-
-
-
-
-
-
-
-
     public function demoTable(){
         $users = User::paginate(10);
         return Inertia::render('Module/Test/Demo',[

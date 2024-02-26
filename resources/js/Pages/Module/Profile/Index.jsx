@@ -16,6 +16,11 @@ function Index() {
         mobile:user.mobile,
         email:user.email,
         gender:user.gender,
+        blood_group:user?.personaldata?.blood_group,
+        pr_address:user?.personaldata?.pr_address,
+        pr_district:user?.personaldata?.pr_district,
+        pr_police_station:user?.personaldata?.pr_police_station,
+        pr_post_code:user?.personaldata?.pr_post_code,
     });
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -60,7 +65,6 @@ function Index() {
 
     function handleSubmitPassword(e) {
         e.preventDefault();
-        // console.log(password);
         router.post("/admin/user/profile/change-password", password);
     }
     return (
@@ -197,14 +201,74 @@ function Index() {
                                     </div>
                                     <div>
                                         <label>Gender</label>
-                                        <select id="gender" defaultValue={values.gender || ''} className="form-select text-white-dark" onChange={handleChange}>
+                                        <select id="gender" defaultValue={values.gender || ''}
+                                                className="form-select text-white-dark" onChange={handleChange}>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                         </select>
                                     </div>
+
+                                    <div>
+                                        <label>Blood Group</label>
+                                        <select id="blood_group" defaultValue={values?.blood_group || ''}
+                                                className="form-select text-white-dark" onChange={handleChange}>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label>Present Address</label>
+                                        <input id="pr_address"
+                                               type="text"
+                                               placeholder="Present Address"
+                                               className="form-input"
+                                               value={values?.pr_address || ''}
+                                               onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label>Present District</label>
+                                        <input id="pr_district"
+                                               type="text"
+                                               placeholder="Present District"
+                                               className="form-input"
+                                               value={values?.pr_district || ''}
+                                               onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label>Present Police Station</label>
+                                        <input id="pr_police_station"
+                                               type="text"
+                                               placeholder="Present Police Station"
+                                               className="form-input"
+                                               value={values?.pr_police_station || ''}
+                                               onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label>Present Post Code</label>
+                                        <input id="pr_post_code"
+                                               type="text"
+                                               placeholder="Present Post Code"
+                                               className="form-input"
+                                               value={values?.pr_post_code || ''}
+                                               onChange={handleChange}
+                                        />
+                                    </div>
+
+
                                     <div>
                                         <label>Image</label>
-                                        <input id="image" type="file" placeholder="Jimmy@gmail.com" className="form-input" onChange={handleImageChange} />
+                                        <input id="image" type="file" placeholder="Jimmy@gmail.com"
+                                               className="form-input" onChange={handleImageChange}/>
                                     </div>
                                     <div className="sm:col-span-2 mt-3">
                                         <button type="submit" className="btn btn-primary">
@@ -292,6 +356,6 @@ function Index() {
     );
 }
 Index.layout = (page) => (
-    <MainLayout children={page} title="HR || Bank" />
+    <MainLayout children={page} title="HR || User Profile" />
 );
 export default Index;

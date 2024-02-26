@@ -20,7 +20,6 @@ class LeaveCategoryController extends Controller
         $result = $this->leave_category->getAll();
         return Inertia::render('Module/LeaveCategory/Index',[
             'result' => $result,
-            'permissions' => checkPermissions(),
         ]);
 
         ;

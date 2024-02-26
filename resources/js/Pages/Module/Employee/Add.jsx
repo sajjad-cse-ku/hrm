@@ -81,7 +81,6 @@ function Add()
     const sectionSelect =  async (id) => {
         try {
             const response = await axios.get('/admin/section-select/'+id);
-            // console.log(response);
             setSection(response.data);
         } catch (error) {
             console.error(error);
@@ -91,7 +90,6 @@ function Add()
 
 
     function onSubmit(data) {
-        // console.log(data);
         router.post("/admin/employee/store", data);
     }
 
